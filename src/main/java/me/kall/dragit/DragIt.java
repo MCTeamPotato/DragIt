@@ -1,6 +1,6 @@
 package me.kall.dragit;
 
-import me.kall.dragit.network.ImageSyncManager;
+import me.kall.dragit.network.DragNetworker;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,6 +11,6 @@ public final class DragIt {
     public static final Logger LOGGER = LogManager.getLogger(DragIt.class);
 
     public DragIt() {
-        ImageSyncManager.register();
+        DragNetworker.register();
     }
 }

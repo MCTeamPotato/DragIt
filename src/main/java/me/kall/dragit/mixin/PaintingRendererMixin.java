@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
-import me.kall.dragit.data.ClientImages;
+import me.kall.dragit.data.painting.ClientPaintings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -36,9 +36,9 @@ public abstract class PaintingRendererMixin extends EntityRenderer<Painting> {
     private void renderDropped(@NotNull Painting painting, float yaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight, CallbackInfo ci) {
         ResourceLocation dimension = painting.level().dimension().location();
         long pos = painting.blockPosition().asLong();
-        Long2ObjectMap<ClientImages.Image> imageMap = ClientImages.IMAGES.get(dimension);
+        Long2ObjectMap<ClientPaintings.Painting> imageMap = ClientPaintings.PAINTINGS.get(dimension);
         if (imageMap == null) return;
-        ClientImages.Image image = imageMap.get(pos);
+        ClientPaintings.Painting image = imageMap.get(pos);
         if (image == null) return;
         ci.cancel();
 
