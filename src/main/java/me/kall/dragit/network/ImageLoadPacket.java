@@ -1,14 +1,11 @@
 package me.kall.dragit.network;
 
-import com.mojang.blaze3d.platform.NativeImage;
-import me.kall.dragit.DragIt;
 import me.kall.dragit.data.ClientImages;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.util.function.Supplier;
 
 public class ImageLoadPacket {
@@ -39,13 +36,7 @@ public class ImageLoadPacket {
     }
 
     public void handle(@NotNull Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            try {
-                ClientImages.registerImage(this.dimension, this.pos, NativeImage.read(this.textureBytes), this.textureLocation);
-            } catch (IOException ioException) {
-                DragIt.LOGGER.error("Error loading image", ioException);
-            }
-        });
+        ctx.get().enqueueWork(() -> ClientImages.registerImage(this.dimension, this.pos, this.textureBytes, this.textureLocation));
         ctx.get().setPacketHandled(true);
     }
 }

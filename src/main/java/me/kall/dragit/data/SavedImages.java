@@ -13,7 +13,9 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.decoration.Painting;
 import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -28,6 +30,13 @@ public class SavedImages extends SavedData {
 
     public final Object2ObjectMap<ResourceLocation, Long2ObjectMap<Image>> images = new Object2ObjectOpenHashMap<>();
 
+    public void removeImage(ResourceLocation dimension, long pos) {
+        Long2ObjectMap<Image> imageMap = this.images.get(dimension);
+        if (imageMap == null) return;
+        imageMap.remove(pos);
+        if (imageMap.isEmpty()) this.images.remove(dimension);
+    }
+
     public static @NotNull SavedImages load(@NotNull CompoundTag tag) {
         SavedImages data = new SavedImages();
 
@@ -41,7 +50,7 @@ public class SavedImages extends SavedData {
 
             for (int i = 0; i < imagesList.size(); i++) {
                 CompoundTag imageTag = imagesList.getCompound(i);
-                dimensionImages.put(imageTag.getLong("Pos"), new Image(ResourceLocation.parse(imageTag.getString("TextureLocation")), imageTag.getByteArray("DynamicTexture")));
+                dimensionImages.put(imageTag.getLong("Pos"), new Image(ResourceLocation.parse(imageTag.getString("TextureLocation")), imageTag.getByteArray("TextureBytes")));
             }
 
             data.images.put(resourceLocation, dimensionImages);
@@ -62,7 +71,7 @@ public class SavedImages extends SavedData {
                 CompoundTag imageTag = new CompoundTag();
                 imageTag.putLong("Pos", imageEntry.getLongKey());
                 imageTag.putString("TextureLocation", imageEntry.getValue().textureLocation().toString());
-                imageTag.putByteArray("DynamicTexture", imageEntry.getValue().textureBytes());
+                imageTag.putByteArray("TextureBytes", imageEntry.getValue().textureBytes());
 
                 imagesList.add(imageTag);
             }
@@ -80,7 +89,7 @@ public class SavedImages extends SavedData {
     }
 
     @SubscribeEvent
-    public static void sendImages(PlayerEvent.PlayerLoggedInEvent event) {
+    public static void sendImages(PlayerEvent.@NotNull PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player && player.level() instanceof ServerLevel level) {
             SavedImages savedImages = get(level);
             for (Map.Entry<ResourceLocation, Long2ObjectMap<Image>> dimensionEntry : savedImages.images.entrySet()) {
@@ -95,6 +104,15 @@ public class SavedImages extends SavedData {
             }
             savedImages.images.clear();
             savedImages.setDirty();
+        }
+    }
+
+    @SubscribeEvent
+    public static void removeImage(EntityLeaveLevelEvent event) {
+        if (event.getEntity() instanceof Painting painting && painting.level() instanceof ServerLevel level) {
+            ResourceLocation dimension = level.dimension().location();
+            long pos = painting.blockPosition().asLong();
+            SavedImages.get(level).removeImage(dimension, pos);
         }
     }
 
