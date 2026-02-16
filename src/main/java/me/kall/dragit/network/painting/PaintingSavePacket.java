@@ -3,6 +3,7 @@ package me.kall.dragit.network.painting;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import me.kall.dragit.data.painting.SavedPaintings;
 import me.kall.dragit.network.DragNetworker;
+import me.kall.dragit.network.base.PaintingPacket;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -14,33 +15,16 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-public class PaintingSavePacket {
-    public final ResourceLocation dimension;
-    public final long pos;
-    public final ResourceLocation textureLocation;
-    public final byte[] textureBytes;
-
+public class PaintingSavePacket extends PaintingPacket {
     public PaintingSavePacket(ResourceLocation dimension, long pos, ResourceLocation textureLocation, byte[] textureBytes) {
-        this.dimension = dimension;
-        this.pos = pos;
-        this.textureLocation = textureLocation;
-        this.textureBytes = textureBytes;
+        super(dimension, pos, textureLocation, textureBytes);
     }
 
     public PaintingSavePacket(@NotNull FriendlyByteBuf buf) {
-        this.dimension = buf.readResourceLocation();
-        this.pos = buf.readLong();
-        this.textureLocation = buf.readResourceLocation();
-        this.textureBytes = buf.readByteArray();
+        super(buf);
     }
 
-    public void save(@NotNull FriendlyByteBuf buf) {
-        buf.writeResourceLocation(this.dimension);
-        buf.writeLong(this.pos);
-        buf.writeResourceLocation(this.textureLocation);
-        buf.writeByteArray(this.textureBytes);
-    }
-
+    @Override
     public void handle(@NotNull Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             ServerPlayer player = ctx.get().getSender();

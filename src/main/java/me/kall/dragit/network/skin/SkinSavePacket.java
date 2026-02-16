@@ -2,6 +2,7 @@ package me.kall.dragit.network.skin;
 
 import me.kall.dragit.data.skin.SavedSkins;
 import me.kall.dragit.network.DragNetworker;
+import me.kall.dragit.network.base.SkinPacket;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -13,29 +14,16 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-public class SkinSavePacket {
-    public final UUID uuid;
-    public final ResourceLocation textureLocation;
-    public final byte[] textureBytes;
-
+public class SkinSavePacket extends SkinPacket {
     public SkinSavePacket(UUID uuid, ResourceLocation textureLocation, byte[] textureBytes) {
-        this.uuid = uuid;
-        this.textureLocation = textureLocation;
-        this.textureBytes = textureBytes;
+        super(uuid, textureLocation, textureBytes);
     }
 
     public SkinSavePacket(@NotNull FriendlyByteBuf buf) {
-        this.uuid = buf.readUUID();
-        this.textureLocation = buf.readResourceLocation();
-        this.textureBytes = buf.readByteArray();
+        super(buf);
     }
 
-    public void save(@NotNull FriendlyByteBuf buf) {
-        buf.writeUUID(this.uuid);
-        buf.writeResourceLocation(this.textureLocation);
-        buf.writeByteArray(this.textureBytes);
-    }
-
+    @Override
     public void handle(@NotNull Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             ServerPlayer player = ctx.get().getSender();
