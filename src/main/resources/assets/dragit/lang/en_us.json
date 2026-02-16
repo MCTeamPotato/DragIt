@@ -3,14 +3,15 @@
   "gui.dragit.painting_config.compression.on": "Compression: ON",
   "gui.dragit.painting_config.compression.off": "Compression: OFF",
   "gui.dragit.painting_config.max_pixels": "Max Pixels",
-  "gui.dragit.painting_config.confirm": "Confirm",
-  "gui.dragit.painting_config.cancel": "Cancel",
-  "gui.dragit.painting_config.file": "File: %s",
   "gui.dragit.painting_config.valid": "Valid: %s pixels (~%s KB)",
   "gui.dragit.painting_config.invalid_range": "Invalid: Must be 1-100,000,000",
   "gui.dragit.painting_config.invalid_format": "Invalid number format",
   "gui.dragit.painting_config.tip": "Tip: Smaller values = more compression",
-  "gui.dragit.painting_config.error": "Error: %s",
-  "gui.dragit.painting_config.sync.on": "Sync to Server: ON",
-  "gui.dragit.painting_config.sync.off": "Sync to Server: OFF"
+
+  "gui.dragit.skin_config.title": "Skin Configuration",
+
+  "gui.dragit.sync.on": "Sync to Server: ON",
+  "gui.dragit.sync.off": "Sync to Server: OFF",
+  "gui.dragit.file": "File: %s",
+  "gui.dragit.error": "Error: %s"
 }

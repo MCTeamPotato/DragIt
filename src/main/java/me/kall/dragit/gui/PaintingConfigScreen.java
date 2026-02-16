@@ -54,9 +54,9 @@ public class PaintingConfigScreen extends Screen {
         Button enableCompressionButton = Button.builder(
                 Component.translatable("gui.dragit.painting_config.compression." + (this.enableCompression ? "on" : "off")),
                 button -> {
-                    enableCompression = !enableCompression;
+                    this.enableCompression = !this.enableCompression;
                     button.setMessage(Component.translatable("gui.dragit.painting_config.compression." + (this.enableCompression ? "on" : "off")));
-                    maxPixelsBox.setEditable(enableCompression);
+                    this.maxPixelsBox.setEditable(this.enableCompression);
                 }).bounds(centerX - 100, startY, 200, 20).build();
         this.addRenderableWidget(enableCompressionButton);
 
@@ -99,13 +99,13 @@ public class PaintingConfigScreen extends Screen {
         }
 
         this.addRenderableWidget(Button.builder(
-                Component.translatable("gui.dragit.painting_config.sync." + (this.syncToServer ? "on" : "off")),
+                Component.translatable("gui.dragit.sync." + (this.syncToServer ? "on" : "off")),
                 button -> {
-                    syncToServer = !syncToServer;
-                    button.setMessage(Component.translatable("gui.dragit.painting_config.sync." + (this.syncToServer ? "on" : "off")));
+                    this.syncToServer = !this.syncToServer;
+                    button.setMessage(Component.translatable("gui.dragit.sync." + (this.syncToServer ? "on" : "off")));
                 }).bounds(centerX - 100, startY + 25, 200, 20).build());
-        this.addRenderableWidget(Button.builder(Component.translatable("gui.dragit.painting_config.confirm"), button -> this.onDone()).bounds(centerX - 105, startY + 135, 100, 20).build());
-        this.addRenderableWidget(Button.builder(Component.translatable("gui.dragit.painting_config.cancel"), button -> this.onClose()).bounds(centerX + 5, startY + 135, 100, 20).build());
+        this.addRenderableWidget(Button.builder(Component.translatable("gui.yes"), button -> this.onDone()).bounds(centerX - 105, startY + 135, 100, 20).build());
+        this.addRenderableWidget(Button.builder(Component.translatable("gui.no"), button -> this.onClose()).bounds(centerX + 5, startY + 135, 100, 20).build());
     }
 
     @Override
@@ -113,7 +113,7 @@ public class PaintingConfigScreen extends Screen {
         this.renderBackground(poseStack);
         super.render(poseStack, mouseX, mouseY, partialTick);
         poseStack.drawCenteredString(this.font, this.title, this.width / 2, 20, 0xFFFFFF);
-        poseStack.drawCenteredString(this.font, Component.translatable("gui.dragit.painting_config.file", new File(this.filePath).getName()), this.width / 2, 40, 0xAAAAAA);
+        poseStack.drawCenteredString(this.font, Component.translatable("gui.dragit.file", new File(this.filePath).getName()), this.width / 2, 40, 0xAAAAAA);
         poseStack.drawCenteredString(this.font, Component.translatable("gui.dragit.painting_config.max_pixels"), this.width / 2, this.height / 2 - 60 + 70, 0xFFFFFF);
         if (!this.statusMessage.getString().isEmpty()) poseStack.drawCenteredString(this.font, this.statusMessage, this.width / 2, this.height / 2 + 80, this.statusColor);
         poseStack.drawCenteredString(this.font, Component.translatable("gui.dragit.painting_config.tip"), this.width / 2, this.height - 30, 0x888888);
@@ -138,7 +138,7 @@ public class PaintingConfigScreen extends Screen {
         } catch (IOException exception) {
             DragIt.LOGGER.error("Failed to load image: {}", this.filePath);
             DragIt.LOGGER.error(exception.getMessage(), exception);
-            this.statusMessage = Component.translatable("gui.dragit.painting_config.error", exception.getMessage());
+            this.statusMessage = Component.translatable("gui.dragit.error", exception.getMessage());
             this.statusColor = 0xFF0000;
         }
     }
