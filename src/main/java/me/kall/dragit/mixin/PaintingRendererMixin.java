@@ -21,13 +21,15 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(PaintingRenderer.class)
 public abstract class PaintingRendererMixin extends EntityRenderer<Painting> {
+    @Shadow protected abstract void vertex(Matrix4f pose, Matrix3f normal, VertexConsumer consumer, float x, float y, float u, float v, float z, int normalX, int normalY, int normalZ, int lightmapUV);
+
     protected PaintingRendererMixin(EntityRendererProvider.Context context) {
         super(context);
     }
@@ -104,39 +106,34 @@ public abstract class PaintingRendererMixin extends EntityRenderer<Painting> {
                 float y0 = minY + yTile * 16;
                 float y1 = y0 + 16;
 
-                this.convenientImage$vertex(matrix, normal, frameConsumer, x1, y1, j, k, 0.5F, 0, 0, 1, light);
-                this.convenientImage$vertex(matrix, normal, frameConsumer, x0, y1, i, k, 0.5F, 0, 0, 1, light);
-                this.convenientImage$vertex(matrix, normal, frameConsumer, x0, y0, i, l, 0.5F, 0, 0, 1, light);
-                this.convenientImage$vertex(matrix, normal, frameConsumer, x1, y0, j, l, 0.5F, 0, 0, 1, light);
+                this.vertex(matrix, normal, frameConsumer, x1, y1, j, k, 0.5F, 0, 0, 1, light);
+                this.vertex(matrix, normal, frameConsumer, x0, y1, i, k, 0.5F, 0, 0, 1, light);
+                this.vertex(matrix, normal, frameConsumer, x0, y0, i, l, 0.5F, 0, 0, 1, light);
+                this.vertex(matrix, normal, frameConsumer, x1, y0, j, l, 0.5F, 0, 0, 1, light);
 
-                this.convenientImage$vertex(matrix, normal, frameConsumer, x1, y1, m, o, -0.5F, 0, 1, 0, light);
-                this.convenientImage$vertex(matrix, normal, frameConsumer, x0, y1, n, o, -0.5F, 0, 1, 0, light);
-                this.convenientImage$vertex(matrix, normal, frameConsumer, x0, y1, n, p, 0.5F, 0, 1, 0, light);
-                this.convenientImage$vertex(matrix, normal, frameConsumer, x1, y1, m, p, 0.5F, 0, 1, 0, light);
+                this.vertex(matrix, normal, frameConsumer, x1, y1, m, o, -0.5F, 0, 1, 0, light);
+                this.vertex(matrix, normal, frameConsumer, x0, y1, n, o, -0.5F, 0, 1, 0, light);
+                this.vertex(matrix, normal, frameConsumer, x0, y1, n, p, 0.5F, 0, 1, 0, light);
+                this.vertex(matrix, normal, frameConsumer, x1, y1, m, p, 0.5F, 0, 1, 0, light);
 
-                this.convenientImage$vertex(matrix, normal, frameConsumer, x1, y0, m, o, 0.5F, 0, -1, 0, light);
-                this.convenientImage$vertex(matrix, normal, frameConsumer, x0, y0, n, o, 0.5F, 0, -1, 0, light);
-                this.convenientImage$vertex(matrix, normal, frameConsumer, x0, y0, n, p, -0.5F, 0, -1, 0, light);
-                this.convenientImage$vertex(matrix, normal, frameConsumer, x1, y0, m, p, -0.5F, 0, -1, 0, light);
+                this.vertex(matrix, normal, frameConsumer, x1, y0, m, o, 0.5F, 0, -1, 0, light);
+                this.vertex(matrix, normal, frameConsumer, x0, y0, n, o, 0.5F, 0, -1, 0, light);
+                this.vertex(matrix, normal, frameConsumer, x0, y0, n, p, -0.5F, 0, -1, 0, light);
+                this.vertex(matrix, normal, frameConsumer, x1, y0, m, p, -0.5F, 0, -1, 0, light);
 
-                this.convenientImage$vertex(matrix, normal, frameConsumer, x1, y1, r, s, 0.5F, -1, 0, 0, light);
-                this.convenientImage$vertex(matrix, normal, frameConsumer, x1, y0, r, t, 0.5F, -1, 0, 0, light);
-                this.convenientImage$vertex(matrix, normal, frameConsumer, x1, y0, q, t, -0.5F, -1, 0, 0, light);
-                this.convenientImage$vertex(matrix, normal, frameConsumer, x1, y1, q, s, -0.5F, -1, 0, 0, light);
+                this.vertex(matrix, normal, frameConsumer, x1, y1, r, s, 0.5F, -1, 0, 0, light);
+                this.vertex(matrix, normal, frameConsumer, x1, y0, r, t, 0.5F, -1, 0, 0, light);
+                this.vertex(matrix, normal, frameConsumer, x1, y0, q, t, -0.5F, -1, 0, 0, light);
+                this.vertex(matrix, normal, frameConsumer, x1, y1, q, s, -0.5F, -1, 0, 0, light);
 
-                this.convenientImage$vertex(matrix, normal, frameConsumer, x0, y1, r, s, -0.5F, 1, 0, 0, light);
-                this.convenientImage$vertex(matrix, normal, frameConsumer, x0, y0, r, t, -0.5F, 1, 0, 0, light);
-                this.convenientImage$vertex(matrix, normal, frameConsumer, x0, y0, q, t, 0.5F, 1, 0, 0, light);
-                this.convenientImage$vertex(matrix, normal, frameConsumer, x0, y1, q, s, 0.5F, 1, 0, 0, light);
+                this.vertex(matrix, normal, frameConsumer, x0, y1, r, s, -0.5F, 1, 0, 0, light);
+                this.vertex(matrix, normal, frameConsumer, x0, y0, r, t, -0.5F, 1, 0, 0, light);
+                this.vertex(matrix, normal, frameConsumer, x0, y0, q, t, 0.5F, 1, 0, 0, light);
+                this.vertex(matrix, normal, frameConsumer, x0, y1, q, s, 0.5F, 1, 0, 0, light);
             }
         }
 
         poseStack.popPose();
         super.render(painting, yaw, partialTicks, poseStack, buffer, packedLight);
-    }
-
-    @Unique
-    private void convenientImage$vertex(Matrix4f pose, Matrix3f normal, @NotNull VertexConsumer consumer, float x, float y, float u, float v, float z, int normalX, int normalY, int normalZ, int lightmapUV) {
-        consumer.vertex(pose, x, y, z).color(255, 255, 255, 255).uv(u, v).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(lightmapUV).normal(normal, normalX, normalY, normalZ).endVertex();
     }
 }

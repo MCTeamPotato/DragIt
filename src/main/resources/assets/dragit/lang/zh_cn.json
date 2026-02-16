@@ -1,0 +1,14 @@
+{
+  "gui.dragit.painting_config.title": "画作配置",
+  "gui.dragit.painting_config.compression.on": "压缩: 开启",
+  "gui.dragit.painting_config.compression.off": "压缩: 关闭",
+  "gui.dragit.painting_config.max_pixels": "最大像素数",
+  "gui.dragit.painting_config.confirm": "确认",
+  "gui.dragit.painting_config.cancel": "取消",
+  "gui.dragit.painting_config.file": "文件: %s",
+  "gui.dragit.painting_config.valid": "有效: %s 像素 (~%s KB)",
+  "gui.dragit.painting_config.invalid_range": "无效: 必须在 1-100,000,000 之间",
+  "gui.dragit.painting_config.invalid_format": "无效的数字格式",
+  "gui.dragit.painting_config.tip": "提示: 值越小压缩越多",
+  "gui.dragit.painting_config.error": "错误: %s"
+}

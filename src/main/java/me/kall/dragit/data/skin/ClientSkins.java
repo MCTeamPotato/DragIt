@@ -16,19 +16,20 @@ public class ClientSkins {
 
     public static void registerSkin(UUID uuid, ResourceLocation textureLocation, byte[] textureBytes) {
         try {
+            if (SKINS.containsKey(uuid)) {
+                Skin removed = SKINS.remove(uuid);
+                Minecraft.getInstance().getTextureManager().release(removed.textureLocation());
+                removed.dynamicTexture().close();
+            }
+
             DynamicTexture dynamicTexture = new DynamicTexture(NativeImage.read(textureBytes));
             Minecraft.getInstance().getTextureManager().register(textureLocation, dynamicTexture);
-            Skin old = SKINS.put(uuid, new Skin(textureLocation, dynamicTexture, textureBytes));
+            SKINS.put(uuid, new Skin(textureLocation, dynamicTexture, textureBytes));
             DragIt.LOGGER.info("Skin {} is registered", textureLocation.toString());
-            if (old != null) {
-                Minecraft.getInstance().getTextureManager().release(old.textureLocation());
-                old.dynamicTexture().close();
-            }
         } catch (IOException ioException) {
             DragIt.LOGGER.error("Error saving skin", ioException);
         }
     }
-
 
     public record Skin(ResourceLocation textureLocation, DynamicTexture dynamicTexture, byte[] textureBytes) {}
 }

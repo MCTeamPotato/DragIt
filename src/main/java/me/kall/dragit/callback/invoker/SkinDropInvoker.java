@@ -10,7 +10,6 @@ import org.lwjgl.glfw.GLFWDropCallback;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.UUID;
 
 public class SkinDropInvoker implements Invoker {
     public static final SkinDropInvoker INSTANCE = new SkinDropInvoker();
@@ -22,10 +21,7 @@ public class SkinDropInvoker implements Invoker {
             Minecraft minecraft = Minecraft.getInstance();
             LocalPlayer player = minecraft.player;
             if (minecraft.screen instanceof EffectRenderingInventoryScreen && player != null) {
-                UUID uuid = player.getUUID();
-                ResourceLocation textureLocation = ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, "skin_" + Math.abs(filePath.hashCode()));
-                byte[] textureBytes = skinFile.readAllBytes();
-                ClientSkins.registerSkin(uuid, textureLocation, textureBytes);
+                ClientSkins.registerSkin(player.getUUID(), ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, "skin_" + System.currentTimeMillis()), skinFile.readAllBytes());
                 return true;
             }
         } catch (IOException ioException) {

@@ -101,8 +101,6 @@ public class SavedPaintings extends SavedData {
                     DragIt.LOGGER.info("Delivering image {} to client. Size: {} bytes.", textureLocation.toString(), textureBytes.length + 16);
                 }
             }
-            savedPaintings.paintings.clear();
-            savedPaintings.setDirty();
         }
     }
 
