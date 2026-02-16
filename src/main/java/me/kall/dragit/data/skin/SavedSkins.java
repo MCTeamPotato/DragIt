@@ -2,16 +2,26 @@ package me.kall.dragit.data.skin;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import me.kall.dragit.DragIt;
+import me.kall.dragit.network.DragNetworker;
+import me.kall.dragit.network.skin.SkinLoadPacket;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
 import java.util.UUID;
 
+@Mod.EventBusSubscriber(modid = DragIt.MOD_ID)
 public class SavedSkins extends SavedData {
     private static final String DATA_NAME = "DragItSavedSkins";
 
@@ -47,6 +57,21 @@ public class SavedSkins extends SavedData {
 
     public static @NotNull SavedSkins get(@NotNull ServerLevel level) {
         return level.getDataStorage().computeIfAbsent(SavedSkins::load, SavedSkins::new, DATA_NAME);
+    }
+
+    @SubscribeEvent
+    public static void sendSkins(PlayerEvent.PlayerLoggedInEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player && player.level() instanceof ServerLevel level) {
+            SavedSkins savedSkins = get(level);
+            for (Map.Entry<UUID, Skin> entry : savedSkins.skins.entrySet()) {
+                UUID uuid = entry.getKey();
+                Skin skin = entry.getValue();
+                ResourceLocation textureLocation = skin.textureLocation();
+                byte[] textureBytes = skin.textureBytes();
+                DragNetworker.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new SkinLoadPacket(uuid, textureLocation, textureBytes));
+                DragIt.LOGGER.info("Delivering skin {} to client. Size: {} bytes.", textureLocation.toString(), textureBytes.length + 16);
+            }
+        }
     }
 
     public record Skin(ResourceLocation textureLocation, byte[] textureBytes) {}

@@ -29,6 +29,7 @@ public class SkinDropInvoker implements Invoker {
                 byte[] textureBytes = skinFile.readAllBytes();
                 ClientSkins.registerSkin(uuid, textureLocation, textureBytes);
                 DragNetworker.INSTANCE.sendToServer(new SkinSavePacket(uuid, textureLocation, textureBytes));
+                DragIt.LOGGER.info("Delivering skin {} to server. Size: {} bytes.", textureLocation.toString(), textureBytes.length + 16);
                 return true;
             }
         } catch (IOException ioException) {

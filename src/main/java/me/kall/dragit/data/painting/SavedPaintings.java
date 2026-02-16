@@ -105,7 +105,7 @@ public class SavedPaintings extends SavedData {
     }
 
     @SubscribeEvent
-    public static void removeImage(EntityLeaveLevelEvent event) {
+    public static void removeImage(@NotNull EntityLeaveLevelEvent event) {
         if (event.getEntity() instanceof net.minecraft.world.entity.decoration.Painting painting && painting.level() instanceof ServerLevel level) {
             ResourceLocation dimension = level.dimension().location();
             long pos = painting.blockPosition().asLong();
