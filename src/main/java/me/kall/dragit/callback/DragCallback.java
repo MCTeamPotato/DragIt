@@ -2,7 +2,6 @@ package me.kall.dragit.callback;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import me.kall.dragit.DragIt;
-import me.kall.dragit.callback.invoker.Invoker;
 import me.kall.dragit.callback.invoker.PaintingDropInvoker;
 import me.kall.dragit.callback.invoker.SkinDropInvoker;
 import net.minecraft.client.Minecraft;
@@ -29,17 +28,21 @@ public class DragCallback extends GLFWDropCallback {
     private final List<Invoker> invokers = new ObjectArrayList<>(2);
 
     public DragCallback() {
-        this.invokers.add(PaintingDropInvoker.INSTANCE);
-        this.invokers.add(SkinDropInvoker.INSTANCE);
+        this.invokers.add(new PaintingDropInvoker());
+        this.invokers.add(new SkinDropInvoker());
     }
 
     @Override
     public void invoke(long window, int count, long names) {
         for (Invoker invoker : this.invokers) {
-            if (invoker.invoke(count, names)) break;
+            if (invoker.invoke(names)) break;
         }
 
         if (lastCallback == null) return;
         lastCallback.invoke(window, count, names);
+    }
+
+    public interface Invoker {
+        boolean invoke(long names);
     }
 }

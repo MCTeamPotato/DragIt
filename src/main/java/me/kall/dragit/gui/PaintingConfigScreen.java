@@ -95,7 +95,7 @@ public class PaintingConfigScreen extends Screen {
             this.addRenderableWidget(Button.builder(Component.literal(String.valueOf(value)), button -> this.maxPixelsBox.setValue(String.valueOf(value))).bounds(presetStartX + i * (buttonWidth + spacing), presetY, buttonWidth, 20).build());
         }
 
-        this.addRenderableWidget(Button.builder(Component.translatable("gui.dragit.painting_config.confirm"), button -> this.processAndUpload()).bounds(centerX - 105, startY + 110, 100, 20).build());
+        this.addRenderableWidget(Button.builder(Component.translatable("gui.dragit.painting_config.confirm"), button -> this.onDone()).bounds(centerX - 105, startY + 110, 100, 20).build());
         this.addRenderableWidget(Button.builder(Component.translatable("gui.dragit.painting_config.cancel"), button -> this.onClose()).bounds(centerX + 5, startY + 110, 100, 20).build());
     }
 
@@ -110,7 +110,7 @@ public class PaintingConfigScreen extends Screen {
         poseStack.drawCenteredString(this.font, Component.translatable("gui.dragit.painting_config.tip"), this.width / 2, this.height - 30, 0x888888);
     }
 
-    private void processAndUpload() {
+    private void onDone() {
         try {
             byte[] textureBytes = processImage(this.filePath, this.enableCompression, this.maxPixels);
             ResourceLocation textureLocation = ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, "painting_" + System.currentTimeMillis());

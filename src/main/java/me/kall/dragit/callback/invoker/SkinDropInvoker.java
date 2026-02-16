@@ -1,6 +1,7 @@
 package me.kall.dragit.callback.invoker;
 
 import me.kall.dragit.DragIt;
+import me.kall.dragit.callback.DragCallback;
 import me.kall.dragit.data.skin.ClientSkins;
 import me.kall.dragit.network.DragNetworker;
 import me.kall.dragit.network.skin.SkinSavePacket;
@@ -14,11 +15,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.UUID;
 
-public class SkinDropInvoker implements Invoker {
-    public static final SkinDropInvoker INSTANCE = new SkinDropInvoker();
-
+public class SkinDropInvoker implements DragCallback.Invoker {
     @Override
-    public boolean invoke(int count, long names) {
+    public boolean invoke(long names) {
         String filePath = GLFWDropCallback.getName(names, 0);
         try (FileInputStream skinFile = new FileInputStream(filePath)) {
             Minecraft minecraft = Minecraft.getInstance();
