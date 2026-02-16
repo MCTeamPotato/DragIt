@@ -18,18 +18,19 @@ import java.util.List;
 
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, modid = DragIt.MOD_ID, value = Dist.CLIENT)
 public class DragCallback extends GLFWDropCallback {
+
     private static @Nullable GLFWDropCallback lastCallback;
+
+    @SubscribeEvent
+    public static void clientSetup(FMLClientSetupEvent event) {
+        lastCallback = GLFW.glfwSetDropCallback(Minecraft.getInstance().getWindow().getWindow(), new DragCallback());
+    }
 
     private final List<Invoker> invokers = new ObjectArrayList<>(2);
 
     public DragCallback() {
         this.invokers.add(PaintingDropInvoker.INSTANCE);
         this.invokers.add(SkinDropInvoker.INSTANCE);
-    }
-
-    @SubscribeEvent
-    public static void clientSetup(FMLClientSetupEvent event) {
-        lastCallback = GLFW.glfwSetDropCallback(Minecraft.getInstance().getWindow().getWindow(), new DragCallback());
     }
 
     @Override

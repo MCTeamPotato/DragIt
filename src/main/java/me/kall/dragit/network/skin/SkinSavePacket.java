@@ -1,7 +1,6 @@
-package me.kall.dragit.network.painting;
+package me.kall.dragit.network.skin;
 
-import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
-import me.kall.dragit.data.painting.SavedPaintings;
+import me.kall.dragit.data.skin.SavedSkins;
 import me.kall.dragit.network.DragNetworker;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -14,29 +13,25 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-public class PaintingSavePacket {
-    public final ResourceLocation dimension;
-    public final long pos;
+public class SkinSavePacket {
+    public final UUID uuid;
     public final ResourceLocation textureLocation;
     public final byte[] textureBytes;
 
-    public PaintingSavePacket(ResourceLocation dimension, long pos, ResourceLocation textureLocation, byte[] textureBytes) {
-        this.dimension = dimension;
-        this.pos = pos;
+    public SkinSavePacket(UUID uuid, ResourceLocation textureLocation, byte[] textureBytes) {
+        this.uuid = uuid;
         this.textureLocation = textureLocation;
         this.textureBytes = textureBytes;
     }
 
-    public PaintingSavePacket(@NotNull FriendlyByteBuf buf) {
-        this.dimension = buf.readResourceLocation();
-        this.pos = buf.readLong();
+    public SkinSavePacket(@NotNull FriendlyByteBuf buf) {
+        this.uuid = buf.readUUID();
         this.textureLocation = buf.readResourceLocation();
         this.textureBytes = buf.readByteArray();
     }
 
     public void save(@NotNull FriendlyByteBuf buf) {
-        buf.writeResourceLocation(this.dimension);
-        buf.writeLong(this.pos);
+        buf.writeUUID(this.uuid);
         buf.writeResourceLocation(this.textureLocation);
         buf.writeByteArray(this.textureBytes);
     }
@@ -45,16 +40,16 @@ public class PaintingSavePacket {
         ctx.get().enqueueWork(() -> {
             ServerPlayer player = ctx.get().getSender();
             if (player == null) return;
-            SavedPaintings savedPaintings = SavedPaintings.get(player.serverLevel());
-            savedPaintings.setDirty();
-            savedPaintings.paintings.computeIfAbsent(this.dimension, key -> new Long2ObjectOpenHashMap<>()).put(this.pos, new SavedPaintings.Painting(this.textureLocation, this.textureBytes));
+            SavedSkins savedSkins = SavedSkins.get(player.serverLevel());
+            savedSkins.setDirty();
+            savedSkins.skins.put(this.uuid, new SavedSkins.Skin(this.textureLocation, this.textureBytes));
 
             List<ServerPlayer> syncTargets = player.server.getPlayerList().getPlayers();
             if (syncTargets.size() == 1) return;
             UUID uuid = player.getUUID();
             for (ServerPlayer syncTarget : syncTargets) {
                 if (syncTarget.getUUID().equals(uuid)) continue;
-                DragNetworker.INSTANCE.send(PacketDistributor.PLAYER.with(() -> syncTarget), new PaintingLoadPacket(this.dimension, this.pos, this.textureLocation, this.textureBytes));
+                DragNetworker.INSTANCE.send(PacketDistributor.PLAYER.with(() -> syncTarget), new SkinLoadPacket(this.uuid, this.textureLocation, this.textureBytes));
             }
         });
         ctx.get().setPacketHandled(true);

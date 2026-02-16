@@ -25,7 +25,7 @@ import java.util.Map;
 
 @Mod.EventBusSubscriber(modid = DragIt.MOD_ID)
 public class SavedPaintings extends SavedData {
-    private static final String DATA_NAME = "DragIt";
+    private static final String DATA_NAME = "DragItSavedPaintings";
 
     public final Object2ObjectMap<ResourceLocation, Long2ObjectMap<Painting>> paintings = new Object2ObjectOpenHashMap<>();
 

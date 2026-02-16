@@ -24,12 +24,12 @@ public class ClientSkins {
 
             DynamicTexture dynamicTexture = new DynamicTexture(NativeImage.read(textureBytes));
             Minecraft.getInstance().getTextureManager().register(textureLocation, dynamicTexture);
-            SKINS.put(uuid, new Skin(textureLocation, dynamicTexture, textureBytes));
+            SKINS.put(uuid, new Skin(textureLocation, dynamicTexture));
             DragIt.LOGGER.info("Skin {} is registered", textureLocation.toString());
         } catch (IOException ioException) {
             DragIt.LOGGER.error("Error saving skin", ioException);
         }
     }
 
-    public record Skin(ResourceLocation textureLocation, DynamicTexture dynamicTexture, byte[] textureBytes) {}
+    public record Skin(ResourceLocation textureLocation, DynamicTexture dynamicTexture) {}
 }
