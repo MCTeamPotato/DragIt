@@ -10,5 +10,7 @@
   "gui.dragit.painting_config.invalid_range": "无效: 必须在 1-100,000,000 之间",
   "gui.dragit.painting_config.invalid_format": "无效的数字格式",
   "gui.dragit.painting_config.tip": "提示: 值越小压缩越多",
-  "gui.dragit.painting_config.error": "错误: %s"
+  "gui.dragit.painting_config.error": "错误: %s",
+  "gui.dragit.painting_config.sync.on": "同步到服务器: 开启",
+  "gui.dragit.painting_config.sync.off": "同步到服务器: 关闭"
 }

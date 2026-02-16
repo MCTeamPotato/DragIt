@@ -10,5 +10,7 @@
   "gui.dragit.painting_config.invalid_range": "Invalid: Must be 1-100,000,000",
   "gui.dragit.painting_config.invalid_format": "Invalid number format",
   "gui.dragit.painting_config.tip": "Tip: Smaller values = more compression",
-  "gui.dragit.painting_config.error": "Error: %s"
+  "gui.dragit.painting_config.error": "Error: %s",
+  "gui.dragit.painting_config.sync.on": "Sync to Server: ON",
+  "gui.dragit.painting_config.sync.off": "Sync to Server: OFF"
 }
