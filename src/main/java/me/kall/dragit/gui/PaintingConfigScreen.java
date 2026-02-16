@@ -115,7 +115,7 @@ public class PaintingConfigScreen extends Screen {
             byte[] textureBytes = processImage(this.filePath, this.enableCompression, this.maxPixels);
             ResourceLocation textureLocation = ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, "painting_" + System.currentTimeMillis());
             DragNetworker.INSTANCE.sendToServer(new PaintingSavePacket(dimension, pos, textureLocation, textureBytes));
-            DragIt.LOGGER.info("Delivering image {} to server. Size: {} bytes.", textureLocation.toString(), textureBytes.length + 16);
+            DragIt.LOGGER.info("Delivering image {} to server. Texture Location: {}. Size: {} bytes.", this.filePath, textureLocation.toString(), textureBytes.length + 16);
             ClientPaintings.registerPainting(this.dimension, this.pos, textureBytes, textureLocation);
             this.onClose();
         } catch (IOException exception) {
