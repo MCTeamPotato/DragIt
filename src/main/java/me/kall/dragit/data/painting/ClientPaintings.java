@@ -65,8 +65,8 @@ public class ClientPaintings {
             if (imageMap == null) return;
             if (imageMap.containsKey(pos)) {
                 Painting image = imageMap.get(pos);
-                image.dynamicTexture.close();
-                Minecraft.getInstance().getTextureManager().release(image.textureLocation);
+                image.dynamicTexture().close();
+                Minecraft.getInstance().getTextureManager().release(image.textureLocation());
                 imageMap.remove(pos);
             }
             if (imageMap.isEmpty()) PAINTINGS.remove(dimension);
