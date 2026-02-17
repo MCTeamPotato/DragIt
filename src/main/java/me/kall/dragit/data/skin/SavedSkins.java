@@ -60,7 +60,7 @@ public class SavedSkins extends SavedData {
     }
 
     @SubscribeEvent
-    public static void sendSkins(PlayerEvent.PlayerLoggedInEvent event) {
+    public static void sendSkins(PlayerEvent.@NotNull PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player && player.level() instanceof ServerLevel level) {
             SavedSkins savedSkins = get(level);
             for (Map.Entry<UUID, Skin> entry : savedSkins.skins.entrySet()) {
