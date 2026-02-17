@@ -3,7 +3,11 @@ Drag and drop images into Minecraft to customize paintings and player skins.
 ## Features
 - **Custom Paintings**: Look at a painting, drag an image file into the game window, and it becomes your custom painting
 - **Custom Skins**: Open your inventory, drag a skin file into the game window, instantly change your skin
-- **Server-synced**: Other players can see your customizations
+## In-game Setting Screens
+### Painting Config Screen
+![painting.png](painting.png)
+### Skin Config Screen
+![skin.png](skin.png)
 ## Notes
 - Both client and server need this mod installed
 - It's dangerous for customizing large image file without compression as your client would go out of memory and crash!

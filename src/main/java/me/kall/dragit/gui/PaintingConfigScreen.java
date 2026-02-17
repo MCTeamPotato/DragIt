@@ -58,7 +58,7 @@ public class PaintingConfigScreen extends BaseConfigScreen {
                     this.enableCompression = !this.enableCompression;
                     button.setMessage(Component.translatable("gui.dragit.painting_config.compression." + (this.enableCompression ? "on" : "off")));
                     this.maxPixelsBox.setEditable(this.enableCompression);
-                }).bounds(centerX - 100, startY + 50, 200, 20).build());
+                }).bounds(centerX - 100, startY + 30, 200, 20).build());
 
         this.maxPixelsBox = new EditBox(this.font, centerX - 100, startY + 85, 200, 20, Component.translatable("gui.dragit.painting_config.max_pixels"));
         this.maxPixelsBox.setValue(String.valueOf(MAX_PIXELS_DEFAULT));
@@ -95,10 +95,8 @@ public class PaintingConfigScreen extends BaseConfigScreen {
 
     @Override
     protected void renderExtra(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        guiGraphics.drawCenteredString(this.font, Component.translatable("gui.dragit.painting_config.max_pixels"),
-                this.width / 2, this.height / 2 - 60 + 70, 0xFFFFFF);
-        guiGraphics.drawCenteredString(this.font, Component.translatable("gui.dragit.painting_config.tip"),
-                this.width / 2, this.height - 30, 0x888888);
+        guiGraphics.drawCenteredString(this.font, Component.translatable("gui.dragit.painting_config.max_pixels"), this.width / 2, this.height / 2 - 60 + 50, 0xFFFFFF);
+        guiGraphics.drawCenteredString(this.font, Component.translatable("gui.dragit.painting_config.tip"), this.width / 2, this.height - 30, 0x888888);
     }
 
     @Override
