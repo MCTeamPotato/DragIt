@@ -9,6 +9,8 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectMaps;
 import me.kall.dragit.data.painting.ClientPaintings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderBuffers;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -30,9 +32,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(PaintingRenderer.class)
 public abstract class PaintingRendererMixin extends EntityRenderer<Painting> {
     @Unique private final ThreadLocal<Boolean> dropIt$usingClientPainting = new ThreadLocal<>();
+    @Unique private final ThreadLocal<MultiBufferSource> dropIt$buffer = new ThreadLocal<>();
 
     protected PaintingRendererMixin(EntityRendererProvider.Context context) {
         super(context);
+    }
+
+    @Inject(method = "render(Lnet/minecraft/world/entity/decoration/Painting;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/PaintingRenderer;renderPainting(Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;Lnet/minecraft/world/entity/decoration/Painting;IILnet/minecraft/client/renderer/texture/TextureAtlasSprite;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;)V"))
+    private void catchBuffer(Painting entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight, CallbackInfo ci) {
+        this.dropIt$buffer.set(buffer);
+    }
+
+    @Inject(method = "render(Lnet/minecraft/world/entity/decoration/Painting;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V", at = @At("RETURN"))
+    private void cleanBuffer(CallbackInfo ci) {
+        this.dropIt$buffer.remove();
     }
 
     @Shadow protected abstract void vertex(Matrix4f pose, Matrix3f normal, VertexConsumer consumer, float x, float y, float u, float v, float z, int normalX, int normalY, int normalZ, int lightmapUV);
@@ -47,8 +60,17 @@ public abstract class PaintingRendererMixin extends EntityRenderer<Painting> {
     }
 
     @ModifyVariable(method = "renderPainting", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;getU0()F", shift = At.Shift.AFTER, ordinal = 0), argsOnly = true)
-    private VertexConsumer relocateConsumer(VertexConsumer consumer, @Local(argsOnly = true) Painting painting) {
-        return Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderType.entitySolid(this.getTextureLocation(painting)));
+    private @NotNull VertexConsumer relocateConsumer(VertexConsumer consumer, @Local(argsOnly = true) Painting painting) {
+        MultiBufferSource buffer = this.dropIt$buffer.get();
+        if (buffer == null) buffer = this.dropIt$getBuffer();
+        return buffer.getBuffer(RenderType.entitySolid(this.getTextureLocation(painting)));
+    }
+
+    @Unique
+    private MultiBufferSource dropIt$getBuffer() {
+        Minecraft minecraft = Minecraft.getInstance();
+        RenderBuffers renderBuffers = minecraft.renderBuffers();
+        return minecraft.levelRenderer.shouldShowEntityOutlines() ? renderBuffers.outlineBufferSource() : renderBuffers.bufferSource();
     }
 
     @Unique
@@ -59,7 +81,9 @@ public abstract class PaintingRendererMixin extends EntityRenderer<Painting> {
         int tilesX = width / 16;
         int tilesY = height / 16;
 
-        VertexConsumer imageConsumer = Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderType.entitySolid(painting.textureLocation()));
+        MultiBufferSource buffer = this.dropIt$buffer.get();
+        if (buffer == null) buffer = this.dropIt$getBuffer();
+        VertexConsumer imageConsumer = buffer.getBuffer(RenderType.entitySolid(painting.textureLocation()));
         int light = LevelRenderer.getLightColor(entity.level(), entity.blockPosition());
 
         for (int xTile = 0; xTile < tilesX; xTile++) {
