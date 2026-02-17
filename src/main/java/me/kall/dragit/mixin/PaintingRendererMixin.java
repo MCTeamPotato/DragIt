@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.PaintingRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.decoration.Painting;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix3f;
@@ -23,6 +24,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(PaintingRenderer.class)
@@ -35,11 +37,18 @@ public abstract class PaintingRendererMixin extends EntityRenderer<Painting> {
 
     @Shadow protected abstract void vertex(Matrix4f pose, Matrix3f normal, VertexConsumer consumer, float x, float y, float u, float v, float z, int normalX, int normalY, int normalZ, int lightmapUV);
 
+    @Shadow public abstract @NotNull ResourceLocation getTextureLocation(@NotNull Painting entity);
+
     @Inject(method = "renderPainting", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;getU0()F", ordinal = 0))
     private void renderDropped(PoseStack poseStack, VertexConsumer consumer, @NotNull Painting entity, int width, int height, TextureAtlasSprite paintingSprite, TextureAtlasSprite backSprite, CallbackInfo ci, @Local PoseStack.Pose pose, @Local Matrix4f matrix4f, @Local Matrix3f matrix3f) {
         ClientPaintings.Painting painting = ClientPaintings.PAINTINGS.getOrDefault(entity.level().dimension().location(), Long2ObjectMaps.emptyMap()).get(entity.blockPosition().asLong());
         this.dropIt$usingClientPainting.set(painting != null);
         this.dropIt$render(width, height, painting, entity, matrix4f, matrix3f);
+    }
+
+    @ModifyVariable(method = "renderPainting", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;getU0()F", shift = At.Shift.AFTER, ordinal = 0), argsOnly = true)
+    private VertexConsumer relocateConsumer(VertexConsumer consumer, @Local(argsOnly = true) Painting painting) {
+        return Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderType.entitySolid(this.getTextureLocation(painting)));
     }
 
     @Unique
