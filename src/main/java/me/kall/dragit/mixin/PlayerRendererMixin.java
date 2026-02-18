@@ -1,6 +1,7 @@
 package me.kall.dragit.mixin;
 
 import me.kall.dragit.data.skin.ClientSkins;
+import me.kall.dragit.data.ClientTextureData;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.resources.ResourceLocation;
@@ -14,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class PlayerRendererMixin {
     @Inject(method = "getTextureLocation(Lnet/minecraft/client/player/AbstractClientPlayer;)Lnet/minecraft/resources/ResourceLocation;", at = @At("RETURN"), cancellable = true)
     private void customSkin(@NotNull AbstractClientPlayer entity, CallbackInfoReturnable<ResourceLocation> cir) {
-        ClientSkins.Skin skin = ClientSkins.SKINS.get(entity.getGameProfile().getId());
-        if (skin != null) cir.setReturnValue(skin.textureLocation());
+        ClientTextureData clientTextureData = ClientSkins.SKINS.get(entity.getGameProfile().getId());
+        if (clientTextureData != null) cir.setReturnValue(clientTextureData.textureLocation());
     }
 }

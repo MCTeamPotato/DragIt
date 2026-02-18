@@ -7,6 +7,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMaps;
 import me.kall.dragit.data.painting.ClientPaintings;
+import me.kall.dragit.data.ClientTextureData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -54,9 +55,9 @@ public abstract class PaintingRendererMixin extends EntityRenderer<Painting> {
 
     @Inject(method = "renderPainting", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;getU0()F", ordinal = 0))
     private void renderDropped(PoseStack poseStack, VertexConsumer consumer, @NotNull Painting entity, int width, int height, TextureAtlasSprite paintingSprite, TextureAtlasSprite backSprite, CallbackInfo ci, @Local PoseStack.Pose pose, @Local Matrix4f matrix4f, @Local Matrix3f matrix3f) {
-        ClientPaintings.Painting painting = ClientPaintings.PAINTINGS.getOrDefault(entity.level().dimension().location(), Long2ObjectMaps.emptyMap()).get(entity.blockPosition().asLong());
-        this.dropIt$usingClientPainting.set(painting != null);
-        this.dropIt$render(width, height, painting, entity, matrix4f, matrix3f);
+        ClientTextureData clientTextureData = ClientPaintings.PAINTINGS.getOrDefault(entity.level().dimension().location(), Long2ObjectMaps.emptyMap()).get(entity.blockPosition().asLong());
+        this.dropIt$usingClientPainting.set(clientTextureData != null);
+        this.dropIt$render(width, height, clientTextureData, entity, matrix4f, matrix3f);
     }
 
     @ModifyVariable(method = "renderPainting", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;getU0()F", shift = At.Shift.AFTER, ordinal = 0), argsOnly = true)
@@ -74,8 +75,8 @@ public abstract class PaintingRendererMixin extends EntityRenderer<Painting> {
     }
 
     @Unique
-    private void dropIt$render(int width, int height, ClientPaintings.Painting painting, @NotNull Painting entity, Matrix4f matrix4f, Matrix3f matrix3f) {
-        if (painting == null) return;
+    private void dropIt$render(int width, int height, ClientTextureData clientTextureData, @NotNull Painting entity, Matrix4f matrix4f, Matrix3f matrix3f) {
+        if (clientTextureData == null) return;
         float minX = -width / 2f;
         float minY = -height / 2f;
         int tilesX = width / 16;
@@ -83,7 +84,7 @@ public abstract class PaintingRendererMixin extends EntityRenderer<Painting> {
 
         MultiBufferSource buffer = this.dropIt$buffer.get();
         if (buffer == null) buffer = this.dropIt$getBuffer();
-        VertexConsumer imageConsumer = buffer.getBuffer(RenderType.entitySolid(painting.textureLocation()));
+        VertexConsumer imageConsumer = buffer.getBuffer(RenderType.entitySolid(clientTextureData.textureLocation()));
         int light = LevelRenderer.getLightColor(entity.level(), entity.blockPosition());
 
         for (int xTile = 0; xTile < tilesX; xTile++) {

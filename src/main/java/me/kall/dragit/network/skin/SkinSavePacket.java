@@ -1,6 +1,7 @@
 package me.kall.dragit.network.skin;
 
 import me.kall.dragit.data.skin.SavedSkins;
+import me.kall.dragit.data.SavedTextureData;
 import me.kall.dragit.network.DragNetworker;
 import me.kall.dragit.network.base.SkinPacket;
 import net.minecraft.network.FriendlyByteBuf;
@@ -30,7 +31,7 @@ public class SkinSavePacket extends SkinPacket {
             if (player == null) return;
             SavedSkins savedSkins = SavedSkins.get(player.serverLevel());
             savedSkins.setDirty();
-            savedSkins.skins.put(this.uuid, new SavedSkins.Skin(this.textureLocation, this.textureBytes));
+            savedSkins.skins.put(this.uuid, new SavedTextureData(this.textureLocation, this.textureBytes));
 
             List<ServerPlayer> syncTargets = player.server.getPlayerList().getPlayers();
             if (syncTargets.size() == 1) return;

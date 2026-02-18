@@ -4,7 +4,6 @@ import me.kall.dragit.callback.DragCallback;
 import me.kall.dragit.gui.PaintingConfigScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.decoration.Painting;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -15,11 +14,10 @@ public class PaintingDropInvoker implements DragCallback.Invoker {
     public boolean invoke(long names) {
         String filePath = GLFWDropCallback.getName(names, 0);
         Minecraft minecraft = Minecraft.getInstance();
-        LocalPlayer player = minecraft.player;
         ClientLevel level = minecraft.level;
         HitResult target = minecraft.hitResult;
 
-        if (player != null && level != null && target != null && target.getType().equals(HitResult.Type.ENTITY) && ((EntityHitResult) target).getEntity() instanceof Painting painting) {
+        if (level != null && target != null && target.getType().equals(HitResult.Type.ENTITY) && ((EntityHitResult) target).getEntity() instanceof Painting painting) {
             minecraft.setScreen(new PaintingConfigScreen(filePath, level.dimension().location(), painting.blockPosition().asLong()));
             return true;
         }

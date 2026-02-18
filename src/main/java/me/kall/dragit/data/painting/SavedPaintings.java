@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import me.kall.dragit.DragIt;
+import me.kall.dragit.data.SavedTextureData;
 import me.kall.dragit.network.painting.PaintingLoadPacket;
 import me.kall.dragit.network.DragNetworker;
 import net.minecraft.nbt.CompoundTag;
@@ -13,6 +14,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.decoration.Painting;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -27,10 +29,10 @@ import java.util.Map;
 public class SavedPaintings extends SavedData {
     private static final String DATA_NAME = "DragItSavedPaintings";
 
-    public final Object2ObjectMap<ResourceLocation, Long2ObjectMap<Painting>> paintings = new Object2ObjectOpenHashMap<>();
+    public final Object2ObjectMap<ResourceLocation, Long2ObjectMap<SavedTextureData>> paintings = new Object2ObjectOpenHashMap<>();
 
     public void removeImage(ResourceLocation dimension, long pos) {
-        Long2ObjectMap<Painting> imageMap = this.paintings.get(dimension);
+        Long2ObjectMap<SavedTextureData> imageMap = this.paintings.get(dimension);
         if (imageMap == null) return;
         imageMap.remove(pos);
         if (imageMap.isEmpty()) this.paintings.remove(dimension);
@@ -44,12 +46,12 @@ public class SavedPaintings extends SavedData {
             ResourceLocation resourceLocation = ResourceLocation.parse(key);
             CompoundTag dimensionTag = imagesTag.getCompound(key);
 
-            Long2ObjectMap<Painting> dimensionImages = new Long2ObjectOpenHashMap<>();
+            Long2ObjectMap<SavedTextureData> dimensionImages = new Long2ObjectOpenHashMap<>();
             ListTag imagesList = dimensionTag.getList("PaintingList", Tag.TAG_COMPOUND);
 
             for (int i = 0; i < imagesList.size(); i++) {
                 CompoundTag imageTag = imagesList.getCompound(i);
-                dimensionImages.put(imageTag.getLong("Pos"), new Painting(ResourceLocation.parse(imageTag.getString("TextureLocation")), imageTag.getByteArray("TextureBytes")));
+                dimensionImages.put(imageTag.getLong("Pos"), new SavedTextureData(ResourceLocation.parse(imageTag.getString("TextureLocation")), imageTag.getByteArray("TextureBytes")));
             }
 
             data.paintings.put(resourceLocation, dimensionImages);
@@ -62,11 +64,11 @@ public class SavedPaintings extends SavedData {
     public @NotNull CompoundTag save(@NotNull CompoundTag tag) {
         CompoundTag imagesTag = new CompoundTag();
 
-        for (Object2ObjectMap.Entry<ResourceLocation, Long2ObjectMap<Painting>> entry : this.paintings.object2ObjectEntrySet()) {
+        for (Object2ObjectMap.Entry<ResourceLocation, Long2ObjectMap<SavedTextureData>> entry : this.paintings.object2ObjectEntrySet()) {
             CompoundTag dimensionTag = new CompoundTag();
             ListTag imagesList = new ListTag();
 
-            for (Long2ObjectMap.Entry<Painting> imageEntry : entry.getValue().long2ObjectEntrySet()) {
+            for (Long2ObjectMap.Entry<SavedTextureData> imageEntry : entry.getValue().long2ObjectEntrySet()) {
                 CompoundTag imageTag = new CompoundTag();
                 imageTag.putLong("Pos", imageEntry.getLongKey());
                 imageTag.putString("TextureLocation", imageEntry.getValue().textureLocation().toString());
@@ -91,12 +93,12 @@ public class SavedPaintings extends SavedData {
     public static void sendImages(PlayerEvent.@NotNull PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player && player.level() instanceof ServerLevel level) {
             SavedPaintings savedPaintings = get(level);
-            for (Map.Entry<ResourceLocation, Long2ObjectMap<Painting>> dimensionEntry : savedPaintings.paintings.entrySet()) {
+            for (Map.Entry<ResourceLocation, Long2ObjectMap<SavedTextureData>> dimensionEntry : savedPaintings.paintings.entrySet()) {
                 ResourceLocation dimension = dimensionEntry.getKey();
-                for (Long2ObjectMap.Entry<Painting> imageEntry : dimensionEntry.getValue().long2ObjectEntrySet()) {
-                    Painting painting = imageEntry.getValue();
-                    ResourceLocation textureLocation = painting.textureLocation();
-                    byte[] textureBytes = painting.textureBytes();
+                for (Long2ObjectMap.Entry<SavedTextureData> imageEntry : dimensionEntry.getValue().long2ObjectEntrySet()) {
+                    SavedTextureData savedTextureData = imageEntry.getValue();
+                    ResourceLocation textureLocation = savedTextureData.textureLocation();
+                    byte[] textureBytes = savedTextureData.textureBytes();
                     DragNetworker.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new PaintingLoadPacket(dimension, imageEntry.getLongKey(), textureLocation, textureBytes));
                     DragIt.LOGGER.info("Delivering image {} to client. Size: {} bytes.", textureLocation.toString(), textureBytes.length + 16);
                 }
@@ -106,12 +108,10 @@ public class SavedPaintings extends SavedData {
 
     @SubscribeEvent
     public static void removeImage(@NotNull EntityLeaveLevelEvent event) {
-        if (event.getEntity() instanceof net.minecraft.world.entity.decoration.Painting painting && painting.level() instanceof ServerLevel level) {
+        if (event.getEntity() instanceof Painting painting && painting.level() instanceof ServerLevel level) {
             ResourceLocation dimension = level.dimension().location();
             long pos = painting.blockPosition().asLong();
             SavedPaintings.get(level).removeImage(dimension, pos);
         }
     }
-
-    public record Painting(ResourceLocation textureLocation, byte[] textureBytes) {}
 }

@@ -2,6 +2,7 @@ package me.kall.dragit.network.painting;
 
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import me.kall.dragit.data.painting.SavedPaintings;
+import me.kall.dragit.data.SavedTextureData;
 import me.kall.dragit.network.DragNetworker;
 import me.kall.dragit.network.base.PaintingPacket;
 import net.minecraft.network.FriendlyByteBuf;
@@ -31,7 +32,7 @@ public class PaintingSavePacket extends PaintingPacket {
             if (player == null) return;
             SavedPaintings savedPaintings = SavedPaintings.get(player.serverLevel());
             savedPaintings.setDirty();
-            savedPaintings.paintings.computeIfAbsent(this.dimension, key -> new Long2ObjectOpenHashMap<>()).put(this.pos, new SavedPaintings.Painting(this.textureLocation, this.textureBytes));
+            savedPaintings.paintings.computeIfAbsent(this.dimension, key -> new Long2ObjectOpenHashMap<>()).put(this.pos, new SavedTextureData(this.textureLocation, this.textureBytes));
 
             List<ServerPlayer> syncTargets = player.server.getPlayerList().getPlayers();
             if (syncTargets.size() == 1) return;

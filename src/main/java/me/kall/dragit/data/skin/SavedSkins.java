@@ -3,6 +3,7 @@ package me.kall.dragit.data.skin;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import me.kall.dragit.DragIt;
+import me.kall.dragit.data.SavedTextureData;
 import me.kall.dragit.network.DragNetworker;
 import me.kall.dragit.network.skin.SkinLoadPacket;
 import net.minecraft.nbt.CompoundTag;
@@ -25,7 +26,7 @@ import java.util.UUID;
 public class SavedSkins extends SavedData {
     private static final String DATA_NAME = "DragItSavedSkins";
 
-    public final Object2ObjectMap<UUID, Skin> skins = new Object2ObjectOpenHashMap<>();
+    public final Object2ObjectMap<UUID, SavedTextureData> skins = new Object2ObjectOpenHashMap<>();
 
     public static @NotNull SavedSkins load(@NotNull CompoundTag tag) {
         SavedSkins data = new SavedSkins();
@@ -33,7 +34,7 @@ public class SavedSkins extends SavedData {
         ListTag skinsList = tag.getList("Skins", Tag.TAG_COMPOUND);
         for (int i = 0; i < skinsList.size(); i++) {
             CompoundTag skinTag = skinsList.getCompound(i);
-            data.skins.put(skinTag.getUUID("UUID"), new Skin(ResourceLocation.parse(skinTag.getString("TextureLocation")), skinTag.getByteArray("TextureBytes")));
+            data.skins.put(skinTag.getUUID("UUID"), new SavedTextureData(ResourceLocation.parse(skinTag.getString("TextureLocation")), skinTag.getByteArray("TextureBytes")));
         }
 
         return data;
@@ -63,16 +64,14 @@ public class SavedSkins extends SavedData {
     public static void sendSkins(PlayerEvent.@NotNull PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player && player.level() instanceof ServerLevel level) {
             SavedSkins savedSkins = get(level);
-            for (Map.Entry<UUID, Skin> entry : savedSkins.skins.entrySet()) {
+            for (Map.Entry<UUID, SavedTextureData> entry : savedSkins.skins.entrySet()) {
                 UUID uuid = entry.getKey();
-                Skin skin = entry.getValue();
-                ResourceLocation textureLocation = skin.textureLocation();
-                byte[] textureBytes = skin.textureBytes();
+                SavedTextureData savedTextureData = entry.getValue();
+                ResourceLocation textureLocation = savedTextureData.textureLocation();
+                byte[] textureBytes = savedTextureData.textureBytes();
                 DragNetworker.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new SkinLoadPacket(uuid, textureLocation, textureBytes));
                 DragIt.LOGGER.info("Delivering skin {} to client. Size: {} bytes.", textureLocation.toString(), textureBytes.length + 16);
             }
         }
     }
-
-    public record Skin(ResourceLocation textureLocation, byte[] textureBytes) {}
 }
