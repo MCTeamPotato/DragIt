@@ -62,13 +62,13 @@ public abstract class PaintingRendererMixin extends EntityRenderer<Painting> {
 
     @ModifyVariable(method = "renderPainting", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;getU0()F", shift = At.Shift.AFTER, ordinal = 0), argsOnly = true)
     private @NotNull VertexConsumer relocateConsumer(VertexConsumer consumer, @Local(argsOnly = true) Painting painting) {
-        MultiBufferSource buffer = this.dropIt$buffer.get();
-        if (buffer == null) buffer = this.dropIt$getBuffer();
-        return buffer.getBuffer(RenderType.entitySolid(this.getTextureLocation(painting)));
+        return this.dropIt$getBuffer().getBuffer(RenderType.entitySolid(this.getTextureLocation(painting)));
     }
 
     @Unique
     private MultiBufferSource dropIt$getBuffer() {
+        MultiBufferSource localSource = this.dropIt$buffer.get();
+        if (localSource != null) return localSource;
         Minecraft minecraft = Minecraft.getInstance();
         RenderBuffers renderBuffers = minecraft.renderBuffers();
         return minecraft.levelRenderer.shouldShowEntityOutlines() ? renderBuffers.outlineBufferSource() : renderBuffers.bufferSource();
@@ -82,9 +82,7 @@ public abstract class PaintingRendererMixin extends EntityRenderer<Painting> {
         int tilesX = width / 16;
         int tilesY = height / 16;
 
-        MultiBufferSource buffer = this.dropIt$buffer.get();
-        if (buffer == null) buffer = this.dropIt$getBuffer();
-        VertexConsumer imageConsumer = buffer.getBuffer(RenderType.entitySolid(clientTextureData.textureLocation()));
+        VertexConsumer imageConsumer = this.dropIt$getBuffer().getBuffer(RenderType.entitySolid(clientTextureData.textureLocation()));
         int light = LevelRenderer.getLightColor(entity.level(), entity.blockPosition());
 
         for (int xTile = 0; xTile < tilesX; xTile++) {
