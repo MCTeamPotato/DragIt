@@ -2,6 +2,7 @@ package me.kall.dragit.callback;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import me.kall.dragit.DragIt;
+import me.kall.dragit.callback.invoker.ChatImageDropInvoker;
 import me.kall.dragit.callback.invoker.PaintingDropInvoker;
 import me.kall.dragit.callback.invoker.SkinDropInvoker;
 import net.minecraft.client.Minecraft;
@@ -30,6 +31,7 @@ public class DragCallback extends GLFWDropCallback {
     public DragCallback() {
         this.invokers.add(new PaintingDropInvoker());
         this.invokers.add(new SkinDropInvoker());
+        this.invokers.add(new ChatImageDropInvoker());
     }
 
     @Override

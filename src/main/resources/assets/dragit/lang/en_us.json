@@ -13,5 +13,7 @@
   "gui.dragit.sync.on": "Sync to Server: ON",
   "gui.dragit.sync.off": "Sync to Server: OFF",
   "gui.dragit.file": "File: %s",
-  "gui.dragit.error": "Error: %s"
+  "gui.dragit.error": "Error: %s",
+
+  "gui.dragit.images": "Attached Images: %s"
 }

@@ -11,7 +11,9 @@
     "defaultRequire": 1
   },
   "client": [
-    "PlayerRendererMixin",
-    "PaintingRendererMixin"
+    "ChatComponentMixin",
+    "ChatScreenMixin",
+    "PaintingRendererMixin",
+    "PlayerRendererMixin"
   ]
 }
