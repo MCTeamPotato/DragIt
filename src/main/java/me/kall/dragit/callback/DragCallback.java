@@ -18,7 +18,7 @@ public class DragCallback extends GLFWDropCallback {
 
     private static @Nullable GLFWDropCallback lastCallback;
 
-    private final Invoker[] invokers = new Invoker[]{new ChatDropInvoker(), new SkinDropInvoker(), new PaintingDropInvoker()};
+    private final Invoker[] invokers = new Invoker[]{new SkinDropInvoker(), new PaintingDropInvoker(), new ChatDropInvoker()};
 
     @Override
     public void invoke(long window, int count, long names) {

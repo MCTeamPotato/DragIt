@@ -17,12 +17,6 @@ public class ImageCompressor {
         return compress(original, maxPixels, filePath);
     }
 
-    public static byte @NotNull [] compress(byte[] imageBytes, int maxPixels) throws IOException {
-        BufferedImage original = ImageIO.read(new java.io.ByteArrayInputStream(imageBytes));
-        if (original == null) throw new IOException("Unable to decode image bytes");
-        return compress(original, maxPixels, "<bytes>");
-    }
-
     private static byte @NotNull [] compress(@NotNull BufferedImage original, int maxPixels, String source) throws IOException {
         int width = original.getWidth();
         int height = original.getHeight();

@@ -10,7 +10,7 @@ import me.jellysquid.mods.sodium.client.gui.options.control.ControlValueFormatte
 import me.jellysquid.mods.sodium.client.gui.options.control.SliderControl;
 import me.jellysquid.mods.sodium.client.gui.options.storage.SodiumOptionsStorage;
 import me.kall.dragit.DragIt;
-import me.kall.dragit.config.DragChatConfig;
+import me.kall.dragit.config.DragClientConfig;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
@@ -22,34 +22,47 @@ public class SodiumIntegration {
     private static final SodiumOptionsStorage sodiumOpts = new SodiumOptionsStorage();
 
     private static void addConfigPage(@NotNull OptionGUIConstructionEvent event) {
-        OptionImpl<SodiumGameOptions, Integer> width = OptionImpl.createBuilder(Integer.TYPE, sodiumOpts)
-                .setId(ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, "width"))
-                .setName(Component.translatable("config.dragit.width.name"))
-                .setTooltip(Component.translatable("config.dragit.width.tooltip"))
+        OptionImpl<SodiumGameOptions, Integer> chatWidth = OptionImpl.createBuilder(Integer.TYPE, sodiumOpts)
+                .setId(ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, "chat_width"))
+                .setName(Component.translatable("config.dragit.chat_width.name"))
+                .setTooltip(Component.translatable("config.dragit.chat_width.tooltip"))
                 .setControl(option -> new SliderControl(option, 4, 128, 4, ControlValueFormatter.number()))
-                .setBinding((options, value) -> DragChatConfig.INSTANCE.setMaxWidth(value), sodiumGameOptions -> DragChatConfig.INSTANCE.getMaxWidth())
+                .setBinding((options, value) -> DragClientConfig.INSTANCE.setChatMaxWidth(value), sodiumGameOptions -> DragClientConfig.INSTANCE.getChatMaxWidth())
                 .build();
 
-        OptionImpl<SodiumGameOptions, Integer> height = OptionImpl.createBuilder(Integer.TYPE, sodiumOpts)
-                .setId(ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, "height"))
-                .setName(Component.translatable("config.dragit.height.name"))
-                .setTooltip(Component.translatable("config.dragit.height.tooltip"))
+        OptionImpl<SodiumGameOptions, Integer> chatHeight = OptionImpl.createBuilder(Integer.TYPE, sodiumOpts)
+                .setId(ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, "chat_height"))
+                .setName(Component.translatable("config.dragit.chat_height.name"))
+                .setTooltip(Component.translatable("config.dragit.chat_height.tooltip"))
                 .setControl(option -> new SliderControl(option, 4, 128, 4, ControlValueFormatter.number()))
-                .setBinding((options, value) -> DragChatConfig.INSTANCE.setMaxHeight(value), sodiumGameOptions -> DragChatConfig.INSTANCE.getMaxHeight())
+                .setBinding((options, value) -> DragClientConfig.INSTANCE.setChatMaxHeight(value), sodiumGameOptions -> DragClientConfig.INSTANCE.getChatMaxHeight())
                 .build();
 
-        OptionImpl<SodiumGameOptions, Integer> pixels = OptionImpl.createBuilder(Integer.TYPE, sodiumOpts)
-                .setId(ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, "pixels"))
-                .setName(Component.translatable("config.dragit.pixels.name"))
-                .setTooltip(Component.translatable("config.dragit.pixels.tooltip"))
-                .setControl(option -> new SliderControl(option, 512, 8192, 512, ControlValueFormatter.number()))
-                .setBinding((options, value) -> DragChatConfig.INSTANCE.setMaxPixels(value), sodiumGameOptions -> DragChatConfig.INSTANCE.getMaxPixels())
+        OptionImpl<SodiumGameOptions, Integer> chatPixels = OptionImpl.createBuilder(Integer.TYPE, sodiumOpts)
+                .setId(ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, "chat_pixels"))
+                .setName(Component.translatable("config.dragit.chat_pixels.name"))
+                .setTooltip(Component.translatable("config.dragit.chat_pixels.tooltip"))
+                .setControl(option -> new SliderControl(option, 512, 8192, 256, ControlValueFormatter.number()))
+                .setBinding((options, value) -> DragClientConfig.INSTANCE.setChatMaxPixels(value), sodiumGameOptions -> DragClientConfig.INSTANCE.getChatMaxPixels())
                 .setImpact(OptionImpact.MEDIUM)
                 .build();
 
-        OptionIdentifier<Void> id = OptionIdentifier.create(DragIt.MOD_ID, "chat");
-        ImmutableList<OptionGroup> groups = ImmutableList.of(OptionGroup.createBuilder().setId(ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, "chat_group")).add(width).add(height).add(pixels).build());
-        event.addPage(new OptionPage(id, Component.translatable("config.dragit.page.chat"), groups));
+        OptionGroup chatGroup = OptionGroup.createBuilder().setId(ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, "chat_group")).add(chatWidth).add(chatHeight).add(chatPixels).build();
+
+
+        OptionImpl<SodiumGameOptions, Integer> paintingPixels = OptionImpl.createBuilder(Integer.TYPE, sodiumOpts)
+                .setId(ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, "painting_pixels"))
+                .setName(Component.translatable("config.dragit.painting_pixels.name"))
+                .setTooltip(Component.translatable("config.dragit.painting_pixels.tooltip"))
+                .setControl(option -> new SliderControl(option, 512, 8192, 256, ControlValueFormatter.number()))
+                .setBinding((options, value) -> DragClientConfig.INSTANCE.setPaintingMaxPixels(value), sodiumGameOptions -> DragClientConfig.INSTANCE.getPaintingMaxPixels())
+                .setImpact(OptionImpact.MEDIUM)
+                .build();
+
+        OptionGroup paintingGroup = OptionGroup.createBuilder().setId(ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, "painting_group")).add(paintingPixels).build();
+
+        ImmutableList<OptionGroup> groups = ImmutableList.of(chatGroup, paintingGroup);
+        event.addPage(new OptionPage(OptionIdentifier.create(DragIt.MOD_ID, "client_config"), Component.translatable("config.dragit.page.chat"), groups));
     }
 
     public static void register() {
