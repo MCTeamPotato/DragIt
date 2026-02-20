@@ -10,6 +10,7 @@ import me.kall.dragit.data.ClientTextureData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.decoration.Painting;
 import net.minecraftforge.api.distmarker.Dist;
@@ -26,11 +27,12 @@ public class ClientPaintings {
     public static final Object2ObjectMap<ResourceLocation, Long2ObjectMap<ClientTextureData>> PAINTINGS = new Object2ObjectOpenHashMap<>();
 
     public static void registerPainting(ResourceLocation dimension, long pos, byte[] textureBytes, ResourceLocation textureLocation) {
+        TextureManager textureManager = Minecraft.getInstance().getTextureManager();
         if (PAINTINGS.containsKey(dimension)) {
             Long2ObjectMap<ClientTextureData> positionMap = PAINTINGS.get(dimension);
             if (positionMap.containsKey(pos)) {
                 ClientTextureData removed = positionMap.remove(pos);
-                Minecraft.getInstance().getTextureManager().release(removed.textureLocation());
+                textureManager.release(removed.textureLocation());
                 removed.dynamicTexture().close();
                 if (positionMap.isEmpty()) PAINTINGS.remove(dimension);
             }
@@ -38,7 +40,7 @@ public class ClientPaintings {
 
         try {
             DynamicTexture dynamicTexture = new DynamicTexture(NativeImage.read(textureBytes));
-            Minecraft.getInstance().getTextureManager().register(textureLocation, dynamicTexture);
+            textureManager.register(textureLocation, dynamicTexture);
             PAINTINGS.computeIfAbsent(dimension, key -> new Long2ObjectOpenHashMap<>()).put(pos, new ClientTextureData(textureLocation, dynamicTexture));
         } catch (IOException ioException) {
             DragIt.LOGGER.error("Error registering painting", ioException);
@@ -46,12 +48,11 @@ public class ClientPaintings {
     }
 
     @SubscribeEvent
-    public static void saveImages(ClientPlayerNetworkEvent.LoggingOut event) {
+    public static void clearImages(ClientPlayerNetworkEvent.LoggingOut event) {
+        TextureManager textureManager = Minecraft.getInstance().getTextureManager();
         for (Long2ObjectMap<ClientTextureData> imageMap : PAINTINGS.values()) {
-            for (Long2ObjectMap.Entry<ClientTextureData> imageEntry : imageMap.long2ObjectEntrySet()) {
-                ClientTextureData clientTextureData = imageEntry.getValue();
-                ResourceLocation textureLocation = clientTextureData.textureLocation();
-                Minecraft.getInstance().getTextureManager().release(textureLocation);
+            for (ClientTextureData clientTextureData : imageMap.values()) {
+                textureManager.release(clientTextureData.textureLocation());
                 clientTextureData.dynamicTexture().close();
             }
         }
