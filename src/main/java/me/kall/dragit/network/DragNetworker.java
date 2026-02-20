@@ -1,6 +1,8 @@
 package me.kall.dragit.network;
 
 import me.kall.dragit.DragIt;
+import me.kall.dragit.network.chat.ChatLoadPacket;
+import me.kall.dragit.network.chat.ChatSyncPacket;
 import me.kall.dragit.network.painting.PaintingLoadPacket;
 import me.kall.dragit.network.painting.PaintingSavePacket;
 import me.kall.dragit.network.skin.SkinLoadPacket;
@@ -17,5 +19,7 @@ public class DragNetworker {
         INSTANCE.registerMessage(id++, PaintingLoadPacket.class, PaintingLoadPacket::save, PaintingLoadPacket::new, PaintingLoadPacket::handle);
         INSTANCE.registerMessage(id++, SkinLoadPacket.class, SkinLoadPacket::save, SkinLoadPacket::new, SkinLoadPacket::handle);
         INSTANCE.registerMessage(id++, SkinSavePacket.class, SkinSavePacket::save, SkinSavePacket::new, SkinSavePacket::handle);
+        INSTANCE.registerMessage(id++, ChatSyncPacket.class, ChatSyncPacket::save, ChatSyncPacket::new, ChatSyncPacket::handle);
+        INSTANCE.registerMessage(id++, ChatLoadPacket.class, ChatLoadPacket::save, ChatLoadPacket::new, ChatLoadPacket::handle);
     }
 }

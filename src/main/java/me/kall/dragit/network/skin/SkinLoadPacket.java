@@ -1,5 +1,6 @@
 package me.kall.dragit.network.skin;
 
+import me.kall.dragit.DragIt;
 import me.kall.dragit.data.skin.ClientSkins;
 import me.kall.dragit.network.base.SkinPacket;
 import net.minecraft.network.FriendlyByteBuf;
@@ -21,7 +22,13 @@ public class SkinLoadPacket extends SkinPacket {
 
     @Override
     public void handle(@NotNull Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> ClientSkins.registerSkin(this.uuid, this.textureLocation, this.textureBytes));
+        ctx.get().enqueueWork(() -> {
+            try {
+                ClientSkins.registerSkin(this.uuid, this.textureLocation, this.textureBytes);
+            } catch (Throwable throwable) {
+                DragIt.LOGGER.error("Error handling SkinLoadPacket", throwable);
+            }
+        });
         ctx.get().setPacketHandled(true);
     }
 }

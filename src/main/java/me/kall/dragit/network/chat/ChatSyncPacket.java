@@ -1,11 +1,8 @@
-package me.kall.dragit.network.painting;
+package me.kall.dragit.network.chat;
 
-import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import me.kall.dragit.DragIt;
-import me.kall.dragit.data.painting.SavedPaintings;
-import me.kall.dragit.data.SavedTextureData;
 import me.kall.dragit.network.DragNetworker;
-import me.kall.dragit.network.base.PaintingPacket;
+import me.kall.dragit.network.base.ChatPacket;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -17,12 +14,12 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-public class PaintingSavePacket extends PaintingPacket {
-    public PaintingSavePacket(ResourceLocation dimension, long pos, ResourceLocation textureLocation, byte[] textureBytes) {
-        super(dimension, pos, textureLocation, textureBytes);
+public class ChatSyncPacket extends ChatPacket {
+    public ChatSyncPacket(ResourceLocation textureLocation, byte[] textureBytes) {
+        super(textureLocation, textureBytes);
     }
 
-    public PaintingSavePacket(@NotNull FriendlyByteBuf buf) {
+    public ChatSyncPacket(@NotNull FriendlyByteBuf buf) {
         super(buf);
     }
 
@@ -32,19 +29,15 @@ public class PaintingSavePacket extends PaintingPacket {
             try {
                 ServerPlayer player = ctx.get().getSender();
                 if (player == null) return;
-                SavedPaintings savedPaintings = SavedPaintings.get(player.serverLevel());
-                savedPaintings.setDirty();
-                savedPaintings.paintings.computeIfAbsent(this.dimension, key -> new Long2ObjectOpenHashMap<>()).put(this.pos, new SavedTextureData(this.textureLocation, this.textureBytes));
-
                 List<ServerPlayer> syncTargets = player.server.getPlayerList().getPlayers();
                 if (syncTargets.size() == 1) return;
                 UUID uuid = player.getUUID();
                 for (ServerPlayer syncTarget : syncTargets) {
                     if (syncTarget.getUUID().equals(uuid)) continue;
-                    DragNetworker.INSTANCE.send(PacketDistributor.PLAYER.with(() -> syncTarget), new PaintingLoadPacket(this.dimension, this.pos, this.textureLocation, this.textureBytes));
+                    DragNetworker.INSTANCE.send(PacketDistributor.PLAYER.with(() -> syncTarget), new ChatLoadPacket(this.textureLocation, this.textureBytes));
                 }
             } catch (Throwable throwable) {
-                DragIt.LOGGER.error("Error handling PaintingSavePacket", throwable);
+                DragIt.LOGGER.error("Error handling ChatSavePacket", throwable);
             }
         });
         ctx.get().setPacketHandled(true);

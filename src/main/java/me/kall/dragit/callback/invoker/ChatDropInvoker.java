@@ -2,9 +2,12 @@ package me.kall.dragit.callback.invoker;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import me.kall.dragit.DragIt;
+import me.kall.dragit.DragItClient;
 import me.kall.dragit.callback.DragCallback;
 import me.kall.dragit.config.DragClientConfig;
 import me.kall.dragit.data.chat.ChatImages;
+import me.kall.dragit.network.DragNetworker;
+import me.kall.dragit.network.chat.ChatSyncPacket;
 import me.kall.dragit.util.ImageCompressor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ChatComponent;
@@ -28,7 +31,8 @@ public class ChatDropInvoker implements DragCallback.Invoker {
                 String filePath = GLFWDropCallback.getName(names, index);
                 ResourceLocation textureLocation = ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, "chat_" + System.currentTimeMillis() + "_" + index);
                 try {
-                    NativeImage image = ChatImages.registerChatImage(textureLocation, ImageCompressor.compress(filePath, DragClientConfig.INSTANCE.getChatMaxPixels()));
+                    byte[] textureBytes = ImageCompressor.compress(filePath, DragClientConfig.INSTANCE.getChatMaxPixels());
+                    NativeImage image = ChatImages.registerChatImage(textureLocation, textureBytes);
                     if (image != null) {
                         chatComponent.addMessage(Component.literal("!image:" + textureLocation));
                         double width = image.getWidth();
@@ -38,6 +42,8 @@ public class ChatDropInvoker implements DragCallback.Invoker {
                         for (int i = 0; i < (int) Math.ceil((int) (height * scale) / 9.0) - 1; i++) {
                             chatComponent.addMessage(EMPTY);
                         }
+
+                        if (DragItClient.canSync()) DragNetworker.INSTANCE.sendToServer(new ChatSyncPacket(textureLocation, textureBytes));
                     }
 
                     handled = true;
