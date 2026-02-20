@@ -16,7 +16,6 @@ import org.lwjgl.glfw.GLFWDropCallback;
 import java.io.IOException;
 
 public class ChatDropInvoker implements DragCallback.Invoker {
-    private static final int MAX_PIXELS = 8192;
     private static final Component EMPTY = Component.empty();
 
     @Override
@@ -28,7 +27,7 @@ public class ChatDropInvoker implements DragCallback.Invoker {
                 String filePath = GLFWDropCallback.getName(names, index);
                 ResourceLocation textureLocation = ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, "chat_" + System.currentTimeMillis() + "_" + index);
                 try {
-                    NativeImage image = ChatImages.registerChatImage(textureLocation, ImageCompressor.compress(filePath, MAX_PIXELS));
+                    NativeImage image = ChatImages.registerChatImage(textureLocation, ImageCompressor.compress(filePath, DragChatConfig.INSTANCE.getMaxPixels()));
                     if (image != null) {
                         chatComponent.addMessage(Component.literal("!image:" + textureLocation));
                         double width = image.getWidth();

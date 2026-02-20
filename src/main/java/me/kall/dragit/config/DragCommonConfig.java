@@ -16,8 +16,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-public class DragServerConfig {
-    public static final DragServerConfig INSTANCE = new DragServerConfig();
+public class DragCommonConfig {
+    public static final DragCommonConfig INSTANCE = new DragCommonConfig();
 
     private final ForgeConfigSpec configSpec;
     private final ForgeConfigSpec.BooleanValue all;
@@ -26,9 +26,9 @@ public class DragServerConfig {
 
     private final Set<UUID> whitelistCache, blacklistCache;
 
-    private DragServerConfig() {
+    private DragCommonConfig() {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
-        builder.push("DragItCommonConfig");
+        builder.push("DragCommonConfig");
         this.all = builder.comment("If enabled, all the players can send their skin/painting/chat images data to server.").define("All", true);
         this.blacklist = builder.comment("Put UUIDs here so these players can never send their skin/painting/chat images data to server even if 'All' is enabled.").defineListAllowEmpty("Blacklist", Lists.newArrayList(), Predicates.alwaysTrue());
         this.whitelist = builder.comment("Require 'All' to be false.", "Put UUIDs here so only these players can send their skin/painting/chat images data to server.").defineListAllowEmpty("Whitelist", Lists.newArrayList(), Predicates.alwaysTrue());

@@ -1,6 +1,6 @@
 package me.kall.dragit.gui;
 
-import me.kall.dragit.config.DragServerConfig;
+import me.kall.dragit.config.DragCommonConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -32,7 +32,7 @@ public abstract class BaseConfigScreen extends Screen {
     protected abstract void onDone();
 
     protected boolean checkSync() {
-        DragServerConfig config = DragServerConfig.INSTANCE;
+        DragCommonConfig config = DragCommonConfig.INSTANCE;
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) return true;
         UUID uuid = player.getUUID();

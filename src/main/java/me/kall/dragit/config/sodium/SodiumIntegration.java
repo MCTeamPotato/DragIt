@@ -3,6 +3,7 @@ package me.kall.dragit.config.sodium;
 import com.google.common.collect.ImmutableList;
 import me.jellysquid.mods.sodium.client.gui.SodiumGameOptions;
 import me.jellysquid.mods.sodium.client.gui.options.OptionGroup;
+import me.jellysquid.mods.sodium.client.gui.options.OptionImpact;
 import me.jellysquid.mods.sodium.client.gui.options.OptionImpl;
 import me.jellysquid.mods.sodium.client.gui.options.OptionPage;
 import me.jellysquid.mods.sodium.client.gui.options.control.ControlValueFormatter;
@@ -37,8 +38,17 @@ public class SodiumIntegration {
                 .setBinding((options, value) -> DragChatConfig.INSTANCE.setMaxHeight(value), sodiumGameOptions -> DragChatConfig.INSTANCE.getMaxHeight())
                 .build();
 
+        OptionImpl<SodiumGameOptions, Integer> pixels = OptionImpl.createBuilder(Integer.TYPE, sodiumOpts)
+                .setId(ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, "pixels"))
+                .setName(Component.translatable("config.dragit.pixels.name"))
+                .setTooltip(Component.translatable("config.dragit.pixels.tooltip"))
+                .setControl(option -> new SliderControl(option, 512, 8192, 512, ControlValueFormatter.number()))
+                .setBinding((options, value) -> DragChatConfig.INSTANCE.setMaxPixels(value), sodiumGameOptions -> DragChatConfig.INSTANCE.getMaxPixels())
+                .setImpact(OptionImpact.MEDIUM)
+                .build();
+
         OptionIdentifier<Void> id = OptionIdentifier.create(DragIt.MOD_ID, "chat");
-        ImmutableList<OptionGroup> groups = ImmutableList.of(OptionGroup.createBuilder().setId(ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, "chat_group")).add(width).add(height).build());
+        ImmutableList<OptionGroup> groups = ImmutableList.of(OptionGroup.createBuilder().setId(ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, "chat_group")).add(width).add(height).add(pixels).build());
         event.addPage(new OptionPage(id, Component.translatable("config.dragit.page.chat"), groups));
     }
 

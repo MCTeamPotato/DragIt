@@ -1,7 +1,7 @@
 package me.kall.dragit.gui;
 
 import me.kall.dragit.DragIt;
-import me.kall.dragit.config.DragServerConfig;
+import me.kall.dragit.config.DragCommonConfig;
 import me.kall.dragit.data.painting.ClientPaintings;
 import me.kall.dragit.network.DragNetworker;
 import me.kall.dragit.network.painting.PaintingSavePacket;
@@ -51,12 +51,12 @@ public class PaintingConfigScreen extends BaseConfigScreen {
         this.maxPixelsBox.setResponder(text -> {
             try {
                 int value = Integer.parseInt(text);
-                if (value > 0 && value <= DragServerConfig.INSTANCE.getMaxPixels()) {
+                if (value > 0 && value <= DragCommonConfig.INSTANCE.getMaxPixels()) {
                     this.maxPixels = value;
                     double sizeKB = (value * 4.0) / 1024.0;
                     this.setStatus(Component.translatable("gui.dragit.painting_config.valid", value, String.format("%.2f", sizeKB)), 0x00FF00);
                 } else {
-                    this.setStatus(Component.translatable("gui.dragit.painting_config.invalid_range", String.valueOf(DragServerConfig.INSTANCE.getMaxPixels())), 0xFF0000);
+                    this.setStatus(Component.translatable("gui.dragit.painting_config.invalid_range", String.valueOf(DragCommonConfig.INSTANCE.getMaxPixels())), 0xFF0000);
                 }
             } catch (NumberFormatException e) {
                 if (!text.isEmpty()) {
