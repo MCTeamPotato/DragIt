@@ -11,7 +11,7 @@ import org.lwjgl.glfw.GLFWDropCallback;
 
 public class PaintingDropInvoker implements DragCallback.Invoker {
     @Override
-    public boolean invoke(long names) {
+    public boolean invoke(long window, int count, long names) {
         String filePath = GLFWDropCallback.getName(names, 0);
         Minecraft minecraft = Minecraft.getInstance();
         ClientLevel level = minecraft.level;

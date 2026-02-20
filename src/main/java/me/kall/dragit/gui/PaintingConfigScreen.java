@@ -20,14 +20,12 @@ import java.io.File;
 import java.io.IOException;
 
 public class PaintingConfigScreen extends BaseConfigScreen {
-    private static final int MAX_PIXELS_DEFAULT = 32 * 32;
-
     private final ResourceLocation dimension;
     private final long pos;
 
     private EditBox maxPixelsBox;
     private boolean enableCompression = true;
-    private int maxPixels = MAX_PIXELS_DEFAULT;
+    private int maxPixels = 32 * 32;
 
     public PaintingConfigScreen(String filePath, ResourceLocation dimension, long pos) {
         super(Component.translatable("gui.dragit.painting_config.title"), filePath);
@@ -61,7 +59,7 @@ public class PaintingConfigScreen extends BaseConfigScreen {
                 }).bounds(centerX - 100, startY + 30, 200, 20).build());
 
         this.maxPixelsBox = new EditBox(this.font, centerX - 100, startY + 85, 200, 20, Component.translatable("gui.dragit.painting_config.max_pixels"));
-        this.maxPixelsBox.setValue(String.valueOf(MAX_PIXELS_DEFAULT));
+        this.maxPixelsBox.setValue(String.valueOf(this.maxPixels));
         this.maxPixelsBox.setMaxLength(10);
         this.maxPixelsBox.setResponder(text -> {
             try {

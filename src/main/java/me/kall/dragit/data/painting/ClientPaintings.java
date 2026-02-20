@@ -26,21 +26,22 @@ public class ClientPaintings {
     public static final Object2ObjectMap<ResourceLocation, Long2ObjectMap<ClientTextureData>> PAINTINGS = new Object2ObjectOpenHashMap<>();
 
     public static void registerPainting(ResourceLocation dimension, long pos, byte[] textureBytes, ResourceLocation textureLocation) {
-        try {
-            if (PAINTINGS.containsKey(dimension)) {
-                Long2ObjectMap<ClientTextureData> positionMap = PAINTINGS.get(dimension);
-                if (positionMap.containsKey(pos)) {
-                    ClientTextureData removed = positionMap.remove(pos);
-                    Minecraft.getInstance().getTextureManager().release(removed.textureLocation());
-                    removed.dynamicTexture().close();
-                    if (positionMap.isEmpty()) PAINTINGS.remove(dimension);
-                }
+        if (PAINTINGS.containsKey(dimension)) {
+            Long2ObjectMap<ClientTextureData> positionMap = PAINTINGS.get(dimension);
+            if (positionMap.containsKey(pos)) {
+                ClientTextureData removed = positionMap.remove(pos);
+                Minecraft.getInstance().getTextureManager().release(removed.textureLocation());
+                removed.dynamicTexture().close();
+                if (positionMap.isEmpty()) PAINTINGS.remove(dimension);
             }
+        }
+
+        try {
             DynamicTexture dynamicTexture = new DynamicTexture(NativeImage.read(textureBytes));
             Minecraft.getInstance().getTextureManager().register(textureLocation, dynamicTexture);
             PAINTINGS.computeIfAbsent(dimension, key -> new Long2ObjectOpenHashMap<>()).put(pos, new ClientTextureData(textureLocation, dynamicTexture));
         } catch (IOException ioException) {
-            DragIt.LOGGER.error("Error saving image", ioException);
+            DragIt.LOGGER.error("Error registering painting", ioException);
         }
     }
 

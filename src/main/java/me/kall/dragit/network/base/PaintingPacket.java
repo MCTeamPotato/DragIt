@@ -21,10 +21,7 @@ public abstract class PaintingPacket {
     }
 
     public PaintingPacket(@NotNull FriendlyByteBuf buf) {
-        this.dimension = buf.readResourceLocation();
-        this.pos = buf.readLong();
-        this.textureLocation = buf.readResourceLocation();
-        this.textureBytes = buf.readByteArray();
+        this(buf.readResourceLocation(), buf.readLong(), buf.readResourceLocation(), buf.readByteArray());
     }
 
     public void save(@NotNull FriendlyByteBuf buf) {

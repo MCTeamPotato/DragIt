@@ -20,9 +20,7 @@ public abstract class SkinPacket {
     }
 
     public SkinPacket(@NotNull FriendlyByteBuf buf) {
-        this.uuid = buf.readUUID();
-        this.textureLocation = buf.readResourceLocation();
-        this.textureBytes = buf.readByteArray();
+        this(buf.readUUID(), buf.readResourceLocation(), buf.readByteArray());
     }
 
     public void save(@NotNull FriendlyByteBuf buf) {

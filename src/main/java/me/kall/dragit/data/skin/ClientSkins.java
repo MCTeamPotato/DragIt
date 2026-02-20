@@ -28,7 +28,7 @@ public class ClientSkins {
             SKINS.put(uuid, new ClientTextureData(textureLocation, dynamicTexture));
             DragIt.LOGGER.info("Skin {} is registered", textureLocation.toString());
         } catch (IOException ioException) {
-            DragIt.LOGGER.error("Error saving skin", ioException);
+            DragIt.LOGGER.error("Error registering skin", ioException);
         }
     }
 }

@@ -10,6 +10,7 @@ public abstract class BaseConfigScreen extends Screen {
 
     protected final String filePath;
     protected boolean syncToServer = true;
+
     protected Component statusMessage = Component.empty();
     protected int statusColor = 0xFFFFFF;
 
