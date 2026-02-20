@@ -15,12 +15,12 @@
   "gui.dragit.file": "File: %s",
   "gui.dragit.error": "Error: %s",
 
-  "config.dragit.width.name": "Max Width",
+  "config.dragit.width.name": "Chat Image Max Width",
   "config.dragit.width.tooltip": "The maximum rendering width of chat images in pixels. Images are scaled proportionally, so this does not stretch or distort them.",
-  "config.dragit.height.name": "Max Height",
+  "config.dragit.height.name": "Chat Image Max Height",
   "config.dragit.height.tooltip": "The maximum rendering height of chat images in pixels. Images are scaled proportionally, so this does not stretch or distort them.",
-  "config.dragit.pixels.name": "Max Pixels",
-  "config.dragit.pixels.tooltip": "The maximum renderable pixels of chat images. Images would be compressed and lose details if you decrease this value. Performance impact is mainly about network sync, not client rendering",
+  "config.dragit.pixels.name": "Chat Image Max Pixels",
+  "config.dragit.pixels.tooltip": "The maximum renderable pixels of chat images. Images would be compressed and lose details if you decrease this value. Performance impact is mainly about network sync, not client rendering.",
 
   "config.dragit.page.chat": "Chat Image Config"
 }

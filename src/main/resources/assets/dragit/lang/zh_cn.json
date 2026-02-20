@@ -15,10 +15,12 @@
   "gui.dragit.file": "文件：%s",
   "gui.dragit.error": "错误：%s",
 
-  "config.dragit.width.name": "最大宽度",
+  "config.dragit.width.name": "聊天图片最大宽度",
   "config.dragit.width.tooltip": "聊天栏图片的最大渲染宽度（像素）。图片会按比例缩放，不会拉伸或变形。",
-  "config.dragit.height.name": "最大高度",
+  "config.dragit.height.name": "聊天图片最大高度",
   "config.dragit.height.tooltip": "聊天栏图片的最大渲染高度（像素）。图片会按比例缩放，不会拉伸或变形。",
+  "config.dragit.pixels.name": "聊天图片像素限制",
+  "config.dragit.pixels.tooltip": "聊天栏图片的最大可渲染像素数量。如果调低了这个值，图片会被压缩并失真。性能影响主要在于网络同步方面而非客户端渲染。",
 
   "config.dragit.page.chat": "聊天图片配置"
 }
