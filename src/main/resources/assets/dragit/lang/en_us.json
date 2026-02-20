@@ -25,5 +25,14 @@
   "config.dragit.painting_pixels.name": "Painting Image Max Pixels",
   "config.dragit.painting_pixels.tooltip": "The maximum renderable pixels of painting images. \nImages would be compressed and lose details if you decrease this value. \nPerformance impact is mainly about network sync, not client rendering.",
 
-  "config.dragit.page.chat": "Drag It Config"
+  "config.dragit.page.chat": "Drag It Config",
+
+  "commands.dragit.whitelist.add.already":   "%s is already whitelisted.",
+  "commands.dragit.whitelist.add.success":   "Added %s to whitelist.",
+  "commands.dragit.whitelist.remove.not_found": "%s is not whitelisted.",
+  "commands.dragit.whitelist.remove.success": "Removed %s from whitelist.",
+  "commands.dragit.blacklist.add.already":   "%s is already blacklisted.",
+  "commands.dragit.blacklist.add.success":   "Added %s to blacklist.",
+  "commands.dragit.blacklist.remove.not_found": "%s is not blacklisted.",
+  "commands.dragit.blacklist.remove.success": "Removed %s from blacklist."
 }

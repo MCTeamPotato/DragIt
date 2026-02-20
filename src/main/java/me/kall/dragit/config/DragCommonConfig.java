@@ -89,6 +89,20 @@ public class DragCommonConfig {
         this.blacklistCache.clear();
     }
 
+    public void removeWhitelisted(@NotNull UUID uuid) {
+        List<String> list = new ArrayList<>(this.whitelist.get());
+        list.remove(uuid.toString());
+        this.whitelist.set(list);
+        this.whitelistCache.clear();
+    }
+
+    public void removeBlacklisted(@NotNull UUID uuid) {
+        List<String> list = new ArrayList<>(this.blacklist.get());
+        list.remove(uuid.toString());
+        this.blacklist.set(list);
+        this.blacklistCache.clear();
+    }
+
     private void invalidateCache(ModConfigEvent.@NotNull Reloading event) {
         if (event.getConfig().getModId().equals(DragIt.MOD_ID)) {
             this.whitelistCache.clear();

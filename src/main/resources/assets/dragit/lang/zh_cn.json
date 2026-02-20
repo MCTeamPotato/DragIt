@@ -25,5 +25,14 @@
   "config.dragit.painting_pixels.name": "画作图片像素限制",
   "config.dragit.painting_pixels.tooltip": "画作图片的最大可渲染像素数量。如果调低了这个值，图片会被压缩并失真。性能影响主要在于网络同步方面而非客户端渲染。",
 
-  "config.dragit.page.chat": "聊天图片配置"
+  "config.dragit.page.chat": "聊天图片配置",
+
+  "commands.dragit.whitelist.add.already":      "%s 早已在白名单中。",
+  "commands.dragit.whitelist.add.success":      "已将 %s 添加到白名单。",
+  "commands.dragit.whitelist.remove.not_found": "%s 不在白名单中。",
+  "commands.dragit.whitelist.remove.success":   "已将 %s 从白名单中移除。",
+  "commands.dragit.blacklist.add.already":      "%s 早已在黑名单中。",
+  "commands.dragit.blacklist.add.success":      "已将 %s 添加到黑名单。",
+  "commands.dragit.blacklist.remove.not_found": "%s 不在黑名单中。",
+  "commands.dragit.blacklist.remove.success":   "已将 %s 从黑名单中移除。"
 }
