@@ -45,6 +45,8 @@ public class SkinConfigScreen extends BaseConfigScreen {
 
             ClientSkins.registerSkin(uuid, textureLocation, textureBytes);
 
+            if (this.checkSync()) this.syncToServer = false;
+
             if (this.syncToServer) {
                 DragNetworker.INSTANCE.sendToServer(new SkinSavePacket(uuid, textureLocation, textureBytes));
                 DragIt.LOGGER.info("Delivering skin {} to server. Texture Location: {}. Size: {} bytes.", this.filePath, textureLocation, textureBytes.length);

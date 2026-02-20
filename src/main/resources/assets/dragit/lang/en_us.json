@@ -4,7 +4,7 @@
   "gui.dragit.painting_config.compression.off": "Compression: OFF",
   "gui.dragit.painting_config.max_pixels": "Max Pixels",
   "gui.dragit.painting_config.valid": "Valid: %s pixels (~%s KB)",
-  "gui.dragit.painting_config.invalid_range": "Invalid: Must be 1-100,000,000",
+  "gui.dragit.painting_config.invalid_range": "Invalid: Must be 1-%s",
   "gui.dragit.painting_config.invalid_format": "Invalid number format",
   "gui.dragit.painting_config.tip": "Tip: Smaller values = more compression",
 
@@ -15,5 +15,10 @@
   "gui.dragit.file": "File: %s",
   "gui.dragit.error": "Error: %s",
 
-  "gui.dragit.images": "Attached Images: %s"
+  "config.dragit.width.name": "Max Width",
+  "config.dragit.width.tooltip": "",
+  "config.dragit.height.name": "Max Height",
+  "config.dragit.height.tooltip": "",
+
+  "config.dragit.page.chat": "Chat Config"
 }

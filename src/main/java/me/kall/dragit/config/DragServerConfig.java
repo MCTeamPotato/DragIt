@@ -16,23 +16,26 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-public class DragConfig {
-    public static final DragConfig INSTANCE = new DragConfig();
+public class DragServerConfig {
+    public static final DragServerConfig INSTANCE = new DragServerConfig();
 
     private final ForgeConfigSpec configSpec;
     private final ForgeConfigSpec.BooleanValue all;
     private final ForgeConfigSpec.ConfigValue<List<? extends String>> whitelist, blacklist;
+    private final ForgeConfigSpec.IntValue maxPixels;
 
     private final Set<UUID> whitelistCache, blacklistCache;
 
-    public DragConfig() {
+    private DragServerConfig() {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
-        builder.push("DragIt");
-        this.all = builder.comment("If enabled, all the players can send their skin/painting/chat images data to the server.").define("All", true);
-        this.blacklist = builder.comment("Put UUIDs here so these players can never send their skin/painting/chat images data to the server even if 'All' is enabled.").defineList("Blacklist", Lists.newArrayList(), Predicates.alwaysTrue());
-        this.whitelist = builder.comment("Require 'All' to be false.", "Put UUIDs here so only these players can send their skin/painting/chat images data to the server.").defineList("Whitelist", Lists.newArrayList(), Predicates.alwaysTrue());
+        builder.push("DragItCommonConfig");
+        this.all = builder.comment("If enabled, all the players can send their skin/painting/chat images data to server.").define("All", true);
+        this.blacklist = builder.comment("Put UUIDs here so these players can never send their skin/painting/chat images data to server even if 'All' is enabled.").defineListAllowEmpty("Blacklist", Lists.newArrayList(), Predicates.alwaysTrue());
+        this.whitelist = builder.comment("Require 'All' to be false.", "Put UUIDs here so only these players can send their skin/painting/chat images data to server.").defineListAllowEmpty("Whitelist", Lists.newArrayList(), Predicates.alwaysTrue());
+        this.maxPixels = builder.comment("All the painting/chat images will be compressed to be less than this size before they are sent to server.").defineInRange("MaxSendablePixels", 16384, 0, Integer.MAX_VALUE);
         builder.pop();
         this.configSpec = builder.build();
+
         this.whitelistCache = new ObjectOpenHashSet<>();
         this.blacklistCache = new ObjectOpenHashSet<>();
     }
@@ -40,6 +43,10 @@ public class DragConfig {
     public void register(@NotNull FMLJavaModLoadingContext context, @NotNull IEventBus modBus) {
         context.registerConfig(ModConfig.Type.COMMON, this.configSpec);
         modBus.addListener(this::invalidateCache);
+    }
+
+    public int getMaxPixels() {
+        return this.maxPixels.get();
     }
 
     public boolean all() {

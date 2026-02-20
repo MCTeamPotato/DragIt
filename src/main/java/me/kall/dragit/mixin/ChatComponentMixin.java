@@ -3,6 +3,7 @@ package me.kall.dragit.mixin;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.platform.NativeImage;
+import me.kall.dragit.config.DragChatConfig;
 import me.kall.dragit.data.chat.ChatImages;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -28,7 +29,7 @@ public abstract class ChatComponentMixin {
                 if (pixels != null) {
                     double width = pixels.getWidth();
                     double height = pixels.getHeight();
-                    double scale = Math.min(ChatImages.MAX_WIDTH / width, ChatImages.MAX_HEIGHT / height);
+                    double scale = Math.min(DragChatConfig.INSTANCE.getMaxWidth() / width, DragChatConfig.INSTANCE.getMaxHeight() / height);
 
                     guiGraphics.blit(textureLocation, x, y, 0F, 0F, (int)(width * scale),  (int)(height * scale), (int)(width * scale),  (int)(height * scale));
                     return original.call(guiGraphics, font, FormattedCharSequence.EMPTY, x, y, color);

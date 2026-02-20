@@ -20,9 +20,6 @@ import java.util.Map;
 public class ChatImages {
     public static final Map<ResourceLocation, DynamicTexture> CHAT_IMAGES = new Object2ObjectOpenHashMap<>();
 
-    public static double MAX_WIDTH = 64;
-    public static double MAX_HEIGHT = 64;
-
     public static @Nullable NativeImage registerChatImage(ResourceLocation textureLocation, byte[] textureBytes) {
         TextureManager textureManager = Minecraft.getInstance().getTextureManager();
         if (CHAT_IMAGES.containsKey(textureLocation)) {

@@ -1,10 +1,15 @@
 package me.kall.dragit.gui;
 
+import me.kall.dragit.config.DragServerConfig;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.UUID;
 
 public abstract class BaseConfigScreen extends Screen {
 
@@ -26,22 +31,31 @@ public abstract class BaseConfigScreen extends Screen {
 
     protected abstract void onDone();
 
+    protected boolean checkSync() {
+        DragServerConfig config = DragServerConfig.INSTANCE;
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player == null) return true;
+        UUID uuid = player.getUUID();
+        if (config.blacklisted(uuid)) return true;
+        return !config.all() && !config.whitelisted(uuid);
+    }
+
     @Override
     protected void init() {
         super.init();
         int centerX = this.width / 2;
-        int startY = getStartY();
+        int startY = this.getStartY();
 
         this.addRenderableWidget(Button.builder(
-                Component.translatable("gui.dragit.sync." + (syncToServer ? "on" : "off")),
+                Component.translatable("gui.dragit.sync." + (this.syncToServer ? "on" : "off")),
                 button -> {
                     this.syncToServer = !this.syncToServer;
-                    button.setMessage(Component.translatable("gui.dragit.sync." + (syncToServer ? "on" : "off")));
+                    button.setMessage(Component.translatable("gui.dragit.sync." + (this.syncToServer ? "on" : "off")));
                 }).bounds(centerX - 100, startY, 200, 20).build());
 
-        initExtraWidgets(centerX, startY);
+        this.initExtraWidgets(centerX, startY);
 
-        int confirmY = startY + getConfirmButtonYOffset();
+        int confirmY = startY + this.getConfirmButtonYOffset();
         this.addRenderableWidget(Button.builder(Component.translatable("gui.yes"), button -> this.onDone()).bounds(centerX - 105, confirmY, 100, 20).build());
         this.addRenderableWidget(Button.builder(Component.translatable("gui.no"), button -> this.onClose()).bounds(centerX + 5, confirmY, 100, 20).build());
     }
