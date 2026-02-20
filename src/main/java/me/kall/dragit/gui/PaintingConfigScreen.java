@@ -7,7 +7,6 @@ import me.kall.dragit.network.painting.PaintingSavePacket;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
@@ -103,13 +102,8 @@ public class PaintingConfigScreen extends BaseConfigScreen {
             byte[] textureBytes = processImage(this.filePath, this.enableCompression, this.maxPixels);
             ResourceLocation textureLocation = ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, "painting_" + System.currentTimeMillis());
 
-            if (DragIt.OP_REQUIRED.get() && this.minecraft != null && this.minecraft.player != null
-                    && !this.minecraft.player.hasPermissions(Commands.LEVEL_GAMEMASTERS)) {
-                this.syncToServer = false;
-            }
-
             if (this.syncToServer) {
-                DragNetworker.INSTANCE.sendToServer(new PaintingSavePacket(dimension, pos, textureLocation, textureBytes));
+                DragNetworker.INSTANCE.sendToServer(new PaintingSavePacket(this.dimension, this.pos, textureLocation, textureBytes));
                 DragIt.LOGGER.info("Delivering image {} to server. Texture Location: {}. Size: {} bytes.", this.filePath, textureLocation, textureBytes.length + 16);
             } else {
                 DragIt.LOGGER.info("Skipping server sync for image {}. Texture Location: {}. Size: {} bytes.", this.filePath, textureLocation, textureBytes.length + 16);

@@ -19,12 +19,12 @@ public class ChatDropInvoker implements DragCallback.Invoker {
     public boolean invoke(long window, int count, long names) {
         Minecraft minecraft = Minecraft.getInstance();
         if (minecraft.screen instanceof ChatScreen) {
+            ChatComponent chatComponent = minecraft.gui.getChat();
             for (int index = 0; index < count; index++) {
                 String filePath = GLFWDropCallback.getName(names, index);
                 ResourceLocation textureLocation = ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, "chat_" + System.currentTimeMillis() + "_" + index);
                 try (FileInputStream imageFile = new FileInputStream(filePath)) {
                     byte[] textureBytes = imageFile.readAllBytes();
-                    ChatComponent chatComponent = minecraft.gui.getChat();
                     NativeImage image = ChatImages.registerChatImage(textureLocation, textureBytes);
                     if (image != null) {
                         chatComponent.addMessage(Component.literal("!image:" + textureLocation));

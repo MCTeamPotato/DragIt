@@ -29,6 +29,7 @@ public abstract class ChatComponentMixin {
                     double width = pixels.getWidth();
                     double height = pixels.getHeight();
                     double scale = Math.min(ChatImages.MAX_WIDTH / width, ChatImages.MAX_HEIGHT / height);
+
                     guiGraphics.blit(textureLocation, x, y, 0F, 0F, (int)(width * scale),  (int)(height * scale), (int)(width * scale),  (int)(height * scale));
                     return original.call(guiGraphics, font, FormattedCharSequence.EMPTY, x, y, color);
                 }
