@@ -10,19 +10,22 @@ import java.util.function.Supplier;
 public abstract class ChatPacket {
     public final ResourceLocation textureLocation;
     public final byte[] textureBytes;
+    public final String sender;
 
-    public ChatPacket(ResourceLocation textureLocation, byte[] textureBytes) {
+    public ChatPacket(ResourceLocation textureLocation, byte[] textureBytes, String sender) {
         this.textureLocation = textureLocation;
         this.textureBytes = textureBytes;
+        this.sender = sender;
     }
 
     public ChatPacket(@NotNull FriendlyByteBuf buf) {
-        this(buf.readResourceLocation(), buf.readByteArray());
+        this(buf.readResourceLocation(), buf.readByteArray(), buf.readUtf());
     }
 
     public void save(@NotNull FriendlyByteBuf buf) {
         buf.writeResourceLocation(this.textureLocation);
         buf.writeByteArray(this.textureBytes);
+        buf.writeUtf(this.sender);
     }
 
     public abstract void handle(@NotNull Supplier<NetworkEvent.Context> ctx);

@@ -18,13 +18,14 @@ import java.util.function.Supplier;
 public class ChatLoadPacket extends ChatPacket {
     private static final Component EMPTY = Component.empty();
 
-    public ChatLoadPacket(ResourceLocation textureLocation, byte[] textureBytes) {
-        super(textureLocation, textureBytes);
+    public ChatLoadPacket(ResourceLocation textureLocation, byte[] textureBytes, String sender) {
+        super(textureLocation, textureBytes, sender);
     }
 
     public ChatLoadPacket(@NotNull FriendlyByteBuf buf) {
         super(buf);
     }
+
 
     @Override
     public void handle(@NotNull Supplier<NetworkEvent.Context> ctx) {
@@ -34,6 +35,7 @@ public class ChatLoadPacket extends ChatPacket {
                 if (image == null) return;
 
                 ChatComponent chatComponent = Minecraft.getInstance().gui.getChat();
+                chatComponent.addMessage(Component.translatable("chat.dragit.shared_image", this.sender));
                 chatComponent.addMessage(Component.literal("!image:" + this.textureLocation));
 
                 double width = image.getWidth();

@@ -34,5 +34,7 @@
   "commands.dragit.blacklist.add.already":      "%s 早已在黑名单中。",
   "commands.dragit.blacklist.add.success":      "已将 %s 添加到黑名单。",
   "commands.dragit.blacklist.remove.not_found": "%s 不在黑名单中。",
-  "commands.dragit.blacklist.remove.success":   "已将 %s 从黑名单中移除。"
+  "commands.dragit.blacklist.remove.success":   "已将 %s 从黑名单中移除。",
+
+  "chat.dragit.shared_image": "%s 分享了图片："
 }

@@ -15,8 +15,9 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 public class ChatSyncPacket extends ChatPacket {
-    public ChatSyncPacket(ResourceLocation textureLocation, byte[] textureBytes) {
-        super(textureLocation, textureBytes);
+
+    public ChatSyncPacket(ResourceLocation textureLocation, byte[] textureBytes, String sender) {
+        super(textureLocation, textureBytes, sender);
     }
 
     public ChatSyncPacket(@NotNull FriendlyByteBuf buf) {
@@ -34,7 +35,7 @@ public class ChatSyncPacket extends ChatPacket {
                 UUID uuid = player.getUUID();
                 for (ServerPlayer syncTarget : syncTargets) {
                     if (syncTarget.getUUID().equals(uuid)) continue;
-                    DragNetworker.INSTANCE.send(PacketDistributor.PLAYER.with(() -> syncTarget), new ChatLoadPacket(this.textureLocation, this.textureBytes));
+                    DragNetworker.INSTANCE.send(PacketDistributor.PLAYER.with(() -> syncTarget), new ChatLoadPacket(this.textureLocation, this.textureBytes, this.sender));
                 }
             } catch (Throwable throwable) {
                 DragIt.LOGGER.error("Error handling ChatSavePacket", throwable);
