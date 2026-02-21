@@ -7,11 +7,13 @@ import me.kall.dragit.network.painting.PaintingLoadPacket;
 import me.kall.dragit.network.painting.PaintingSavePacket;
 import me.kall.dragit.network.skin.SkinLoadPacket;
 import me.kall.dragit.network.skin.SkinSavePacket;
-import me.kall.duplicationless.network.Networker;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
 
 public class DragNetworker {
-    public static final SimpleChannel INSTANCE = Networker.create(DragIt.MOD_ID, "1");
+    public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, "main"), () -> "1", (ver) -> ver.equals("1"), (ver) -> ver.equals("1"));
+
     public static int id = 0;
 
     public static void register() {

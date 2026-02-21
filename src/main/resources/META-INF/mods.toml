@@ -10,11 +10,4 @@ displayName = "DragIt"
 authors = "Kall"
 description = '''
 '''
-#logoFile = ""
-
-[[dependencies.dragit]]
-modId="duplicationless"
-mandatory=true
-versionRange="[1.1.5,)"
-ordering="NONE"
-side="BOTH"
+logoFile = "logo.png"
