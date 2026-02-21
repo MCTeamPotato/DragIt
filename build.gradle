@@ -39,6 +39,12 @@ base {
 loom {
     silentMojangMappingsLicense()
 
+    runs {
+        client {
+            programArgs "--username", "kasualix"
+        }
+    }
+
     if (!isNeo) {
         forge {
             mixinConfig "${archives_name}.mixins.json"
@@ -89,6 +95,7 @@ dependencies {
     if (!isNeo) shadow(annotationProcessor("io.github.llamalad7:mixinextras-common:${project.mixinextras_version}"))
 
     modImplementation("curse.maven:duplicationless-1380105:${versionInfo.duplicationless}")
+    runtimeOnly("io.github.llamalad7:mixinextras-forge:0.5.3")
 
     if (project.minecraft_version == "1.21.11") {
         modImplementation("curse.maven:sodium-394468:${versionInfo.sodium}")
