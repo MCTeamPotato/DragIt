@@ -1,20 +1,4 @@
 {
-  "gui.dragit.painting_config.title": "画作配置",
-  "gui.dragit.painting_config.compression.on": "压缩: 开启",
-  "gui.dragit.painting_config.compression.off": "压缩: 关闭",
-  "gui.dragit.painting_config.max_pixels": "最大像素数",
-  "gui.dragit.painting_config.valid": "有效: %s 像素 (~%s KB)",
-  "gui.dragit.painting_config.invalid_range": "无效: 必须在 1-100,000,000 之间",
-  "gui.dragit.painting_config.invalid_format": "无效的数字格式",
-  "gui.dragit.painting_config.tip": "提示: 值越小压缩越多",
-
-  "gui.dragit.skin_config.title": "皮肤配置",
-
-  "gui.dragit.sync.on": "同步到服务器：开启",
-  "gui.dragit.sync.off": "同步到服务器：关闭",
-  "gui.dragit.file": "文件：%s",
-  "gui.dragit.error": "错误：%s",
-
   "config.dragit.chat_width.name": "聊天图片最大宽度",
   "config.dragit.chat_width.tooltip": "聊天栏图片的最大渲染宽度（像素）。图片会按比例缩放，不会拉伸或变形。",
   "config.dragit.chat_height.name": "聊天图片最大高度",
@@ -25,7 +9,7 @@
   "config.dragit.painting_pixels.name": "画作图片像素限制",
   "config.dragit.painting_pixels.tooltip": "画作图片的最大可渲染像素数量。如果调低了这个值，图片会被压缩并失真。性能影响主要在于网络同步方面而非客户端渲染。",
 
-  "config.dragit.page.chat": "聊天图片配置",
+  "config.dragit.page.chat": "图片拖拽配置",
 
   "commands.dragit.whitelist.add.already":      "%s 早已在白名单中。",
   "commands.dragit.whitelist.add.success":      "已将 %s 添加到白名单。",
