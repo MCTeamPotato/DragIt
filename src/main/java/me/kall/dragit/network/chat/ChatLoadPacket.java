@@ -16,8 +16,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.function.Supplier;
 
 public class ChatLoadPacket extends ChatPacket {
-    private static final Component EMPTY = Component.empty();
-
     public ChatLoadPacket(ResourceLocation textureLocation, byte[] textureBytes, String sender) {
         super(textureLocation, textureBytes, sender);
     }

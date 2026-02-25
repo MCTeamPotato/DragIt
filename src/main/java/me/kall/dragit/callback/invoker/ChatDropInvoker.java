@@ -7,6 +7,7 @@ import me.kall.dragit.callback.DragCallback;
 import me.kall.dragit.config.DragClientConfig;
 import me.kall.dragit.data.chat.ChatImages;
 import me.kall.dragit.network.DragNetworker;
+import me.kall.dragit.network.base.ChatPacket;
 import me.kall.dragit.network.chat.ChatSyncPacket;
 import me.kall.dragit.util.ImageCompressor;
 import net.minecraft.client.Minecraft;
@@ -20,8 +21,6 @@ import org.lwjgl.glfw.GLFWDropCallback;
 import java.io.IOException;
 
 public class ChatDropInvoker implements DragCallback.Invoker {
-    private static final Component EMPTY = Component.empty();
-
     @Override
     public boolean invoke(long window, int count, long names) {
         Minecraft minecraft = Minecraft.getInstance();
@@ -44,7 +43,7 @@ public class ChatDropInvoker implements DragCallback.Invoker {
                         double scale = Math.min(DragClientConfig.INSTANCE.getChatMaxWidth() / width, DragClientConfig.INSTANCE.getChatMaxHeight() / height);
 
                         for (int i = 0; i < (int) Math.ceil((int) (height * scale) / 9.0) - 1; i++) {
-                            chatComponent.addMessage(EMPTY);
+                            chatComponent.addMessage(ChatPacket.EMPTY);
                         }
 
                         if (DragItClient.canSync()) DragNetworker.INSTANCE.sendToServer(new ChatSyncPacket(textureLocation, textureBytes, name));
