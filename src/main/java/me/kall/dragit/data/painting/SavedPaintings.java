@@ -5,8 +5,9 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import me.kall.dragit.DragIt;
+import me.kall.dragit.cache.ImageCache;
 import me.kall.dragit.data.SavedTextureData;
-import me.kall.dragit.network.painting.PaintingLoadPacket;
+import me.kall.dragit.network.cache.painting.PaintingHashPacket;
 import me.kall.dragit.network.DragNetworker;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -51,7 +52,10 @@ public class SavedPaintings extends SavedData {
 
             for (int i = 0; i < imagesList.size(); i++) {
                 CompoundTag imageTag = imagesList.getCompound(i);
-                dimensionImages.put(imageTag.getLong("Pos"), new SavedTextureData(ResourceLocation.parse(imageTag.getString("TextureLocation")), imageTag.getByteArray("TextureBytes")));
+                byte[] bytes = imageTag.getByteArray("TextureBytes");
+                SavedTextureData entry = new SavedTextureData(ResourceLocation.parse(imageTag.getString("TextureLocation")), bytes);
+                dimensionImages.put(imageTag.getLong("Pos"), entry);
+                ImageCache.save(bytes);
             }
 
             data.paintings.put(resourceLocation, dimensionImages);
@@ -97,10 +101,9 @@ public class SavedPaintings extends SavedData {
                 ResourceLocation dimension = dimensionEntry.getKey();
                 for (Long2ObjectMap.Entry<SavedTextureData> imageEntry : dimensionEntry.getValue().long2ObjectEntrySet()) {
                     SavedTextureData savedTextureData = imageEntry.getValue();
-                    ResourceLocation textureLocation = savedTextureData.textureLocation();
-                    byte[] textureBytes = savedTextureData.textureBytes();
-                    DragNetworker.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new PaintingLoadPacket(dimension, imageEntry.getLongKey(), textureLocation, textureBytes));
-                    DragIt.LOGGER.info("Delivering image {} to client. Size: {} bytes.", textureLocation.toString(), textureBytes.length + 16);
+                    int hash = ImageCache.hash(savedTextureData.textureBytes());
+                    DragNetworker.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new PaintingHashPacket(dimension, imageEntry.getLongKey(), savedTextureData.textureLocation(), hash));
+                    DragIt.LOGGER.info("[DragIt] Sending painting HashPacket to client: {} hash={}", savedTextureData.textureLocation(), hash);
                 }
             }
         }

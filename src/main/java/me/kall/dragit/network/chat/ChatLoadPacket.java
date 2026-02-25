@@ -2,6 +2,7 @@ package me.kall.dragit.network.chat;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import me.kall.dragit.DragIt;
+import me.kall.dragit.cache.ImageCache;
 import me.kall.dragit.config.DragClientConfig;
 import me.kall.dragit.data.chat.ChatImages;
 import me.kall.dragit.network.base.ChatPacket;
@@ -31,6 +32,8 @@ public class ChatLoadPacket extends ChatPacket {
     public void handle(@NotNull Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             try {
+                ImageCache.save(this.textureBytes);
+
                 NativeImage image = ChatImages.registerChatImage(this.textureLocation, this.textureBytes);
                 if (image == null) return;
 

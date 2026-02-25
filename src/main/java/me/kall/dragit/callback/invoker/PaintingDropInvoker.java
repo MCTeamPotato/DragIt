@@ -2,11 +2,12 @@ package me.kall.dragit.callback.invoker;
 
 import me.kall.dragit.DragIt;
 import me.kall.dragit.DragItClient;
+import me.kall.dragit.cache.ImageCache;
 import me.kall.dragit.callback.DragCallback;
 import me.kall.dragit.config.DragClientConfig;
 import me.kall.dragit.data.painting.ClientPaintings;
 import me.kall.dragit.network.DragNetworker;
-import me.kall.dragit.network.painting.PaintingSavePacket;
+import me.kall.dragit.network.cache.painting.PaintingHashPacket;
 import me.kall.dragit.util.ImageCompressor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -34,7 +35,12 @@ public class PaintingDropInvoker implements DragCallback.Invoker {
                 ResourceLocation textureLocation = ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, "painting_" + System.currentTimeMillis());
 
                 ClientPaintings.registerPainting(dimension, pos, textureBytes, textureLocation);
-                if (DragItClient.canSync()) DragNetworker.INSTANCE.sendToServer(new PaintingSavePacket(dimension, pos, textureLocation, textureBytes));
+
+                if (DragItClient.canSync()) {
+                    ImageCache.save(textureBytes);
+                    int hash = ImageCache.hash(textureBytes);
+                    DragNetworker.INSTANCE.sendToServer(new PaintingHashPacket(dimension, pos, textureLocation, hash));
+                }
                 return true;
             } catch (IOException exception) {
                 DragIt.LOGGER.error("Error registering painting", exception);

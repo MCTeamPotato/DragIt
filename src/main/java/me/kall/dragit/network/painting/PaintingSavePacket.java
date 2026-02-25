@@ -2,10 +2,12 @@ package me.kall.dragit.network.painting;
 
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import me.kall.dragit.DragIt;
+import me.kall.dragit.cache.ImageCache;
 import me.kall.dragit.data.painting.SavedPaintings;
 import me.kall.dragit.data.SavedTextureData;
 import me.kall.dragit.network.DragNetworker;
 import me.kall.dragit.network.base.PaintingPacket;
+import me.kall.dragit.network.cache.painting.PaintingHashPacket;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -32,6 +34,9 @@ public class PaintingSavePacket extends PaintingPacket {
             try {
                 ServerPlayer player = ctx.get().getSender();
                 if (player == null) return;
+
+                ImageCache.save(this.textureBytes);
+
                 SavedPaintings savedPaintings = SavedPaintings.get(player.serverLevel());
                 savedPaintings.setDirty();
                 savedPaintings.paintings.computeIfAbsent(this.dimension, key -> new Long2ObjectOpenHashMap<>()).put(this.pos, new SavedTextureData(this.textureLocation, this.textureBytes));
@@ -39,9 +44,10 @@ public class PaintingSavePacket extends PaintingPacket {
                 List<ServerPlayer> syncTargets = player.server.getPlayerList().getPlayers();
                 if (syncTargets.size() == 1) return;
                 UUID uuid = player.getUUID();
+                int hash = ImageCache.hash(this.textureBytes);
                 for (ServerPlayer syncTarget : syncTargets) {
                     if (syncTarget.getUUID().equals(uuid)) continue;
-                    DragNetworker.INSTANCE.send(PacketDistributor.PLAYER.with(() -> syncTarget), new PaintingLoadPacket(this.dimension, this.pos, this.textureLocation, this.textureBytes));
+                    DragNetworker.INSTANCE.send(PacketDistributor.PLAYER.with(() -> syncTarget), new PaintingHashPacket(this.dimension, this.pos, this.textureLocation, hash));
                 }
             } catch (Throwable throwable) {
                 DragIt.LOGGER.error("Error handling PaintingSavePacket", throwable);
