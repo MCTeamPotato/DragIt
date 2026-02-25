@@ -3,7 +3,6 @@ package me.kall.dragit;
 import me.kall.dragit.config.DragClientConfig;
 import me.kall.dragit.config.DragCommonConfig;
 import me.kall.dragit.network.DragNetworker;
-import me.kall.dragit.cache.ImageCache;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLLoader;
@@ -16,7 +15,6 @@ public final class DragIt {
     public static final Logger LOGGER = LogManager.getLogger(DragIt.class);
 
     public DragIt(FMLJavaModLoadingContext context) {
-        ImageCache.init();
         DragNetworker.register();
         DragCommonConfig.INSTANCE.register(context, context.getModEventBus());
         if (FMLLoader.getDist().isClient()) {

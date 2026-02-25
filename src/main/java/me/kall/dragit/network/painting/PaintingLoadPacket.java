@@ -1,7 +1,6 @@
 package me.kall.dragit.network.painting;
 
 import me.kall.dragit.DragIt;
-import me.kall.dragit.cache.ImageCache;
 import me.kall.dragit.data.painting.ClientPaintings;
 import me.kall.dragit.network.base.PaintingPacket;
 import net.minecraft.network.FriendlyByteBuf;
@@ -24,7 +23,6 @@ public class PaintingLoadPacket extends PaintingPacket {
     public void handle(@NotNull Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             try {
-                ImageCache.save(this.textureBytes);
                 ClientPaintings.registerPainting(this.dimension, this.pos, this.textureBytes, this.textureLocation);
             } catch (Throwable throwable) {
                 DragIt.LOGGER.error("Error handling PaintingLoadPacket", throwable);
