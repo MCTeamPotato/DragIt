@@ -5,3 +5,5 @@
 - Add logo file
 # 1.0.2
 - Fix skin of player arm unchanged.
+# 1.1.0
+- Now if your mouse is hovered on the chat image, DragIt will render a bigger image on your screen.
