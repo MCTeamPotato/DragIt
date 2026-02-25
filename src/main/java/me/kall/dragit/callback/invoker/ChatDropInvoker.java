@@ -1,9 +1,12 @@
 package me.kall.dragit.callback.invoker;
 
 import me.kall.dragit.DragIt;
+import me.kall.dragit.DragItClient;
 import me.kall.dragit.callback.DragCallback;
 import me.kall.dragit.config.DragClientConfig;
 import me.kall.dragit.data.chat.ChatImages;
+import me.kall.dragit.network.DragNetworker;
+import me.kall.dragit.network.chat.ChatSyncPacket;
 import me.kall.dragit.util.ImageCompressor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ChatScreen;
@@ -24,8 +27,12 @@ public class ChatDropInvoker implements DragCallback.Invoker {
                 String filePath = GLFWDropCallback.getName(names, index);
                 ResourceLocation textureLocation = ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, "chat_" + System.currentTimeMillis() + "_" + index);
                 try {
+                    String name = player.getName().getString();
                     byte[] textureBytes = ImageCompressor.compress(filePath, DragClientConfig.INSTANCE.getChatMaxPixels());
-                    ChatImages.registerChatImage(textureLocation, textureBytes, player.getName().getString());
+                    ChatImages.registerChatImage(textureLocation, textureBytes, name);
+
+                    if (DragItClient.canSync()) DragNetworker.INSTANCE.sendToServer(new ChatSyncPacket(textureLocation, textureBytes, name));
+
                     handled = true;
                 } catch (IOException exception) {
                     DragIt.LOGGER.error("Error reading chat image file", exception);
