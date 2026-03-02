@@ -11,6 +11,8 @@
 
   "config.dragit.page.chat": "图片拖拽配置",
 
+  "note.dragit.skin": "皮肤文件过大。支持的最大尺寸：128 * 128。",
+
   "commands.dragit.whitelist.add.already":      "%s 早已在白名单中。",
   "commands.dragit.whitelist.add.success":      "已将 %s 添加到白名单。",
   "commands.dragit.whitelist.remove.not_found": "%s 不在白名单中。",

@@ -11,6 +11,8 @@
 
   "config.dragit.page.chat": "Drag It Config",
 
+  "note.dragit.skin": "Skin image toooooooo big. Max size acceptable: 128 * 128.",
+
   "commands.dragit.whitelist.add.already":   "%s is already whitelisted.",
   "commands.dragit.whitelist.add.success":   "Added %s to whitelist.",
   "commands.dragit.whitelist.remove.not_found": "%s is not whitelisted.",
