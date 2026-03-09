@@ -8,4 +8,7 @@
 # 1.1.0
 - Now if your mouse is hovered on the chat image, DragIt will render a bigger image on your screen.
 # 1.1.1
-Limit the acceptable skin image size to 128 * 128
+- Limit the acceptable skin image size to 128 * 128
+# 1.2.0
+- Fix data saving and image removal on entities discard for paintings
+- Introduce ItemFrameDropInvoker. Now you can drag images onto item frames!

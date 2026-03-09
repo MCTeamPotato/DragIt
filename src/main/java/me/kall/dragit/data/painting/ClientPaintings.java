@@ -12,6 +12,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.decoration.Painting;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
@@ -64,6 +65,8 @@ public class ClientPaintings {
         if (event.getEntity() instanceof Painting painting && painting.level() instanceof ClientLevel level) {
             ResourceLocation dimension = level.dimension().location();
             long pos = painting.blockPosition().asLong();
+            Entity.RemovalReason removalReason = painting.getRemovalReason();
+            if (removalReason != Entity.RemovalReason.KILLED && removalReason != Entity.RemovalReason.DISCARDED) return;
 
             Long2ObjectMap<ClientTextureData> imageMap = PAINTINGS.get(dimension);
             if (imageMap == null) return;

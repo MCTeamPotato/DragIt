@@ -14,6 +14,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.decoration.Painting;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
@@ -36,6 +37,7 @@ public class SavedPaintings extends SavedData {
         if (imageMap == null) return;
         imageMap.remove(pos);
         if (imageMap.isEmpty()) this.paintings.remove(dimension);
+        this.setDirty();
     }
 
     public static @NotNull SavedPaintings load(@NotNull CompoundTag tag) {
@@ -109,6 +111,9 @@ public class SavedPaintings extends SavedData {
     @SubscribeEvent
     public static void removeImage(@NotNull EntityLeaveLevelEvent event) {
         if (event.getEntity() instanceof Painting painting && painting.level() instanceof ServerLevel level) {
+            Entity.RemovalReason removalReason = painting.getRemovalReason();
+            if (removalReason != Entity.RemovalReason.KILLED && removalReason != Entity.RemovalReason.DISCARDED) return;
+
             ResourceLocation dimension = level.dimension().location();
             long pos = painting.blockPosition().asLong();
             SavedPaintings.get(level).removeImage(dimension, pos);

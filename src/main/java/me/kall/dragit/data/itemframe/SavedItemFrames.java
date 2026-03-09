@@ -15,6 +15,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
@@ -129,12 +130,8 @@ public class SavedItemFrames extends SavedData {
 
         for (Group group : get(level).groups) {
             ResolvedFrames frames = ResolvedFrames.resolve(group.frames);
-            long[] positions = frames.positions;
-            int[] columns = frames.columns;
-            int[] rows = frames.rows;
-
-            DragNetworker.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new ItemFrameLoadPacket(group.dimension, group.textureLocation, group.textureBytes, positions, columns, rows, group.totalColumns, group.totalRows));
-            DragIt.LOGGER.info("Delivering item-frame group {} to {}. {} frames, {} bytes.", group.textureLocation, player.getName().getString(), positions.length, group.textureBytes.length);
+            DragNetworker.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new ItemFrameLoadPacket(group.dimension, group.textureLocation, group.textureBytes, frames.positions, frames.columns, frames.rows, group.totalColumns, group.totalRows));
+            DragIt.LOGGER.info("Delivering item-frame group {} to {}. {} frames, {} bytes.", group.textureLocation, player.getName().getString(), frames.positions.length, group.textureBytes.length);
         }
     }
 
@@ -142,6 +139,8 @@ public class SavedItemFrames extends SavedData {
     public static void removeImage(@NotNull EntityLeaveLevelEvent event) {
         if (!(event.getEntity() instanceof ItemFrame itemFrame)) return;
         if (!(event.getLevel() instanceof ServerLevel level)) return;
+        Entity.RemovalReason removalReason = itemFrame.getRemovalReason();
+        if (removalReason != Entity.RemovalReason.KILLED && removalReason != Entity.RemovalReason.DISCARDED) return;
 
         ResourceLocation dimension = level.dimension().location();
         long position = itemFrame.blockPosition().asLong();
@@ -163,16 +162,16 @@ public class SavedItemFrames extends SavedData {
 
     private record ResolvedFrames(long[] positions, int[] columns, int[] rows) {
         @Contract("_ -> new")
-        public static @NotNull SavedItemFrames.ResolvedFrames resolve(@NotNull List<FrameRecord> frames) {
+        public static @NotNull ResolvedFrames resolve(@NotNull List<FrameRecord> frames) {
             int size = frames.size();
             long[] positions = new long[size];
             int[] columns = new int[size];
             int[] rows = new int[size];
-            for (int index = 0; index < frames.size(); index++) {
-                FrameRecord frameRecord = frames.get(index);
-                positions[index] = frameRecord.position;
-                columns[index] = frameRecord.column;
-                rows[index] = frameRecord.row;
+            for (int index = 0; index < size; index++) {
+                FrameRecord record = frames.get(index);
+                positions[index] = record.position;
+                columns[index] = record.column;
+                rows[index] = record.row;
             }
             return new ResolvedFrames(positions, columns, rows);
         }
