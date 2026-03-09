@@ -35,10 +35,10 @@ public abstract class ItemFrameRendererMixin<T extends ItemFrame> {
         Matrix4f poseMatrix = poseStack.last().pose();
         Matrix3f normalMatrix = poseStack.last().normal();
 
-        this.dragIt$vertex(vertexConsumer, poseMatrix, normalMatrix, 0.5F, -0.5F, 0.4F, uMax, vMax, lightColor);
-        this.dragIt$vertex(vertexConsumer, poseMatrix, normalMatrix, -0.5F, -0.5F, 0.4F, uMin, vMax, lightColor);
-        this.dragIt$vertex(vertexConsumer, poseMatrix, normalMatrix, -0.5F,  0.5F, 0.4F, uMin, vMin, lightColor);
-        this.dragIt$vertex(vertexConsumer, poseMatrix, normalMatrix, 0.5F,  0.5F, 0.4F, uMax, vMin, lightColor);
+        this.dragIt$vertex(vertexConsumer, poseMatrix, normalMatrix, 0.5F, -0.5F, 0.4F, uMin, vMax, lightColor);
+        this.dragIt$vertex(vertexConsumer, poseMatrix, normalMatrix, -0.5F, -0.5F, 0.4F, uMax, vMax, lightColor);
+        this.dragIt$vertex(vertexConsumer, poseMatrix, normalMatrix, -0.5F,  0.5F, 0.4F, uMax, vMin, lightColor);
+        this.dragIt$vertex(vertexConsumer, poseMatrix, normalMatrix, 0.5F,  0.5F, 0.4F, uMin, vMin, lightColor);
     }
 
     @Unique
