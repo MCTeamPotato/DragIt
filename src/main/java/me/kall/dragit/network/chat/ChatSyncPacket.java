@@ -15,7 +15,6 @@ import java.util.UUID;
 import java.util.function.Supplier;
 
 public class ChatSyncPacket extends ChatPacket {
-
     public ChatSyncPacket(ResourceLocation textureLocation, byte[] textureBytes, String sender) {
         super(textureLocation, textureBytes, sender);
     }
@@ -37,6 +36,7 @@ public class ChatSyncPacket extends ChatPacket {
                     if (syncTarget.getUUID().equals(uuid)) continue;
                     DragNetworker.INSTANCE.send(PacketDistributor.PLAYER.with(() -> syncTarget), new ChatLoadPacket(this.textureLocation, this.textureBytes, this.sender));
                 }
+                DragIt.LOGGER.info("ChatSyncPacket handled. TextureLocation: {}. Sender: {}", this.textureLocation.toString(), this.sender);
             } catch (Throwable throwable) {
                 DragIt.LOGGER.error("Error handling ChatSavePacket", throwable);
             }

@@ -153,7 +153,7 @@ tasks.register("publishCurseForge", TaskPublishCurseForge) {
         mainFile.addModLoader(isNeo ? "NeoForge" : "Forge")
         Iterator<String> supported = javaInfo.supported.iterator()
         while (supported.hasNext()) {
-            mainFile.addJavaVersion(supported.next());
+            mainFile.addJavaVersion(supported.next())
         }
         mainFile.addGameVersion(minecraft_version)
         mainFile.addOptional(minecraft_version == "1.21.11" ? "sodium" : "embeddium")

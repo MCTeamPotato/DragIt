@@ -61,7 +61,18 @@ public class SodiumIntegration {
 
         OptionGroup paintingGroup = OptionGroup.createBuilder().setId(ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, "painting_group")).add(paintingPixels).build();
 
-        ImmutableList<OptionGroup> groups = ImmutableList.of(chatGroup, paintingGroup);
+        OptionImpl<SodiumGameOptions, Integer> itemFramePixels = OptionImpl.createBuilder(Integer.TYPE, sodiumOpts)
+                .setId(ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, "item_frame_pixels"))
+                .setName(Component.translatable("config.dragit.item_frame_pixels.name"))
+                .setTooltip(Component.translatable("config.dragit.item_frame_pixels.tooltip"))
+                .setControl(option -> new SliderControl(option, 512, 8192, 256, ControlValueFormatter.number()))
+                .setBinding((options, value) -> DragClientConfig.INSTANCE.setItemFrameMaxPixels(value), sodiumGameOptions -> DragClientConfig.INSTANCE.getItemFrameMaxPixels())
+                .setImpact(OptionImpact.MEDIUM)
+                .build();
+
+        OptionGroup itemFrameGroup = OptionGroup.createBuilder().setId(ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, "item_frame_group")).add(itemFramePixels).build();
+
+        ImmutableList<OptionGroup> groups = ImmutableList.of(chatGroup, paintingGroup, itemFrameGroup);
         event.addPage(new OptionPage(OptionIdentifier.create(DragIt.MOD_ID, "client_config"), Component.translatable("config.dragit.page.chat"), groups));
     }
 

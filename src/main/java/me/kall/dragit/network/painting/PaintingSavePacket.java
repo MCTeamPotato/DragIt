@@ -6,6 +6,7 @@ import me.kall.dragit.data.painting.SavedPaintings;
 import me.kall.dragit.data.SavedTextureData;
 import me.kall.dragit.network.DragNetworker;
 import me.kall.dragit.network.base.PaintingPacket;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -43,6 +44,7 @@ public class PaintingSavePacket extends PaintingPacket {
                     if (syncTarget.getUUID().equals(uuid)) continue;
                     DragNetworker.INSTANCE.send(PacketDistributor.PLAYER.with(() -> syncTarget), new PaintingLoadPacket(this.dimension, this.pos, this.textureLocation, this.textureBytes));
                 }
+                DragIt.LOGGER.info("PaintingLoadPacket handled. TextureLocation: {}.  Dimension: {}. Position: [{}].", this.textureLocation.toString(), this.dimension.toString(), BlockPos.getX(this.pos) + ", " + BlockPos.getY(this.pos) + ", " + BlockPos.getZ(this.pos));
             } catch (Throwable throwable) {
                 DragIt.LOGGER.error("Error handling PaintingSavePacket", throwable);
             }

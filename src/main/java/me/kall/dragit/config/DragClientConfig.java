@@ -11,38 +11,21 @@ public class DragClientConfig {
     public static final DragClientConfig INSTANCE = new DragClientConfig();
 
     private final ForgeConfigSpec configSpec;
-    private final ForgeConfigSpec.IntValue chatMaxWidth, chatMaxHeight, chatMaxPixels, paintingMaxPixels;
+    private final ForgeConfigSpec.IntValue chatMaxWidth, chatMaxHeight, chatMaxPixels, paintingMaxPixels, itemFrameMaxPixels;
 
     private DragClientConfig() {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
         builder.push("DragClientConfig");
         builder.push("Chat");
-        this.chatMaxWidth = builder
-                .comment(
-                        "Max rendering width of the chat images.",
-                        "This pixel limitation doesn't mean to compress or stretch the images. They're scaled proportionally."
-                )
-                .defineInRange("MaxWidth", 64, 0, Integer.MAX_VALUE);
-        this.chatMaxHeight = builder
-                .comment(
-                        "Max rendering height of the chat images.",
-                        "This pixel limitation doesn't mean to compress or stretch the images. They're scaled proportionally."
-                )
-                .defineInRange("MaxHeight", 64, 0, Integer.MAX_VALUE);
-        this.chatMaxPixels = builder
-                .comment(
-                        "Max images' pixels that are allowed to be rendered and sent to server.",
-                        "This pixel limitation DOES mean to compress the images. They would become more pixel-like and lose details if you decrease this value."
-                )
-                .defineInRange("MaxPixels", 8192, 0, Integer.MAX_VALUE);
+        this.chatMaxWidth = builder.defineInRange("MaxWidth", 64, 0, Integer.MAX_VALUE);
+        this.chatMaxHeight = builder.defineInRange("MaxHeight", 64, 0, Integer.MAX_VALUE);
+        this.chatMaxPixels = builder.defineInRange("MaxPixels", 8192, 0, Integer.MAX_VALUE);
         builder.pop();
         builder.push("Painting");
-        this.paintingMaxPixels = builder
-                .comment(
-                        "Max images' pixels that are allowed to be rendered and sent to server.",
-                        "This pixel limitation DOES mean to compress the images. They would become more pixel-like and lose details if you decrease this value."
-                )
-                .defineInRange("MaxPixels", 8192, 0, Integer.MAX_VALUE);
+        this.paintingMaxPixels = builder.defineInRange("MaxPixels", 8192, 0, Integer.MAX_VALUE);
+        builder.pop();
+        builder.push("ItemFrame");
+        this.itemFrameMaxPixels = builder.defineInRange("MaxPixels", 8192, 0, Integer.MAX_VALUE);
         builder.pop();
         builder.pop();
         this.configSpec = builder.build();
@@ -75,6 +58,13 @@ public class DragClientConfig {
         return clientLimit;
     }
 
+    public int getItemFrameMaxPixels() {
+        int clientLimit = this.itemFrameMaxPixels.get();
+        int commonLimit = DragCommonConfig.INSTANCE.getMaxPixels();
+        if (clientLimit > commonLimit) clientLimit = commonLimit;
+        return clientLimit;
+    }
+
     public void setChatMaxWidth(int chatMaxWidth) {
         this.chatMaxWidth.set(chatMaxWidth);
     }
@@ -89,5 +79,9 @@ public class DragClientConfig {
 
     public void setPaintingMaxPixels(int paintingMaxPixels) {
         this.paintingMaxPixels.set(paintingMaxPixels);
+    }
+
+    public void setItemFrameMaxPixels(int itemFrameMaxPixels) {
+        this.itemFrameMaxPixels.set(itemFrameMaxPixels);
     }
 }

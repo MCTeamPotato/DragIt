@@ -42,6 +42,7 @@ public class SkinSavePacket extends SkinPacket {
                     if (syncTarget.getUUID().equals(uuid)) continue;
                     DragNetworker.INSTANCE.send(PacketDistributor.PLAYER.with(() -> syncTarget), new SkinLoadPacket(this.uuid, this.textureLocation, this.textureBytes));
                 }
+                DragIt.LOGGER.info("PaintingLoadPacket handled. TextureLocation: {}. UUID: {}.", this.textureLocation.toString(), this.uuid.toString());
             } catch (Throwable throwable) {
                 DragIt.LOGGER.error("Error handling SkinSavePacket", throwable);
             }

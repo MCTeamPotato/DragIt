@@ -13,6 +13,7 @@
   "client": [
     "AbstractClientPlayerMixin",
     "ChatComponentMixin",
+    "ItemFrameRendererMixin",
     "PaintingRendererMixin",
     "PlayerRendererMixin"
   ]

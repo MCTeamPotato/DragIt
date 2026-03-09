@@ -25,6 +25,7 @@ public class SkinLoadPacket extends SkinPacket {
         ctx.get().enqueueWork(() -> {
             try {
                 ClientSkins.registerSkin(this.uuid, this.textureLocation, this.textureBytes);
+                DragIt.LOGGER.info("PaintingLoadPacket handled. TextureLocation: {}. UUID: {}.", this.textureLocation.toString(), this.uuid.toString());
             } catch (Throwable throwable) {
                 DragIt.LOGGER.error("Error handling SkinLoadPacket", throwable);
             }

@@ -2,6 +2,7 @@ package me.kall.dragit.callback;
 
 import me.kall.dragit.DragIt;
 import me.kall.dragit.callback.invoker.ChatDropInvoker;
+import me.kall.dragit.callback.invoker.ItemFrameDropInvoker;
 import me.kall.dragit.callback.invoker.PaintingDropInvoker;
 import me.kall.dragit.callback.invoker.SkinDropInvoker;
 import net.minecraft.client.Minecraft;
@@ -18,7 +19,7 @@ public class DragCallback extends GLFWDropCallback {
 
     private static @Nullable GLFWDropCallback lastCallback;
 
-    private final Invoker[] invokers = new Invoker[]{new SkinDropInvoker(), new PaintingDropInvoker(), new ChatDropInvoker()};
+    private final Invoker[] invokers = new Invoker[]{new SkinDropInvoker(), new PaintingDropInvoker(), new ItemFrameDropInvoker(), new ChatDropInvoker()};
 
     @Override
     public void invoke(long window, int count, long names) {

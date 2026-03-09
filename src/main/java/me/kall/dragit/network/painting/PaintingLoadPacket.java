@@ -3,6 +3,7 @@ package me.kall.dragit.network.painting;
 import me.kall.dragit.DragIt;
 import me.kall.dragit.data.painting.ClientPaintings;
 import me.kall.dragit.network.base.PaintingPacket;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkEvent;
@@ -24,6 +25,7 @@ public class PaintingLoadPacket extends PaintingPacket {
         ctx.get().enqueueWork(() -> {
             try {
                 ClientPaintings.registerPainting(this.dimension, this.pos, this.textureBytes, this.textureLocation);
+                DragIt.LOGGER.info("PaintingLoadPacket handled. TextureLocation: {}.  Dimension: {}. Position: [{}].", this.textureLocation.toString(), this.dimension.toString(), BlockPos.getX(this.pos) + ", " + BlockPos.getY(this.pos) + ", " + BlockPos.getZ(this.pos));
             } catch (Throwable throwable) {
                 DragIt.LOGGER.error("Error handling PaintingLoadPacket", throwable);
             }

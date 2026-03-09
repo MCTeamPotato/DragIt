@@ -25,6 +25,7 @@ public class ChatLoadPacket extends ChatPacket {
         ctx.get().enqueueWork(() -> {
             try {
                 ChatImages.registerChatImage(this.textureLocation, this.textureBytes, this.sender);
+                DragIt.LOGGER.info("ChatLoadPacket handled. TextureLocation: {}. Sender: {}", this.textureLocation.toString(), this.sender);
             } catch (Throwable throwable) {
                 DragIt.LOGGER.error("Error handling ChatLoadPacket", throwable);
             }

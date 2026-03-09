@@ -9,6 +9,9 @@
   "config.dragit.painting_pixels.name": "Painting Image Max Pixels",
   "config.dragit.painting_pixels.tooltip": "The maximum renderable pixels of painting images. \nImages would be compressed and lose details if you decrease this value. \nPerformance impact is mainly about network sync, not client rendering.",
 
+  "config.dragit.item_frame_pixels.name": "Item Frame Image Max Pixels",
+  "config.dragit.item_frame_pixels.tooltip": "The maximum renderable pixels of item frame images. \nImages would be compressed and lose details if you decrease this value. \nPerformance impact is mainly about network sync, not client rendering.",
+
   "config.dragit.page.chat": "Drag It Config",
 
   "note.dragit.skin": "Skin image toooooooo big. Max size acceptable: 128 * 128.",
