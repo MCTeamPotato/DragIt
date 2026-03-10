@@ -94,12 +94,15 @@ public class ClientItemFrames {
 
         Long2ObjectMap<FrameEntry> frameMap = ITEM_FRAMES.get(dimension);
         if (frameMap == null) return;
-        FrameEntry frameEntry = frameMap.remove(position);
+        FrameEntry frameEntry = frameMap.get(position);
         if (frameEntry == null) return;
-        if (isUnreferenced(frameMap, frameEntry.textureLocation())) {
-            Minecraft.getInstance().getTextureManager().release(frameEntry.textureLocation());
-            frameEntry.dynamicTexture().close();
-        }
+
+        ResourceLocation textureToRemove = frameEntry.textureLocation();
+        frameMap.values().removeIf(e -> e.textureLocation().equals(textureToRemove));
+
+        Minecraft.getInstance().getTextureManager().release(textureToRemove);
+        frameEntry.dynamicTexture().close();
+
         if (frameMap.isEmpty()) ITEM_FRAMES.remove(dimension);
     }
 

@@ -54,16 +54,22 @@ public class SavedItemFrames extends SavedData {
         this.setDirty();
     }
 
-    public void removeFrame(ResourceLocation dimension, long position) {
+    public void removeGroup(ResourceLocation dimension, long position) {
         LongSet positionSet = this.positionIndex.get(dimension);
         if (positionSet == null || !positionSet.contains(position)) return;
 
-        positionSet.remove(position);
         this.groups.removeIf(group -> {
             if (!group.dimension.equals(dimension)) return false;
-            group.frames.removeIf(record -> record.position() == position);
-            return group.frames.isEmpty();
+            boolean contains = group.frames.stream().anyMatch(r -> r.position() == position);
+            if (contains) {
+                for (FrameRecord record : group.frames) {
+                    positionSet.remove(record.position());
+                }
+            }
+            return contains;
         });
+
+        if (positionSet.isEmpty()) this.positionIndex.remove(dimension);
         this.setDirty();
     }
 
@@ -144,7 +150,7 @@ public class SavedItemFrames extends SavedData {
 
         ResourceLocation dimension = level.dimension().location();
         long position = itemFrame.blockPosition().asLong();
-        SavedItemFrames.get(level).removeFrame(dimension, position);
+        SavedItemFrames.get(level).removeGroup(dimension, position);
     }
 
     public record FrameRecord(long position, int column, int row) {}
