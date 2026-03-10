@@ -4,20 +4,21 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
 
 public abstract class ItemFramePacket {
     public final ResourceLocation dimension;
     public final ResourceLocation textureLocation;
-    public final byte[] textureBytes;
+    public final byte @Nullable [] textureBytes;
     public final long[] positions;
     public final int[] columns;
     public final int[] rows;
     public final int totalColumns;
     public final int totalRows;
 
-    public ItemFramePacket(ResourceLocation dimension, ResourceLocation textureLocation, byte[] textureBytes, long[] positions, int[] columns, int[] rows, int totalColumns, int totalRows) {
+    public ItemFramePacket(ResourceLocation dimension, ResourceLocation textureLocation, byte @Nullable [] textureBytes, long[] positions, int[] columns, int[] rows, int totalColumns, int totalRows) {
         this.dimension = dimension;
         this.textureLocation = textureLocation;
         this.textureBytes = textureBytes;
@@ -31,7 +32,7 @@ public abstract class ItemFramePacket {
     public ItemFramePacket(@NotNull FriendlyByteBuf buffer) {
         this.dimension = buffer.readResourceLocation();
         this.textureLocation = buffer.readResourceLocation();
-        this.textureBytes = buffer.readByteArray();
+        this.textureBytes = buffer.readBoolean() ? buffer.readByteArray() : null;
         this.totalColumns = buffer.readInt();
         this.totalRows = buffer.readInt();
         int frameCount = buffer.readInt();
@@ -48,7 +49,8 @@ public abstract class ItemFramePacket {
     public void save(@NotNull FriendlyByteBuf buffer) {
         buffer.writeResourceLocation(this.dimension);
         buffer.writeResourceLocation(this.textureLocation);
-        buffer.writeByteArray(this.textureBytes);
+        buffer.writeBoolean(this.textureBytes != null);
+        if (this.textureBytes != null) buffer.writeByteArray(this.textureBytes);
         buffer.writeInt(this.totalColumns);
         buffer.writeInt(this.totalRows);
         buffer.writeInt(this.positions.length);

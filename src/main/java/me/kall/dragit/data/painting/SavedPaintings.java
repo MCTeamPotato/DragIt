@@ -93,17 +93,14 @@ public class SavedPaintings extends SavedData {
 
     @SubscribeEvent
     public static void sendImages(PlayerEvent.@NotNull PlayerLoggedInEvent event) {
-        if (event.getEntity() instanceof ServerPlayer player && player.level() instanceof ServerLevel level) {
-            SavedPaintings savedPaintings = get(level);
-            for (Map.Entry<ResourceLocation, Long2ObjectMap<SavedTextureData>> dimensionEntry : savedPaintings.paintings.entrySet()) {
-                ResourceLocation dimension = dimensionEntry.getKey();
-                for (Long2ObjectMap.Entry<SavedTextureData> imageEntry : dimensionEntry.getValue().long2ObjectEntrySet()) {
-                    SavedTextureData savedTextureData = imageEntry.getValue();
-                    ResourceLocation textureLocation = savedTextureData.textureLocation();
-                    byte[] textureBytes = savedTextureData.textureBytes();
-                    DragNetworker.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new PaintingLoadPacket(dimension, imageEntry.getLongKey(), textureLocation, textureBytes));
-                    DragIt.LOGGER.info("Delivering image {} to client. Size: {} bytes.", textureLocation.toString(), textureBytes.length + 16);
-                }
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+        if (!(player.level() instanceof ServerLevel level)) return;
+        for (Map.Entry<ResourceLocation, Long2ObjectMap<SavedTextureData>> dimEntry : get(level).paintings.entrySet()) {
+            ResourceLocation dimension = dimEntry.getKey();
+            for (Long2ObjectMap.Entry<SavedTextureData> imgEntry : dimEntry.getValue().long2ObjectEntrySet()) {
+                ResourceLocation textureLocation = imgEntry.getValue().textureLocation();
+                DragNetworker.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new PaintingLoadPacket(dimension, imgEntry.getLongKey(), textureLocation, null));
+                DragIt.LOGGER.info("Delivering painting [{}] to {} (null bytes).", textureLocation, player.getName().getString());
             }
         }
     }

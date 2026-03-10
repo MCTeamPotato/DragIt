@@ -2,6 +2,7 @@ package me.kall.dragit.callback.invoker;
 
 import me.kall.dragit.DragIt;
 import me.kall.dragit.DragItClient;
+import me.kall.dragit.cache.ImageCache;
 import me.kall.dragit.callback.DragCallback;
 import me.kall.dragit.data.skin.ClientSkins;
 import me.kall.dragit.network.DragNetworker;
@@ -25,22 +26,21 @@ public class SkinDropInvoker implements DragCallback.Invoker {
         Minecraft minecraft = Minecraft.getInstance();
         LocalPlayer player = minecraft.player;
 
-        if (minecraft.screen instanceof EffectRenderingInventoryScreen && player != null) {
-            UUID uuid = player.getUUID();
-            try {
-                ResourceLocation textureLocation = ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, "skin_" + System.currentTimeMillis());
-                byte[] textureBytes = Files.readAllBytes(new File(filePath).toPath());
-                if (textureBytes.length > 10000) {
-                    player.displayClientMessage(Component.translatable("note.dragit.skin"), false);
-                    return false;
-                }
-                if (DragItClient.canSync()) DragNetworker.INSTANCE.sendToServer(new SkinSavePacket(uuid, textureLocation, textureBytes));
+        if (!(minecraft.screen instanceof EffectRenderingInventoryScreen) || player == null) return false;
 
-                ClientSkins.registerSkin(uuid, textureLocation, textureBytes);
-                return true;
-            } catch (IOException exception) {
-                DragIt.LOGGER.error("Error registering skin", exception);
+        UUID uuid = player.getUUID();
+        try {
+            byte[] textureBytes = Files.readAllBytes(new File(filePath).toPath());
+            if (textureBytes.length > 10000) {
+                player.displayClientMessage(Component.translatable("note.dragit.skin"), false);
+                return false;
             }
+            ResourceLocation textureLocation = ImageCache.getOrCreate(textureBytes);
+            if (DragItClient.canSync()) DragNetworker.INSTANCE.sendToServer(new SkinSavePacket(uuid, textureLocation, textureBytes));
+            ClientSkins.registerSkin(uuid, textureLocation, textureBytes);
+            return true;
+        } catch (IOException exception) {
+            DragIt.LOGGER.error("Error registering skin", exception);
         }
         return false;
     }

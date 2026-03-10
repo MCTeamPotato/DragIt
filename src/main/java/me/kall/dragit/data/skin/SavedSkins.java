@@ -62,16 +62,13 @@ public class SavedSkins extends SavedData {
 
     @SubscribeEvent
     public static void sendSkins(PlayerEvent.@NotNull PlayerLoggedInEvent event) {
-        if (event.getEntity() instanceof ServerPlayer player && player.level() instanceof ServerLevel level) {
-            SavedSkins savedSkins = get(level);
-            for (Map.Entry<UUID, SavedTextureData> entry : savedSkins.skins.entrySet()) {
-                UUID uuid = entry.getKey();
-                SavedTextureData savedTextureData = entry.getValue();
-                ResourceLocation textureLocation = savedTextureData.textureLocation();
-                byte[] textureBytes = savedTextureData.textureBytes();
-                DragNetworker.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new SkinLoadPacket(uuid, textureLocation, textureBytes));
-                DragIt.LOGGER.info("Delivering skin {} to client. Size: {} bytes.", textureLocation.toString(), textureBytes.length + 16);
-            }
+        if (!(event.getEntity() instanceof ServerPlayer player)) return;
+        if (!(player.level() instanceof ServerLevel level)) return;
+        for (Map.Entry<UUID, SavedTextureData> entry : get(level).skins.entrySet()) {
+            UUID uuid = entry.getKey();
+            ResourceLocation textureLocation = entry.getValue().textureLocation();
+            DragNetworker.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new SkinLoadPacket(uuid, textureLocation, null));
+            DragIt.LOGGER.info("Delivering skin [{}] to {} (null bytes, client will use cache).", textureLocation, player.getName().getString());
         }
     }
 }

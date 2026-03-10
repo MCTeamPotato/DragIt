@@ -3,6 +3,7 @@ package me.kall.dragit.network.itemframe;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import me.kall.dragit.DragIt;
+import me.kall.dragit.cache.ImageCache;
 import me.kall.dragit.data.itemframe.SavedItemFrames;
 import me.kall.dragit.network.DragNetworker;
 import me.kall.dragit.network.base.ItemFramePacket;
@@ -32,12 +33,12 @@ public class ItemFrameSavePacket extends ItemFramePacket {
         context.get().enqueueWork(() -> {
             try {
                 ServerPlayer sender = context.get().getSender();
-                if (sender == null) return;
+                if (sender == null || this.textureBytes == null) return;
+
+                ImageCache.store(this.textureLocation, this.textureBytes);
 
                 ObjectList<SavedItemFrames.FrameRecord> frameRecords = new ObjectArrayList<>();
-                for (int index = 0; index < this.positions.length; index++) {
-                    frameRecords.add(new SavedItemFrames.FrameRecord(this.positions[index], this.columns[index], this.rows[index]));
-                }
+                for (int i = 0; i < this.positions.length; i++) frameRecords.add(new SavedItemFrames.FrameRecord(this.positions[i], this.columns[i], this.rows[i]));
 
                 SavedItemFrames.get(sender.serverLevel()).addGroup(new SavedItemFrames.Group(this.dimension, this.textureLocation, this.textureBytes, this.totalColumns, this.totalRows, frameRecords));
 
@@ -47,9 +48,9 @@ public class ItemFrameSavePacket extends ItemFramePacket {
                         DragNetworker.INSTANCE.send(PacketDistributor.PLAYER.with(() -> target), new ItemFrameLoadPacket(this.dimension, this.textureLocation, this.textureBytes, this.positions, this.columns, this.rows, this.totalColumns, this.totalRows));
                     }
                 }
-                DragIt.LOGGER.info("ItemFrameSavePacket handled. TextureLocation: {}. Dimension: {}. Positions: {{}}", this.textureLocation.toString(), this.dimension.toString(), Arrays.stream(this.positions).mapToObj(pos -> "[" + BlockPos.getX(pos) + ", " + BlockPos.getY(pos) + ", " + BlockPos.getZ(pos) + "]").toArray());
-            } catch (Throwable throwable) {
-                DragIt.LOGGER.error("Error handling ItemFrameSavePacket", throwable);
+                DragIt.LOGGER.info("ItemFrameSavePacket handled [{}] dim={} positions={}", this.textureLocation, this.dimension, Arrays.stream(this.positions).mapToObj(pos -> "[" + BlockPos.getX(pos) + "," + BlockPos.getY(pos) + "," + BlockPos.getZ(pos) + "]").toArray());
+            } catch (Throwable t) {
+                DragIt.LOGGER.error("Error handling ItemFrameSavePacket", t);
             }
         });
         context.get().setPacketHandled(true);

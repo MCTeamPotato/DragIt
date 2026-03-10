@@ -23,7 +23,7 @@ import org.spongepowered.asm.mixin.injection.At;
 public abstract class ChatComponentMixin {
     @WrapOperation(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;drawString(Lnet/minecraft/client/gui/Font;Lnet/minecraft/util/FormattedCharSequence;III)I"))
     private int renderImage(GuiGraphics guiGraphics, Font font, FormattedCharSequence text, int x, int y, int color, @NotNull Operation<Integer> original) {
-        String message = dragIt$toString(text);
+        String message = this.dragIt$toString(text);
         if (message.startsWith("!image:")) {
             ResourceLocation textureLocation = ResourceLocation.parse(message.split("image:")[1]);
             DynamicTexture texture = ChatImages.CHAT_IMAGES.get(textureLocation);
@@ -37,7 +37,7 @@ public abstract class ChatComponentMixin {
                     int renderWidth = (int)(width * scale);
                     int renderHeight = (int)(height * scale);
 
-                    if (dragIt$isMouseHovered(x, y, renderWidth, renderHeight)) {
+                    if (this.dragIt$isMouseHovered(x, y, renderWidth, renderHeight)) {
                         int guiW = guiGraphics.guiWidth();
                         int guiH = guiGraphics.guiHeight();
 
@@ -60,7 +60,7 @@ public abstract class ChatComponentMixin {
     }
 
     @Unique
-    private static boolean dragIt$isMouseHovered(int x, int y, int renderWidth, int renderHeight) {
+    private boolean dragIt$isMouseHovered(int x, int y, int renderWidth, int renderHeight) {
         Minecraft minecraft = Minecraft.getInstance();
         MouseHandler mouse = minecraft.mouseHandler;
         Window window = minecraft.getWindow();
@@ -73,7 +73,7 @@ public abstract class ChatComponentMixin {
     }
 
     @Unique
-    private static @NotNull String dragIt$toString(@NotNull FormattedCharSequence sequence) {
+    private @NotNull String dragIt$toString(@NotNull FormattedCharSequence sequence) {
         StringBuilder stringBuilder = new StringBuilder();
         sequence.accept((index, style, codePoint) -> {
             stringBuilder.appendCodePoint(codePoint);

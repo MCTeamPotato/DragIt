@@ -1,8 +1,9 @@
 package me.kall.dragit.network.skin;
 
 import me.kall.dragit.DragIt;
-import me.kall.dragit.data.skin.SavedSkins;
+import me.kall.dragit.cache.ImageCache;
 import me.kall.dragit.data.SavedTextureData;
+import me.kall.dragit.data.skin.SavedSkins;
 import me.kall.dragit.network.DragNetworker;
 import me.kall.dragit.network.base.SkinPacket;
 import net.minecraft.network.FriendlyByteBuf;
@@ -30,21 +31,24 @@ public class SkinSavePacket extends SkinPacket {
         ctx.get().enqueueWork(() -> {
             try {
                 ServerPlayer player = ctx.get().getSender();
-                if (player == null) return;
+                if (player == null || this.textureBytes == null) return;
+
+                ImageCache.store(this.textureLocation, this.textureBytes);
+
                 SavedSkins savedSkins = SavedSkins.get(player.serverLevel());
                 savedSkins.setDirty();
                 savedSkins.skins.put(this.uuid, new SavedTextureData(this.textureLocation, this.textureBytes));
 
                 List<ServerPlayer> syncTargets = player.server.getPlayerList().getPlayers();
                 if (syncTargets.size() == 1) return;
-                UUID uuid = player.getUUID();
+                UUID senderUUID = player.getUUID();
                 for (ServerPlayer syncTarget : syncTargets) {
-                    if (syncTarget.getUUID().equals(uuid)) continue;
+                    if (syncTarget.getUUID().equals(senderUUID)) continue;
                     DragNetworker.INSTANCE.send(PacketDistributor.PLAYER.with(() -> syncTarget), new SkinLoadPacket(this.uuid, this.textureLocation, this.textureBytes));
                 }
-                DragIt.LOGGER.info("PaintingLoadPacket handled. TextureLocation: {}. UUID: {}.", this.textureLocation.toString(), this.uuid.toString());
-            } catch (Throwable throwable) {
-                DragIt.LOGGER.error("Error handling SkinSavePacket", throwable);
+                DragIt.LOGGER.info("SkinSavePacket handled [{}] uuid={}", this.textureLocation, this.uuid);
+            } catch (Throwable t) {
+                DragIt.LOGGER.error("Error handling SkinSavePacket", t);
             }
         });
         ctx.get().setPacketHandled(true);

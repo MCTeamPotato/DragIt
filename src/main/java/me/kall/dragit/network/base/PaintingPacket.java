@@ -4,6 +4,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
 
@@ -11,9 +12,9 @@ public abstract class PaintingPacket {
     public final ResourceLocation dimension;
     public final long pos;
     public final ResourceLocation textureLocation;
-    public final byte[] textureBytes;
+    public final byte @Nullable [] textureBytes;
 
-    public PaintingPacket(ResourceLocation dimension, long pos, ResourceLocation textureLocation, byte[] textureBytes) {
+    public PaintingPacket(ResourceLocation dimension, long pos, ResourceLocation textureLocation, byte @Nullable [] textureBytes) {
         this.dimension = dimension;
         this.pos = pos;
         this.textureLocation = textureLocation;
@@ -21,14 +22,18 @@ public abstract class PaintingPacket {
     }
 
     public PaintingPacket(@NotNull FriendlyByteBuf buf) {
-        this(buf.readResourceLocation(), buf.readLong(), buf.readResourceLocation(), buf.readByteArray());
+        this.dimension = buf.readResourceLocation();
+        this.pos = buf.readLong();
+        this.textureLocation = buf.readResourceLocation();
+        this.textureBytes = buf.readBoolean() ? buf.readByteArray() : null;
     }
 
     public void save(@NotNull FriendlyByteBuf buf) {
         buf.writeResourceLocation(this.dimension);
         buf.writeLong(this.pos);
         buf.writeResourceLocation(this.textureLocation);
-        buf.writeByteArray(this.textureBytes);
+        buf.writeBoolean(this.textureBytes != null);
+        if (this.textureBytes != null) buf.writeByteArray(this.textureBytes);
     }
 
     public abstract void handle(@NotNull Supplier<NetworkEvent.Context> ctx);

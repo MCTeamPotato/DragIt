@@ -2,8 +2,9 @@ package me.kall.dragit.network.painting;
 
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import me.kall.dragit.DragIt;
-import me.kall.dragit.data.painting.SavedPaintings;
+import me.kall.dragit.cache.ImageCache;
 import me.kall.dragit.data.SavedTextureData;
+import me.kall.dragit.data.painting.SavedPaintings;
 import me.kall.dragit.network.DragNetworker;
 import me.kall.dragit.network.base.PaintingPacket;
 import net.minecraft.core.BlockPos;
@@ -23,19 +24,20 @@ public class PaintingSavePacket extends PaintingPacket {
         super(dimension, pos, textureLocation, textureBytes);
     }
 
-    public PaintingSavePacket(@NotNull FriendlyByteBuf buf) {
-        super(buf);
-    }
+    public PaintingSavePacket(@NotNull FriendlyByteBuf buf) { super(buf); }
 
     @Override
     public void handle(@NotNull Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             try {
                 ServerPlayer player = ctx.get().getSender();
-                if (player == null) return;
+                if (player == null || this.textureBytes == null) return;
+
+                ImageCache.store(this.textureLocation, this.textureBytes);
+
                 SavedPaintings savedPaintings = SavedPaintings.get(player.serverLevel());
                 savedPaintings.setDirty();
-                savedPaintings.paintings.computeIfAbsent(this.dimension, key -> new Long2ObjectOpenHashMap<>()).put(this.pos, new SavedTextureData(this.textureLocation, this.textureBytes));
+                savedPaintings.paintings.computeIfAbsent(this.dimension, k -> new Long2ObjectOpenHashMap<>()).put(this.pos, new SavedTextureData(this.textureLocation, this.textureBytes));
 
                 List<ServerPlayer> syncTargets = player.server.getPlayerList().getPlayers();
                 if (syncTargets.size() == 1) return;
@@ -44,9 +46,9 @@ public class PaintingSavePacket extends PaintingPacket {
                     if (syncTarget.getUUID().equals(uuid)) continue;
                     DragNetworker.INSTANCE.send(PacketDistributor.PLAYER.with(() -> syncTarget), new PaintingLoadPacket(this.dimension, this.pos, this.textureLocation, this.textureBytes));
                 }
-                DragIt.LOGGER.info("PaintingLoadPacket handled. TextureLocation: {}.  Dimension: {}. Position: [{}].", this.textureLocation.toString(), this.dimension.toString(), BlockPos.getX(this.pos) + ", " + BlockPos.getY(this.pos) + ", " + BlockPos.getZ(this.pos));
-            } catch (Throwable throwable) {
-                DragIt.LOGGER.error("Error handling PaintingSavePacket", throwable);
+                DragIt.LOGGER.info("PaintingSavePacket handled [{}] dim={} pos=[{}]", this.textureLocation, this.dimension, BlockPos.getX(this.pos) + "," + BlockPos.getY(this.pos) + "," + BlockPos.getZ(this.pos));
+            } catch (Throwable t) {
+                DragIt.LOGGER.error("Error handling PaintingSavePacket", t);
             }
         });
         ctx.get().setPacketHandled(true);

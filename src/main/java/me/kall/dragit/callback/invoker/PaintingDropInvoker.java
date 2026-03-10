@@ -2,6 +2,7 @@ package me.kall.dragit.callback.invoker;
 
 import me.kall.dragit.DragIt;
 import me.kall.dragit.DragItClient;
+import me.kall.dragit.cache.ImageCache;
 import me.kall.dragit.callback.DragCallback;
 import me.kall.dragit.config.DragClientConfig;
 import me.kall.dragit.data.painting.ClientPaintings;
@@ -26,19 +27,20 @@ public class PaintingDropInvoker implements DragCallback.Invoker {
         ClientLevel level = minecraft.level;
         HitResult target = minecraft.hitResult;
 
-        if (level != null && target != null && target.getType().equals(HitResult.Type.ENTITY) && ((EntityHitResult) target).getEntity() instanceof Painting painting) {
-            try {
-                ResourceLocation dimension = level.dimension().location();
-                long pos = painting.blockPosition().asLong();
-                byte[] textureBytes = ImageCompressor.compress(filePath, DragClientConfig.INSTANCE.getPaintingMaxPixels());
-                ResourceLocation textureLocation = ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, "painting_" + System.currentTimeMillis());
+        if (level == null || target == null || !target.getType().equals(HitResult.Type.ENTITY)) return false;
+        if (!(((EntityHitResult) target).getEntity() instanceof Painting painting)) return false;
 
-                ClientPaintings.registerPainting(dimension, pos, textureBytes, textureLocation);
-                if (DragItClient.canSync()) DragNetworker.INSTANCE.sendToServer(new PaintingSavePacket(dimension, pos, textureLocation, textureBytes));
-                return true;
-            } catch (IOException exception) {
-                DragIt.LOGGER.error("Error registering painting", exception);
-            }
+        try {
+            ResourceLocation dimension = level.dimension().location();
+            long pos = painting.blockPosition().asLong();
+            byte[] textureBytes = ImageCompressor.compress(filePath, DragClientConfig.INSTANCE.getPaintingMaxPixels());
+            ResourceLocation textureLocation = ImageCache.getOrCreate(textureBytes);
+
+            ClientPaintings.registerPainting(dimension, pos, textureBytes, textureLocation);
+            if (DragItClient.canSync()) DragNetworker.INSTANCE.sendToServer(new PaintingSavePacket(dimension, pos, textureLocation, textureBytes));
+            return true;
+        } catch (IOException exception) {
+            DragIt.LOGGER.error("Error registering painting", exception);
         }
         return false;
     }

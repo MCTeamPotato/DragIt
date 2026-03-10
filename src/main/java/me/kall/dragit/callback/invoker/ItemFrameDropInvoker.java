@@ -6,6 +6,7 @@ import it.unimi.dsi.fastutil.longs.LongArrayFIFOQueue;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import me.kall.dragit.DragIt;
 import me.kall.dragit.DragItClient;
+import me.kall.dragit.cache.ImageCache;
 import me.kall.dragit.callback.DragCallback;
 import me.kall.dragit.config.DragClientConfig;
 import me.kall.dragit.data.itemframe.ClientItemFrames;
@@ -29,9 +30,9 @@ import org.lwjgl.glfw.GLFWDropCallback;
 import java.io.IOException;
 
 public class ItemFrameDropInvoker implements DragCallback.Invoker {
-    private static final Direction[] X_NEIGHBORS = new Direction[]{Direction.UP, Direction.DOWN, Direction.NORTH, Direction.SOUTH};
-    private static final Direction[] Z_NEIGHBORS = new Direction[]{Direction.UP, Direction.DOWN, Direction.EAST, Direction.WEST};
-    private static final Direction[] Y_NEIGHBORS = new Direction[]{Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST};
+    private static final Direction[] X_NEIGHBORS = {Direction.UP, Direction.DOWN, Direction.NORTH, Direction.SOUTH};
+    private static final Direction[] Z_NEIGHBORS = {Direction.UP, Direction.DOWN, Direction.EAST, Direction.WEST};
+    private static final Direction[] Y_NEIGHBORS = {Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST};
 
     @Override
     public boolean invoke(long window, int count, long names) {
@@ -59,7 +60,7 @@ public class ItemFrameDropInvoker implements DragCallback.Invoker {
             fillFrameArrays(frameGrid, box, facing, positions, columns, rows);
 
             byte[] textureBytes = ImageCompressor.compress(filePath, DragClientConfig.INSTANCE.getItemFrameMaxPixels());
-            ResourceLocation textureLocation = ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, "itemframe_" + System.currentTimeMillis());
+            ResourceLocation textureLocation = ImageCache.getOrCreate(textureBytes);
 
             ResourceLocation dimension = level.dimension().location();
             ClientItemFrames.registerGroup(dimension, positions, columns, rows, totalColumns, totalRows, textureLocation, textureBytes);
@@ -93,10 +94,7 @@ public class ItemFrameDropInvoker implements DragCallback.Invoker {
         int index = 0;
         for (Long2ObjectMap.Entry<int[]> entry : frameGrid.long2ObjectEntrySet()) {
             long packed = entry.getLongKey();
-            int x = BlockPos.getX(packed);
-            int y = BlockPos.getY(packed);
-            int z = BlockPos.getZ(packed);
-
+            int x = BlockPos.getX(packed), y = BlockPos.getY(packed), z = BlockPos.getZ(packed);
             int column, row;
             switch (facing) {
                 case NORTH -> {
@@ -140,23 +138,21 @@ public class ItemFrameDropInvoker implements DragCallback.Invoker {
 
     @Contract("_ -> new")
     private static @NotNull BoundingBox resolveFromBlocks(@NotNull LongSet blocks) {
-        int minimumX = Integer.MAX_VALUE, maximumX = Integer.MIN_VALUE;
-        int minimumY = Integer.MAX_VALUE, maximumY = Integer.MIN_VALUE;
-        int minimumZ = Integer.MAX_VALUE, maximumZ = Integer.MIN_VALUE;
-
+        int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE;
+        int minY = Integer.MAX_VALUE, maxY = Integer.MIN_VALUE;
+        int minZ = Integer.MAX_VALUE, maxZ = Integer.MIN_VALUE;
         for (long packed : blocks) {
             int x = BlockPos.getX(packed);
             int y = BlockPos.getY(packed);
             int z = BlockPos.getZ(packed);
-            if (x < minimumX) minimumX = x;
-            if (x > maximumX) maximumX = x;
-            if (y < minimumY) minimumY = y;
-            if (y > maximumY) maximumY = y;
-            if (z < minimumZ) minimumZ = z;
-            if (z > maximumZ) maximumZ = z;
+            if (x < minX) minX = x;
+            if (x > maxX) maxX = x;
+            if (y < minY) minY = y;
+            if (y > maxY) maxY = y;
+            if (z < minZ) minZ = z;
+            if (z > maxZ) maxZ = z;
         }
-
-        return new BoundingBox(minimumX, minimumY, minimumZ, maximumX, maximumY, maximumZ);
+        return new BoundingBox(minX, minY, minZ, maxX, maxY, maxZ);
     }
 
     private static @NotNull Long2ObjectMap<int[]> findConnectedFrames(ClientLevel level, long startPosition, Direction facing) {
@@ -168,23 +164,10 @@ public class ItemFrameDropInvoker implements DragCallback.Invoker {
 
         while (!queue.isEmpty()) {
             long current = queue.dequeueLong();
-            switch (facing.getAxis()) {
-                case X -> {
-                    for (Direction neighbor : X_NEIGHBORS) {
-                        resolveNeighbor(frameGrid, queue, level, facing, BlockPos.offset(current, neighbor));
-                    }
-                }
-                case Z -> {
-                    for (Direction neighbor : Z_NEIGHBORS) {
-                        resolveNeighbor(frameGrid, queue, level, facing, BlockPos.offset(current, neighbor));
-                    }
-                }
-                case Y -> {
-                    for (Direction neighbor : Y_NEIGHBORS) {
-                        resolveNeighbor(frameGrid, queue, level, facing, BlockPos.offset(current, neighbor));
-                    }
-                }
-            }
+            Direction[] neighbors = switch (facing.getAxis()) {
+                case X -> X_NEIGHBORS; case Z -> Z_NEIGHBORS; case Y -> Y_NEIGHBORS;
+            };
+            for (Direction neighbor : neighbors) resolveNeighbor(frameGrid, queue, level, facing, BlockPos.offset(current, neighbor));
         }
         return frameGrid;
     }

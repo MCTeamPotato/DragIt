@@ -1,6 +1,7 @@
 package me.kall.dragit.network.chat;
 
 import me.kall.dragit.DragIt;
+import me.kall.dragit.cache.ImageCache;
 import me.kall.dragit.network.DragNetworker;
 import me.kall.dragit.network.base.ChatPacket;
 import net.minecraft.network.FriendlyByteBuf;
@@ -28,7 +29,9 @@ public class ChatSyncPacket extends ChatPacket {
         ctx.get().enqueueWork(() -> {
             try {
                 ServerPlayer player = ctx.get().getSender();
-                if (player == null) return;
+                if (player == null || this.textureBytes == null) return;
+                ImageCache.store(this.textureLocation, this.textureBytes);
+
                 List<ServerPlayer> syncTargets = player.server.getPlayerList().getPlayers();
                 if (syncTargets.size() == 1) return;
                 UUID uuid = player.getUUID();
@@ -36,9 +39,9 @@ public class ChatSyncPacket extends ChatPacket {
                     if (syncTarget.getUUID().equals(uuid)) continue;
                     DragNetworker.INSTANCE.send(PacketDistributor.PLAYER.with(() -> syncTarget), new ChatLoadPacket(this.textureLocation, this.textureBytes, this.sender));
                 }
-                DragIt.LOGGER.info("ChatSyncPacket handled. TextureLocation: {}. Sender: {}", this.textureLocation.toString(), this.sender);
-            } catch (Throwable throwable) {
-                DragIt.LOGGER.error("Error handling ChatSavePacket", throwable);
+                DragIt.LOGGER.info("ChatSyncPacket handled [{}] sender={}", this.textureLocation, this.sender);
+            } catch (Throwable t) {
+                DragIt.LOGGER.error("Error handling ChatSyncPacket", t);
             }
         });
         ctx.get().setPacketHandled(true);

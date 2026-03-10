@@ -133,11 +133,10 @@ public class SavedItemFrames extends SavedData {
     public static void sendImages(PlayerEvent.@NotNull PlayerLoggedInEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
         if (!(player.level() instanceof ServerLevel level)) return;
-
         for (Group group : get(level).groups) {
             ResolvedFrames frames = ResolvedFrames.resolve(group.frames);
-            DragNetworker.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new ItemFrameLoadPacket(group.dimension, group.textureLocation, group.textureBytes, frames.positions, frames.columns, frames.rows, group.totalColumns, group.totalRows));
-            DragIt.LOGGER.info("Delivering item-frame group {} to {}. {} frames, {} bytes.", group.textureLocation, player.getName().getString(), frames.positions.length, group.textureBytes.length);
+            DragNetworker.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new ItemFrameLoadPacket(group.dimension, group.textureLocation, null, frames.positions, frames.columns, frames.rows, group.totalColumns, group.totalRows));
+            DragIt.LOGGER.info("Delivering item-frame group [{}] to {} (null bytes).", group.textureLocation, player.getName().getString());
         }
     }
 
