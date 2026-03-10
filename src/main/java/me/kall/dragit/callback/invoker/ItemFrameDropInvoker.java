@@ -108,11 +108,11 @@ public class ItemFrameDropInvoker implements DragCallback.Invoker {
                     row = box.maxY() - y;
                 }
                 case EAST -> {
-                    column = z - box.minZ();
+                    column = box.maxZ() - z;
                     row = box.maxY() - y;
                 }
                 case WEST -> {
-                    column = box.maxZ() - z;
+                    column = z - box.minZ();
                     row = box.maxY() - y;
                 }
                 case UP -> {
