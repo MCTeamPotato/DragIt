@@ -1,4 +1,4 @@
-package me.kall.dragit.integration;
+package me.kall.dragit.config.integration;
 
 import com.google.common.collect.ImmutableList;
 import me.jellysquid.mods.sodium.client.gui.SodiumGameOptions;

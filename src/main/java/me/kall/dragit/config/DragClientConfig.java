@@ -1,6 +1,6 @@
 package me.kall.dragit.config;
 
-import me.kall.dragit.integration.SodiumIntegration;
+import me.kall.dragit.config.integration.SodiumIntegration;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
