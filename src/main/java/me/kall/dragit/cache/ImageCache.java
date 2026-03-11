@@ -55,10 +55,6 @@ public class ImageCache {
         }
     }
 
-    public static boolean exists(@NotNull ResourceLocation location) {
-        return Files.exists(CACHE.resolve(location.getPath()));
-    }
-
     public static byte @Nullable [] resolveBytes(ResourceLocation location, byte @Nullable [] bytes, PendingRegistrations.Registration onResolved) {
         if (bytes != null) {
             store(location, bytes);
