@@ -23,7 +23,7 @@ public class NoWorldDropInvoker implements DragCallback.Invoker {
         if (minecraft.player != null || minecraft.level != null) return false;
         String filePath = GLFWDropCallback.getName(names, 0);
         try {
-            String newFilePath = NarutoConfig.relative(copyFileToConfig(filePath).toString());
+            String newFilePath = NarutoConfig.relative(copyFileToConfig(filePath));
             BaseEnv.narutoConfig.config.put("videoFileName", newFilePath).put("audioFileName", NarutoLoading.BLANK).saveToFile();
             BaseEnv.setupEnv(false);
             NarutoRenderer.INSTANCE.shutdown();

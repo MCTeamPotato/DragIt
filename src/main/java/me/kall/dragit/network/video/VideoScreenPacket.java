@@ -49,8 +49,6 @@ public class VideoScreenPacket {
 
                 if (!(level.getEntity(this.leftBottom) instanceof ItemFrame leftBottomFrame)) return;
                 if (!(level.getEntity(this.rightBottom) instanceof ItemFrame rightBottomFrame)) return;
-                DragIt.LOGGER.info("Left Bottom Frame: {}", leftBottomFrame.blockPosition().toShortString());
-                DragIt.LOGGER.info("Right Bottom Frame: {}", rightBottomFrame.blockPosition().toShortString());
 
                 Direction facing = leftBottomFrame.getDirection();
 
@@ -63,6 +61,7 @@ public class VideoScreenPacket {
 
                 if (screen != null) {
                     screen.setPath(this.video, "");
+                    NarutoPackets.INSTANCE.send(PacketDistributor.ALL.noArg(), new ScreenLifePacket(screen, true));
                     NarutoPackets.INSTANCE.send(PacketDistributor.ALL.noArg(), new ScreenLifePacket(screen, false));
                     ServerScreenCheckerInvoker.setHangingEntitiesInvisible(level, screen, facing, true);
                 }
