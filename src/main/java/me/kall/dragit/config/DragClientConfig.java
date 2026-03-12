@@ -11,7 +11,7 @@ public class DragClientConfig {
     public static final DragClientConfig INSTANCE = new DragClientConfig();
 
     private final ForgeConfigSpec configSpec;
-    private final ForgeConfigSpec.IntValue chatMaxWidth, chatMaxHeight, chatMaxPixels, paintingMaxPixels, itemFrameMaxPixels;
+    private final ForgeConfigSpec.IntValue chatMaxWidth, chatMaxHeight, chatMaxPixels, paintingMaxPixels, itemFrameMaxPixels, capeMaxPixels;
 
     private DragClientConfig() {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
@@ -26,6 +26,9 @@ public class DragClientConfig {
         builder.pop();
         builder.push("ItemFrame");
         this.itemFrameMaxPixels = builder.defineInRange("MaxPixels", 8192, 0, Integer.MAX_VALUE);
+        builder.pop();
+        builder.push("Cape");
+        this.capeMaxPixels = builder.defineInRange("MaxPixels", 8192, 0, Integer.MAX_VALUE);
         builder.pop();
         builder.pop();
         this.configSpec = builder.build();
@@ -65,6 +68,13 @@ public class DragClientConfig {
         return clientLimit;
     }
 
+    public int getCapeMaxPixels() {
+        int clientLimit = this.capeMaxPixels.get();
+        int commonLimit = DragCommonConfig.INSTANCE.getMaxPixels();
+        if (clientLimit > commonLimit) clientLimit = commonLimit;
+        return clientLimit;
+    }
+
     public void setChatMaxWidth(int chatMaxWidth) {
         this.chatMaxWidth.set(chatMaxWidth);
     }
@@ -83,5 +93,9 @@ public class DragClientConfig {
 
     public void setItemFrameMaxPixels(int itemFrameMaxPixels) {
         this.itemFrameMaxPixels.set(itemFrameMaxPixels);
+    }
+
+    public void setCapeMaxPixels(int capeMaxPixels) {
+        this.capeMaxPixels.set(capeMaxPixels);
     }
 }

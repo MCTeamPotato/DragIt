@@ -1,10 +1,8 @@
 package me.kall.dragit.callback;
 
 import me.kall.dragit.DragIt;
-import me.kall.dragit.callback.invoker.ChatDropInvoker;
-import me.kall.dragit.callback.invoker.ItemFrameDropInvoker;
-import me.kall.dragit.callback.invoker.PaintingDropInvoker;
-import me.kall.dragit.callback.invoker.SkinDropInvoker;
+import me.kall.dragit.callback.invoker.*;
+import me.kall.dragit.integration.NarutoLoadingIntegration;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -19,11 +17,20 @@ public class DragCallback extends GLFWDropCallback {
 
     private static @Nullable GLFWDropCallback lastCallback;
 
-    private final Invoker[] invokers = new Invoker[]{new SkinDropInvoker(), new PaintingDropInvoker(), new ItemFrameDropInvoker(), new ChatDropInvoker()};
+    private final Invoker[] invokers = new Invoker[]{
+            NarutoLoadingIntegration.isIntegratable() ? new NoWorldDropInvoker() : null,
+            new CapeDropInvoker(),
+            new SkinDropInvoker(),
+            new PaintingDropInvoker(),
+            NarutoLoadingIntegration.isIntegratable() ? new VideoDropInvoker() : null,
+            new ItemFrameDropInvoker(),
+            new ChatDropInvoker()
+    };
 
     @Override
     public void invoke(long window, int count, long names) {
         for (Invoker invoker : this.invokers) {
+            if (invoker == null) continue;
             if (invoker.invoke(window, count, names)) break;
         }
 

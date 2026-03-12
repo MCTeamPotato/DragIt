@@ -12,9 +12,14 @@
   },
   "client": [
     "AbstractClientPlayerMixin",
+    "CapeLayerMixin",
     "ChatComponentMixin",
     "ItemFrameRendererMixin",
     "PaintingRendererMixin",
+    "PlayerInfoMixin",
     "PlayerRendererMixin"
+  ],
+  "mixins": [
+    "ServerScreenCheckerInvoker"
   ]
 }

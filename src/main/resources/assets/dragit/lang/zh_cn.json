@@ -12,6 +12,9 @@
   "config.dragit.item_frame_pixels.name": "物品展示框图片像素限制",
   "config.dragit.item_frame_pixels.tooltip": "物品展示框图片的最大可渲染像素数量。如果调低了这个值，图片会被压缩并失真。性能影响主要在于网络同步方面而非客户端渲染。",
 
+  "config.dragit.cape_pixels.name": "披风图片像素限制",
+  "config.dragit.cape_pixels.tooltip": "披风图片的最大可渲染像素数量。如果调低了这个值，图片会被压缩并失真。性能影响主要在于网络同步方面而非客户端渲染。",
+
   "config.dragit.page.chat": "图片拖拽配置",
 
   "note.dragit.skin": "皮肤文件过大。支持的最大尺寸：128 * 128。",
