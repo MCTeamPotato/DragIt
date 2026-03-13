@@ -12,6 +12,11 @@ public class SavedTextureData {
         this.textureBytes = textureBytes;
     }
 
-    public ResourceLocation textureLocation() { return this.textureLocation; }
-    public byte[] textureBytes() { return this.textureBytes; }
+    public ResourceLocation textureLocation() {
+        return this.textureLocation;
+    }
+
+    public byte[] textureBytes() {
+        return this.textureBytes;
+    }
 }

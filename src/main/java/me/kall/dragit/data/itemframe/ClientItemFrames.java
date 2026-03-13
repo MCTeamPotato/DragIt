@@ -98,7 +98,7 @@ public class ClientItemFrames {
         if (frameEntry == null) return;
 
         ResourceLocation textureToRemove = frameEntry.textureLocation();
-        frameMap.values().removeIf(e -> e.textureLocation().equals(textureToRemove));
+        frameMap.values().removeIf(entry -> entry.textureLocation().equals(textureToRemove));
 
         Minecraft.getInstance().getTextureManager().release(textureToRemove);
         frameEntry.dynamicTexture().close();
@@ -124,11 +124,28 @@ public class ClientItemFrames {
             this.totalRows = totalRows;
         }
 
-        public ResourceLocation textureLocation() { return this.textureLocation; }
-        public DynamicTexture dynamicTexture() { return this.dynamicTexture; }
-        public int column() { return this.column; }
-        public int row() { return this.row; }
-        public int totalColumns() { return this.totalColumns; }
-        public int totalRows() { return this.totalRows; }
+        public ResourceLocation textureLocation() {
+            return this.textureLocation;
+        }
+
+        public DynamicTexture dynamicTexture() {
+            return this.dynamicTexture;
+        }
+
+        public int column() {
+            return this.column;
+        }
+
+        public int row() {
+            return this.row;
+        }
+
+        public int totalColumns() {
+            return this.totalColumns;
+        }
+
+        public int totalRows() {
+            return this.totalRows;
+        }
     }
 }

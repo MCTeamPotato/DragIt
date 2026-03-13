@@ -13,6 +13,11 @@ public class ClientTextureData {
         this.dynamicTexture = dynamicTexture;
     }
 
-    public ResourceLocation textureLocation() { return this.textureLocation; }
-    public DynamicTexture dynamicTexture() { return this.dynamicTexture; }
+    public ResourceLocation textureLocation() {
+        return this.textureLocation;
+    }
+
+    public DynamicTexture dynamicTexture() {
+        return this.dynamicTexture;
+    }
 }
