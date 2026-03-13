@@ -3,14 +3,13 @@ package me.kall.dragit.network.cache;
 import me.kall.dragit.DragIt;
 import me.kall.dragit.cache.ImageCache;
 import me.kall.dragit.cache.PendingRegistrations;
+import me.kall.dragit.network.base.Handler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Supplier;
-
-public class CacheResponsePacket {
+public class CacheResponsePacket extends Handler {
     public final ResourceLocation textureLocation;
     public final byte[] textureBytes;
 
@@ -29,16 +28,13 @@ public class CacheResponsePacket {
         buf.writeByteArray(this.textureBytes);
     }
 
-    public void handle(@NotNull Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            try {
-                ImageCache.store(this.textureLocation, this.textureBytes);
-                PendingRegistrations.resolve(this.textureLocation, this.textureBytes);
-                DragIt.LOGGER.info("CacheResponsePacket: resolved [{}]", this.textureLocation);
-            } catch (Throwable t) {
-                DragIt.LOGGER.error("Error handling CacheResponsePacket", t);
-            }
-        });
-        ctx.get().setPacketHandled(true);
+    public void handle(ServerPlayer player) {
+        try {
+            ImageCache.store(this.textureLocation, this.textureBytes);
+            PendingRegistrations.resolve(this.textureLocation, this.textureBytes);
+            DragIt.LOGGER.info("CacheResponsePacket: resolved [{}]", this.textureLocation);
+        } catch (Throwable t) {
+            DragIt.LOGGER.error("Error handling CacheResponsePacket", t);
+        }
     }
 }

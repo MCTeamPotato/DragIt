@@ -2,13 +2,10 @@ package me.kall.dragit.network.base;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Supplier;
-
-public abstract class ItemFramePacket {
+public abstract class ItemFramePacket extends Handler {
     public final ResourceLocation dimension;
     public final ResourceLocation textureLocation;
     public final byte @Nullable [] textureBytes;
@@ -60,6 +57,4 @@ public abstract class ItemFramePacket {
             buffer.writeInt(this.rows[index]);
         }
     }
-
-    public abstract void handle(@NotNull Supplier<NetworkEvent.Context> context);
 }

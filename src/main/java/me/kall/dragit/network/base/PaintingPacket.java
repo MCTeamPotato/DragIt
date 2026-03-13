@@ -2,13 +2,10 @@ package me.kall.dragit.network.base;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Supplier;
-
-public abstract class PaintingPacket {
+public abstract class PaintingPacket extends Handler {
     public final ResourceLocation dimension;
     public final long pos;
     public final ResourceLocation textureLocation;
@@ -35,6 +32,4 @@ public abstract class PaintingPacket {
         buf.writeBoolean(this.textureBytes != null);
         if (this.textureBytes != null) buf.writeByteArray(this.textureBytes);
     }
-
-    public abstract void handle(@NotNull Supplier<NetworkEvent.Context> ctx);
 }

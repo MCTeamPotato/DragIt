@@ -9,13 +9,11 @@ import me.kall.dragit.network.base.SkinPacket;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.function.Supplier;
 
 public class SkinSavePacket extends SkinPacket {
     public SkinSavePacket(UUID uuid, ResourceLocation textureLocation, byte[] textureBytes) {
@@ -27,30 +25,26 @@ public class SkinSavePacket extends SkinPacket {
     }
 
     @Override
-    public void handle(@NotNull Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            try {
-                ServerPlayer player = ctx.get().getSender();
-                if (player == null || this.textureBytes == null) return;
+    public void handle(ServerPlayer player) {
+        try {
+            if (player == null || this.textureBytes == null) return;
 
-                ImageCache.store(this.textureLocation, this.textureBytes);
+            ImageCache.store(this.textureLocation, this.textureBytes);
 
-                SavedSkins savedSkins = SavedSkins.get(player.serverLevel());
-                savedSkins.setDirty();
-                savedSkins.skins.put(this.uuid, new SavedTextureData(this.textureLocation, this.textureBytes));
+            SavedSkins savedSkins = SavedSkins.get(player.serverLevel());
+            savedSkins.setDirty();
+            savedSkins.skins.put(this.uuid, new SavedTextureData(this.textureLocation, this.textureBytes));
 
-                List<ServerPlayer> syncTargets = player.server.getPlayerList().getPlayers();
-                if (syncTargets.size() == 1) return;
-                UUID senderUUID = player.getUUID();
-                for (ServerPlayer syncTarget : syncTargets) {
-                    if (syncTarget.getUUID().equals(senderUUID)) continue;
-                    DragNetworker.INSTANCE.send(PacketDistributor.PLAYER.with(() -> syncTarget), new SkinLoadPacket(this.uuid, this.textureLocation, this.textureBytes));
-                }
-                DragIt.LOGGER.info("SkinSavePacket handled [{}] uuid={}", this.textureLocation, this.uuid);
-            } catch (Throwable t) {
-                DragIt.LOGGER.error("Error handling SkinSavePacket", t);
+            List<ServerPlayer> syncTargets = player.server.getPlayerList().getPlayers();
+            if (syncTargets.size() == 1) return;
+            UUID senderUUID = player.getUUID();
+            for (ServerPlayer syncTarget : syncTargets) {
+                if (syncTarget.getUUID().equals(senderUUID)) continue;
+                DragNetworker.INSTANCE.send(PacketDistributor.PLAYER.with(() -> syncTarget), new SkinLoadPacket(this.uuid, this.textureLocation, this.textureBytes));
             }
-        });
-        ctx.get().setPacketHandled(true);
+            DragIt.LOGGER.info("SkinSavePacket handled [{}] uuid={}", this.textureLocation, this.uuid);
+        } catch (Throwable t) {
+            DragIt.LOGGER.error("Error handling SkinSavePacket", t);
+        }
     }
 }

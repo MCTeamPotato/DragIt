@@ -3,13 +3,10 @@ package me.kall.dragit.network.base;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.network.NetworkEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Supplier;
-
-public abstract class ChatPacket {
+public abstract class ChatPacket extends Handler {
     public static final Component EMPTY = Component.empty();
 
     public final ResourceLocation textureLocation;
@@ -34,6 +31,4 @@ public abstract class ChatPacket {
         if (this.textureBytes != null) buf.writeByteArray(this.textureBytes);
         buf.writeUtf(this.sender);
     }
-
-    public abstract void handle(@NotNull Supplier<NetworkEvent.Context> ctx);
 }
