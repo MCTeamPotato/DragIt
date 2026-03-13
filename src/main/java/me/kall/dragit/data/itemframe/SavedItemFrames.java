@@ -22,7 +22,6 @@ import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -135,7 +134,7 @@ public class SavedItemFrames extends SavedData {
         if (!(player.level() instanceof ServerLevel level)) return;
         for (Group group : get(level).groups) {
             ResolvedFrames frames = ResolvedFrames.resolve(group.frames());
-            DragNetworker.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new ItemFrameLoadPacket(group.dimension(), group.textureLocation(), null, frames.positions(), frames.columns(), frames.rows(), group.totalColumns(), group.totalRows()));
+            DragNetworker.send(player, new ItemFrameLoadPacket(group.dimension(), group.textureLocation(), null, frames.positions(), frames.columns(), frames.rows(), group.totalColumns(), group.totalRows()));
             DragIt.LOGGER.info("Delivering item-frame group [{}] to {} (null bytes).", group.textureLocation(), player.getName().getString());
         }
     }

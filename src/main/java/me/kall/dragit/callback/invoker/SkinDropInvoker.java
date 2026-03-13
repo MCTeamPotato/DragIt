@@ -36,7 +36,7 @@ public class SkinDropInvoker implements DragCallback.Invoker {
                 return false;
             }
             ResourceLocation textureLocation = ImageCache.getOrCreate(textureBytes);
-            if (DragItClient.canSync()) DragNetworker.INSTANCE.sendToServer(new SkinSavePacket(uuid, textureLocation, textureBytes));
+            if (DragItClient.canSync()) DragNetworker.sendToServer(new SkinSavePacket(uuid, textureLocation, textureBytes));
             ClientSkins.registerSkin(uuid, textureLocation, textureBytes);
             return true;
         } catch (IOException exception) {

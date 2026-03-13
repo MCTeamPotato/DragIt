@@ -16,7 +16,6 @@ import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -67,7 +66,7 @@ public class SavedCapes extends SavedData {
         for (Map.Entry<UUID, SavedTextureData> entry : get(level).capes.entrySet()) {
             UUID uuid = entry.getKey();
             ResourceLocation textureLocation = entry.getValue().textureLocation();
-            DragNetworker.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new CapeLoadPacket(uuid, textureLocation, null));
+            DragNetworker.send(player, new CapeLoadPacket(uuid, textureLocation, null));
             DragIt.LOGGER.info("Delivering cape [{}] to {} (null bytes, client will use cache).", textureLocation, player.getName().getString());
         }
     }

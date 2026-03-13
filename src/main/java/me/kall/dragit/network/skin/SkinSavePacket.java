@@ -9,7 +9,6 @@ import me.kall.dragit.network.base.SkinPacket;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -40,7 +39,7 @@ public class SkinSavePacket extends SkinPacket {
             UUID senderUUID = player.getUUID();
             for (ServerPlayer syncTarget : syncTargets) {
                 if (syncTarget.getUUID().equals(senderUUID)) continue;
-                DragNetworker.INSTANCE.send(PacketDistributor.PLAYER.with(() -> syncTarget), new SkinLoadPacket(this.uuid, this.textureLocation, this.textureBytes));
+                DragNetworker.send(syncTarget, new SkinLoadPacket(this.uuid, this.textureLocation, this.textureBytes));
             }
             DragIt.LOGGER.info("SkinSavePacket handled [{}] uuid={}", this.textureLocation, this.uuid);
         } catch (Throwable t) {

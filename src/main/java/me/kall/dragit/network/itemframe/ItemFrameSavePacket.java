@@ -11,7 +11,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -39,9 +38,9 @@ public class ItemFrameSavePacket extends ItemFramePacket {
             SavedItemFrames.get(sender.serverLevel()).addGroup(new SavedItemFrames.Group(this.dimension, this.textureLocation, this.textureBytes, this.totalColumns, this.totalRows, frameRecords));
 
             UUID senderUUID = sender.getUUID();
-            for (ServerPlayer target : sender.server.getPlayerList().getPlayers()) {
-                if (!target.getUUID().equals(senderUUID)) {
-                    DragNetworker.INSTANCE.send(PacketDistributor.PLAYER.with(() -> target), new ItemFrameLoadPacket(this.dimension, this.textureLocation, this.textureBytes, this.positions, this.columns, this.rows, this.totalColumns, this.totalRows));
+            for (ServerPlayer syncTarget : sender.server.getPlayerList().getPlayers()) {
+                if (!syncTarget.getUUID().equals(senderUUID)) {
+                    DragNetworker.send(syncTarget, new ItemFrameLoadPacket(this.dimension, this.textureLocation, this.textureBytes, this.positions, this.columns, this.rows, this.totalColumns, this.totalRows));
                 }
             }
             DragIt.LOGGER.info("ItemFrameSavePacket handled [{}] dim={} positions={}", this.textureLocation, this.dimension, Arrays.stream(this.positions).mapToObj(pos -> "[" + BlockPos.getX(pos) + "," + BlockPos.getY(pos) + "," + BlockPos.getZ(pos) + "]").toArray());

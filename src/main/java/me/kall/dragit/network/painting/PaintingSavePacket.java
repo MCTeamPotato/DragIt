@@ -11,7 +11,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -40,7 +39,7 @@ public class PaintingSavePacket extends PaintingPacket {
             UUID uuid = player.getUUID();
             for (ServerPlayer syncTarget : syncTargets) {
                 if (syncTarget.getUUID().equals(uuid)) continue;
-                DragNetworker.INSTANCE.send(PacketDistributor.PLAYER.with(() -> syncTarget), new PaintingLoadPacket(this.dimension, this.pos, this.textureLocation, this.textureBytes));
+                DragNetworker.send(syncTarget, new PaintingLoadPacket(this.dimension, this.pos, this.textureLocation, this.textureBytes));
             }
             DragIt.LOGGER.info("PaintingSavePacket handled [{}] dim={} pos=[{}]", this.textureLocation, this.dimension, BlockPos.getX(this.pos) + "," + BlockPos.getY(this.pos) + "," + BlockPos.getZ(this.pos));
         } catch (Throwable t) {

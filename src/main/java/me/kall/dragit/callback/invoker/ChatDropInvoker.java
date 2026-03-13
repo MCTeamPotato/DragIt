@@ -32,7 +32,7 @@ public class ChatDropInvoker implements DragCallback.Invoker {
                 byte[] textureBytes = ImageCompressor.compress(filePath, DragClientConfig.INSTANCE.getChatMaxPixels());
                 ResourceLocation textureLocation = ImageCache.getOrCreate(textureBytes);
                 ChatImages.registerChatImage(textureLocation, textureBytes, name);
-                if (DragItClient.canSync()) DragNetworker.INSTANCE.sendToServer(new ChatSyncPacket(textureLocation, textureBytes, name));
+                if (DragItClient.canSync()) DragNetworker.sendToServer(new ChatSyncPacket(textureLocation, textureBytes, name));
                 handled = true;
             } catch (IOException exception) {
                 DragIt.LOGGER.error("Error reading chat image file", exception);

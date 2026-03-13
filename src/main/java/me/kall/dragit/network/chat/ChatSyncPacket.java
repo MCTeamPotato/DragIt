@@ -7,7 +7,6 @@ import me.kall.dragit.network.base.ChatPacket;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -33,7 +32,7 @@ public class ChatSyncPacket extends ChatPacket {
             UUID uuid = player.getUUID();
             for (ServerPlayer syncTarget : syncTargets) {
                 if (syncTarget.getUUID().equals(uuid)) continue;
-                DragNetworker.INSTANCE.send(PacketDistributor.PLAYER.with(() -> syncTarget), new ChatLoadPacket(this.textureLocation, this.textureBytes, this.sender));
+                DragNetworker.send(syncTarget, new ChatLoadPacket(this.textureLocation, this.textureBytes, this.sender));
             }
             DragIt.LOGGER.info("ChatSyncPacket handled [{}] sender={}", this.textureLocation, this.sender);
         } catch (Throwable t) {

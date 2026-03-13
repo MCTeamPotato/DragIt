@@ -65,7 +65,7 @@ public class ItemFrameDropInvoker implements DragCallback.Invoker {
             ResourceLocation dimension = level.dimension().location();
             ClientItemFrames.registerGroup(dimension, positions, columns, rows, totalColumns, totalRows, textureLocation, textureBytes);
             if (DragItClient.canSync()) {
-                DragNetworker.INSTANCE.sendToServer(new ItemFrameSavePacket(dimension, textureLocation, textureBytes, positions, columns, rows, totalColumns, totalRows));
+                DragNetworker.sendToServer(new ItemFrameSavePacket(dimension, textureLocation, textureBytes, positions, columns, rows, totalColumns, totalRows));
             }
 
             DragIt.LOGGER.info("Item-frame image applied: {} frames, grid {}x{}", frameGrid.size(), totalColumns, totalRows);

@@ -32,7 +32,7 @@ public class CapeDropInvoker implements DragCallback.Invoker {
         try {
             byte[] textureBytes = ImageCompressor.compress(filePath, DragClientConfig.INSTANCE.getCapeMaxPixels());
             ResourceLocation textureLocation = ImageCache.getOrCreate(textureBytes);
-            if (DragItClient.canSync()) DragNetworker.INSTANCE.sendToServer(new CapeSavePacket(uuid, textureLocation, textureBytes));
+            if (DragItClient.canSync()) DragNetworker.sendToServer(new CapeSavePacket(uuid, textureLocation, textureBytes));
             ClientCapes.registerCape(uuid, textureLocation, textureBytes);
             return true;
         } catch (IOException exception) {

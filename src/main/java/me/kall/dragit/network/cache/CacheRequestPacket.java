@@ -7,7 +7,6 @@ import me.kall.dragit.network.base.Handler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 public class CacheRequestPacket extends Handler {
@@ -33,7 +32,7 @@ public class CacheRequestPacket extends Handler {
                 DragIt.LOGGER.warn("CacheRequestPacket: no cache entry for [{}], cannot respond.", this.textureLocation);
                 return;
             }
-            DragNetworker.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new CacheResponsePacket(this.textureLocation, bytes));
+            DragNetworker.send(player, new CacheResponsePacket(this.textureLocation, bytes));
             DragIt.LOGGER.info("CacheRequestPacket: sent {} bytes for [{}] to {}", bytes.length, this.textureLocation, player.getName().getString());
         } catch (Throwable t) {
             DragIt.LOGGER.error("Error handling CacheRequestPacket", t);

@@ -63,7 +63,7 @@ public class ImageCache {
         byte[] cached = load(location);
         if (cached != null) return cached;
         PendingRegistrations.add(location, onResolved);
-        DragNetworker.INSTANCE.sendToServer(new CacheRequestPacket(location));
+        DragNetworker.sendToServer(new CacheRequestPacket(location));
         DragIt.LOGGER.info("Cache miss for [{}], requesting from server.", location);
         return null;
     }

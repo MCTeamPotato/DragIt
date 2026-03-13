@@ -6,8 +6,8 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import me.kall.dragit.DragIt;
 import me.kall.dragit.data.SavedTextureData;
-import me.kall.dragit.network.painting.PaintingLoadPacket;
 import me.kall.dragit.network.DragNetworker;
+import me.kall.dragit.network.painting.PaintingLoadPacket;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -21,7 +21,6 @@ import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -99,7 +98,7 @@ public class SavedPaintings extends SavedData {
             ResourceLocation dimension = dimEntry.getKey();
             for (Long2ObjectMap.Entry<SavedTextureData> imgEntry : dimEntry.getValue().long2ObjectEntrySet()) {
                 ResourceLocation textureLocation = imgEntry.getValue().textureLocation();
-                DragNetworker.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new PaintingLoadPacket(dimension, imgEntry.getLongKey(), textureLocation, null));
+                DragNetworker.send(player, new PaintingLoadPacket(dimension, imgEntry.getLongKey(), textureLocation, null));
                 DragIt.LOGGER.info("Delivering painting [{}] to {} (null bytes).", textureLocation, player.getName().getString());
             }
         }

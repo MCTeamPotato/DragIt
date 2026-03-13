@@ -31,7 +31,7 @@ public class VideoDropInvoker implements DragCallback.Invoker {
             if (!(((EntityHitResult)target).getEntity() instanceof ItemFrame leftBottom)) return false;
 
             ItemFrame rightBottom = ItemFrameLocator.findOtherCorner(leftBottom, player, level);
-            DragNetworker.INSTANCE.sendToServer(new VideoScreenPacket(leftBottom.getId(), rightBottom.getId(), filePath));
+            DragNetworker.sendToServer(new VideoScreenPacket(leftBottom.getId(), rightBottom.getId(), filePath));
             return true;
         } catch (IOException exception) {
             DragIt.LOGGER.error("Error copying file to config directory.", exception);

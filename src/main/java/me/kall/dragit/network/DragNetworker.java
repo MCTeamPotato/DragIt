@@ -15,7 +15,9 @@ import me.kall.dragit.network.skin.SkinLoadPacket;
 import me.kall.dragit.network.skin.SkinSavePacket;
 import me.kall.dragit.network.video.VideoScreenPacket;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 
 public class DragNetworker {
@@ -37,5 +39,17 @@ public class DragNetworker {
         INSTANCE.registerMessage(id++, CacheRequestPacket.class, CacheRequestPacket::save, CacheRequestPacket::new, CacheRequestPacket::handle);
         INSTANCE.registerMessage(id++, CacheResponsePacket.class, CacheResponsePacket::save, CacheResponsePacket::new, CacheResponsePacket::handle);
         INSTANCE.registerMessage(id++, VideoScreenPacket.class, VideoScreenPacket::save, VideoScreenPacket::new, VideoScreenPacket::handle);
+    }
+
+    public static <MSG> void sendToServer(MSG msg) {
+        INSTANCE.sendToServer(msg);
+    }
+
+    public static <MSG> void send(ServerPlayer player, MSG msg) {
+        INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), msg);
+    }
+
+    public static <MSG> void send(MSG msg)  {
+        INSTANCE.send(PacketDistributor.ALL.noArg(), msg);
     }
 }

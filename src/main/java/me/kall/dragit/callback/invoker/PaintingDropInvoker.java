@@ -37,7 +37,7 @@ public class PaintingDropInvoker implements DragCallback.Invoker {
             ResourceLocation textureLocation = ImageCache.getOrCreate(textureBytes);
 
             ClientPaintings.registerPainting(dimension, pos, textureBytes, textureLocation);
-            if (DragItClient.canSync()) DragNetworker.INSTANCE.sendToServer(new PaintingSavePacket(dimension, pos, textureLocation, textureBytes));
+            if (DragItClient.canSync()) DragNetworker.sendToServer(new PaintingSavePacket(dimension, pos, textureLocation, textureBytes));
             return true;
         } catch (IOException exception) {
             DragIt.LOGGER.error("Error registering painting", exception);
