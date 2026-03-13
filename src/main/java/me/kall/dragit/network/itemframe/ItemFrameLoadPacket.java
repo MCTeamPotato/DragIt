@@ -3,8 +3,10 @@ package me.kall.dragit.network.itemframe;
 import me.kall.dragit.DragIt;
 import me.kall.dragit.cache.ImageCache;
 import me.kall.dragit.data.itemframe.ClientItemFrames;
+import me.kall.dragit.network.DragNetworker;
 import me.kall.dragit.network.base.ItemFramePacket;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
@@ -28,5 +30,10 @@ public class ItemFrameLoadPacket extends ItemFramePacket {
         } catch (Throwable t) {
             DragIt.LOGGER.error("Error handling ItemFrameLoadPacket", t);
         }
+    }
+
+    @Override
+    public @NotNull Type<? extends CustomPacketPayload> type() {
+        return DragNetworker.ITEM_FRAME_LOAD_TYPE;
     }
 }

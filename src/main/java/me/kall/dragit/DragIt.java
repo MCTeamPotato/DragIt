@@ -3,23 +3,31 @@ package me.kall.dragit;
 import me.kall.dragit.config.DragClientConfig;
 import me.kall.dragit.config.DragCommonConfig;
 import me.kall.dragit.network.DragNetworker;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 @Mod(DragIt.MOD_ID)
 public final class DragIt {
     public static final String MOD_ID = "dragit";
     public static final Logger LOGGER = LogManager.getLogger(DragIt.class);
 
-    public DragIt(IEventBus modBus, Dist dist, ModContainer container) {
-        DragNetworker.register();
+    public DragIt(@NotNull IEventBus modBus, @NotNull Dist dist, ModContainer container) {
+        modBus.addListener(DragNetworker::register);
         DragCommonConfig.INSTANCE.register(container, modBus);
         if (dist.isClient()) {
             DragClientConfig.INSTANCE.register(container);
         }
+    }
+
+    @Contract("_ -> new")
+    public static @NotNull ResourceLocation loc(String path) {
+        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
     }
 }

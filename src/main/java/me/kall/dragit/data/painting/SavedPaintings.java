@@ -8,6 +8,7 @@ import me.kall.dragit.DragIt;
 import me.kall.dragit.data.SavedTextureData;
 import me.kall.dragit.network.DragNetworker;
 import me.kall.dragit.network.painting.PaintingLoadPacket;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -17,15 +18,15 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.decoration.Painting;
 import net.minecraft.world.level.saveddata.SavedData;
-import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-@Mod.EventBusSubscriber(modid = DragIt.MOD_ID)
+@EventBusSubscriber(modid = DragIt.MOD_ID)
 public class SavedPaintings extends SavedData {
     private static final String DATA_NAME = "DragItSavedPaintings";
 
@@ -62,7 +63,7 @@ public class SavedPaintings extends SavedData {
     }
 
     @Override
-    public @NotNull CompoundTag save(@NotNull CompoundTag tag) {
+    public @NotNull CompoundTag save(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
         CompoundTag imagesTag = new CompoundTag();
 
         for (Object2ObjectMap.Entry<ResourceLocation, Long2ObjectMap<SavedTextureData>> entry : this.paintings.object2ObjectEntrySet()) {
@@ -87,7 +88,7 @@ public class SavedPaintings extends SavedData {
     }
 
     public static @NotNull SavedPaintings get(@NotNull ServerLevel level) {
-        return level.getDataStorage().computeIfAbsent(SavedPaintings::load, SavedPaintings::new, DATA_NAME);
+        return level.getDataStorage().computeIfAbsent(new Factory<>(SavedPaintings::new, (compoundTag, provider) -> load(compoundTag)), DATA_NAME);
     }
 
     @SubscribeEvent

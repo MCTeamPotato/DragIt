@@ -13,18 +13,18 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.decoration.ItemFrame;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
+import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.Map;
 
-@Mod.EventBusSubscriber(modid = DragIt.MOD_ID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = DragIt.MOD_ID, value = Dist.CLIENT)
 public class ClientItemFrames {
     public static final Object2ObjectMap<ResourceLocation, Long2ObjectMap<FrameEntry>> ITEM_FRAMES = new Object2ObjectOpenHashMap<>();
 

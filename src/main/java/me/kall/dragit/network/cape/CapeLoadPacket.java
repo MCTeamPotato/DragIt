@@ -3,8 +3,10 @@ package me.kall.dragit.network.cape;
 import me.kall.dragit.DragIt;
 import me.kall.dragit.cache.ImageCache;
 import me.kall.dragit.data.cape.ClientCapes;
+import me.kall.dragit.network.DragNetworker;
 import me.kall.dragit.network.base.SkinPacket;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
@@ -30,5 +32,10 @@ public class CapeLoadPacket extends SkinPacket {
         } catch (Throwable t) {
             DragIt.LOGGER.error("Error handling CapeLoadPacket", t);
         }
+    }
+
+    @Override
+    public @NotNull Type<? extends CustomPacketPayload> type() {
+        return DragNetworker.CAPE_LOAD_TYPE;
     }
 }

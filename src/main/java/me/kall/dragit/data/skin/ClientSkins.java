@@ -9,15 +9,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 
 import java.io.IOException;
 import java.util.UUID;
 
-@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = DragIt.MOD_ID)
+@EventBusSubscriber(value = Dist.CLIENT, modid = DragIt.MOD_ID)
 public class ClientSkins {
     public static final Object2ObjectMap<UUID, ClientTextureData> SKINS = new Object2ObjectOpenHashMap<>();
 

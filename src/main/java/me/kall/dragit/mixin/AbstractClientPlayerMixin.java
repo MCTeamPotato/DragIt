@@ -4,7 +4,8 @@ import me.kall.dragit.data.ClientTextureData;
 import me.kall.dragit.data.cape.ClientCapes;
 import me.kall.dragit.data.skin.ClientSkins;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.resources.PlayerSkin;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -12,17 +13,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(AbstractClientPlayer.class)
 public abstract class AbstractClientPlayerMixin {
-    @Inject(method = "getSkinTextureLocation", at = @At("HEAD"), cancellable = true)
-    private void customSkin(CallbackInfoReturnable<ResourceLocation> cir) {
+    @SuppressWarnings("DataFlowIssue")
+    @Inject(method = "getSkin", at = @At("RETURN"), cancellable = true)
+    private void customSkin(@NotNull CallbackInfoReturnable<PlayerSkin> cir) {
         AbstractClientPlayer player = (AbstractClientPlayer) (Object) this;
-        ClientTextureData clientTextureData = ClientSkins.SKINS.get(player.getUUID());
-        if (clientTextureData != null) cir.setReturnValue(clientTextureData.textureLocation());
+        ClientTextureData capeTexture = ClientCapes.CAPES.get(player.getUUID());
+        ClientTextureData skinTexture = ClientSkins.SKINS.get(player.getUUID());
+
+        PlayerSkin currentSkin = cir.getReturnValue();
+        if (capeTexture != null) ((PlayerSkinAccessor)(Object)currentSkin).setCapeTexture(capeTexture.textureLocation());
+        if (skinTexture != null) ((PlayerSkinAccessor)(Object)currentSkin).setTexture(skinTexture.textureLocation());
+        cir.setReturnValue(currentSkin);
     }
 
-    @Inject(method = "getCloakTextureLocation", at = @At("HEAD"), cancellable = true)
-    private void customCape(CallbackInfoReturnable<ResourceLocation> cir) {
-        AbstractClientPlayer player = (AbstractClientPlayer) (Object) this;
-        ClientTextureData clientTextureData = ClientCapes.CAPES.get(player.getUUID());
-        if (clientTextureData != null) cir.setReturnValue(clientTextureData.textureLocation());
-    }
 }

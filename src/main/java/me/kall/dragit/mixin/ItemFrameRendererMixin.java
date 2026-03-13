@@ -10,8 +10,6 @@ import net.minecraft.client.renderer.entity.ItemFrameRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Matrix3f;
-import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -32,17 +30,16 @@ public abstract class ItemFrameRendererMixin<T extends ItemFrame> {
 
         int lightColor = LevelRenderer.getLightColor(entity.level(), entity.blockPosition());
         VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderType.entitySolid(frameEntry.textureLocation()));
-        Matrix4f poseMatrix = poseStack.last().pose();
-        Matrix3f normalMatrix = poseStack.last().normal();
+        PoseStack.Pose pose = poseStack.last();
 
-        this.dragIt$vertex(vertexConsumer, poseMatrix, normalMatrix, 0.5F, -0.5F, 0.4F, uMin, vMax, lightColor);
-        this.dragIt$vertex(vertexConsumer, poseMatrix, normalMatrix, -0.5F, -0.5F, 0.4F, uMax, vMax, lightColor);
-        this.dragIt$vertex(vertexConsumer, poseMatrix, normalMatrix, -0.5F,  0.5F, 0.4F, uMax, vMin, lightColor);
-        this.dragIt$vertex(vertexConsumer, poseMatrix, normalMatrix, 0.5F,  0.5F, 0.4F, uMin, vMin, lightColor);
+        this.dragIt$vertex(vertexConsumer, pose,  0.5F, -0.5F, 0.4F, uMin, vMax, lightColor);
+        this.dragIt$vertex(vertexConsumer, pose, -0.5F, -0.5F, 0.4F, uMax, vMax, lightColor);
+        this.dragIt$vertex(vertexConsumer, pose, -0.5F,  0.5F, 0.4F, uMax, vMin, lightColor);
+        this.dragIt$vertex(vertexConsumer, pose,  0.5F,  0.5F, 0.4F, uMin, vMin, lightColor);
     }
 
     @Unique
-    private void dragIt$vertex(@NotNull VertexConsumer consumer, Matrix4f poseMatrix, Matrix3f normalMatrix, float x, float y, float z, float u, float v, int lightColor) {
-        consumer.vertex(poseMatrix, x, y, z).color(255, 255, 255, 255).uv(u, v).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(lightColor).normal(normalMatrix, 0.0F, 0.0F, 1.0F).endVertex();
+    private void dragIt$vertex(@NotNull VertexConsumer consumer, PoseStack.Pose pose, float x, float y, float z, float u, float v, int lightColor) {
+        consumer.addVertex(pose, x, y, z).setColor(255, 255, 255, 255).setUv(u, v).setOverlay(OverlayTexture.NO_OVERLAY).setLight(lightColor).setNormal(pose, 0.0F, 0.0F, 1.0F);
     }
 }

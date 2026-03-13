@@ -14,16 +14,16 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.decoration.Painting;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
+import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 
-@Mod.EventBusSubscriber(modid = DragIt.MOD_ID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = DragIt.MOD_ID, value = Dist.CLIENT)
 public class ClientPaintings {
     public static final Object2ObjectMap<ResourceLocation, Long2ObjectMap<ClientTextureData>> PAINTINGS = new Object2ObjectOpenHashMap<>();
 

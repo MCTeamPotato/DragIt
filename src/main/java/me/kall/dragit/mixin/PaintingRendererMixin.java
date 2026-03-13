@@ -22,8 +22,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.decoration.Painting;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Matrix3f;
-import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -50,16 +48,14 @@ public abstract class PaintingRendererMixin extends EntityRenderer<Painting> {
     }
 
     @WrapOperation(method = "render(Lnet/minecraft/world/entity/decoration/Painting;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/PaintingRenderer;renderPainting(Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;Lnet/minecraft/world/entity/decoration/Painting;IILnet/minecraft/client/renderer/texture/TextureAtlasSprite;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;)V"))
-    private void dropIt$renderDropped(PaintingRenderer paintingRenderer, PoseStack pose, VertexConsumer consumer, Painting entity, int width, int height, TextureAtlasSprite paintingSprite, TextureAtlasSprite backSprite, Operation<Void> original) {
+    private void dropIt$renderDropped(PaintingRenderer paintingRenderer, PoseStack pose, VertexConsumer consumer, @NotNull Painting entity, int width, int height, TextureAtlasSprite paintingSprite, TextureAtlasSprite backSprite, Operation<Void> original) {
         ClientTextureData clientTextureData = ClientPaintings.PAINTINGS.getOrDefault(entity.level().dimension().location(), Long2ObjectMaps.emptyMap()).get(entity.blockPosition().asLong());
         if (clientTextureData == null) {
             original.call(paintingRenderer, pose, consumer, entity, width, height, paintingSprite, backSprite);
         } else {
             PoseStack.Pose last = pose.last();
-            Matrix4f matrix4f = last.pose();
-            Matrix3f matrix3f = last.normal();
-            this.dropIt$renderBack(width, height, backSprite, entity, matrix4f, matrix3f, consumer);
-            this.dropIt$renderImage(width, height, clientTextureData, entity, matrix4f, matrix3f);
+            this.dropIt$renderBack(width, height, backSprite, entity, last, consumer);
+            this.dropIt$renderImage(width, height, clientTextureData, entity, last);
         }
     }
 
@@ -73,7 +69,7 @@ public abstract class PaintingRendererMixin extends EntityRenderer<Painting> {
     }
 
     @Unique
-    private void dropIt$renderImage(int width, int height, ClientTextureData clientTextureData, @NotNull Painting entity, Matrix4f pose, Matrix3f normal) {
+    private void dropIt$renderImage(int width, int height, ClientTextureData clientTextureData, @NotNull Painting entity, PoseStack.Pose pose) {
         if (clientTextureData == null) return;
         float minX = -width / 2f;
         float minY = -height / 2f;
@@ -90,21 +86,21 @@ public abstract class PaintingRendererMixin extends EntityRenderer<Painting> {
                 float y0 = minY + yTile * 16;
                 float y1 = y0 + 16;
 
-                float u0 = 1.0f - (float)xTile / tilesX;
-                float u1 = 1.0f - (float)(xTile + 1) / tilesX;
-                float v0 = 1.0f - (float)yTile / tilesY;
-                float v1 = 1.0f - (float)(yTile + 1) / tilesY;
+                float u0 = 1.0f - (float) xTile / tilesX;
+                float u1 = 1.0f - (float) (xTile + 1) / tilesX;
+                float v0 = 1.0f - (float) yTile / tilesY;
+                float v1 = 1.0f - (float) (yTile + 1) / tilesY;
 
-                this.vertex(pose, normal, imageConsumer, x1, y0, u1, v0, -0.5F, 0, 0, -1, light);
-                this.vertex(pose, normal, imageConsumer, x0, y0, u0, v0, -0.5F, 0, 0, -1, light);
-                this.vertex(pose, normal, imageConsumer, x0, y1, u0, v1, -0.5F, 0, 0, -1, light);
-                this.vertex(pose, normal, imageConsumer, x1, y1, u1, v1, -0.5F, 0, 0, -1, light);
+                this.vertex(pose, imageConsumer, x1, y0, u1, v0, -0.5F, 0, 0, -1, light);
+                this.vertex(pose, imageConsumer, x0, y0, u0, v0, -0.5F, 0, 0, -1, light);
+                this.vertex(pose, imageConsumer, x0, y1, u0, v1, -0.5F, 0, 0, -1, light);
+                this.vertex(pose, imageConsumer, x1, y1, u1, v1, -0.5F, 0, 0, -1, light);
             }
         }
     }
 
     @Unique
-    private void dropIt$renderBack(int width, int height, @NotNull TextureAtlasSprite backSprite, Painting painting, Matrix4f pose, Matrix3f normal, VertexConsumer backConsumer) {
+    private void dropIt$renderBack(int width, int height, @NotNull TextureAtlasSprite backSprite, Painting painting, PoseStack.Pose pose, VertexConsumer backConsumer) {
         float minX = -width / 2.0F;
         float minY = -height / 2.0F;
 
@@ -116,10 +112,10 @@ public abstract class PaintingRendererMixin extends EntityRenderer<Painting> {
         float topU0 = backSprite.getU0();
         float topU1 = backSprite.getU1();
         float topV0 = backSprite.getV0();
-        float topV1 = backSprite.getV(1.0);
+        float topV1 = backSprite.getV(1.0F);
 
         float sideU0 = backSprite.getU0();
-        float sideU1 = backSprite.getU(1.0);
+        float sideU1 = backSprite.getU(1.0F);
         float sideV0 = backSprite.getV0();
         float sideV1 = backSprite.getV1();
 
@@ -145,34 +141,35 @@ public abstract class PaintingRendererMixin extends EntityRenderer<Painting> {
 
                 int light = LevelRenderer.getLightColor(painting.level(), new BlockPos(blockX, blockY, blockZ));
 
-                this.vertex(pose, normal, backConsumer, x1, y1, backU1, backV0, 0.5F,  0,  0,  1, light);
-                this.vertex(pose, normal, backConsumer, x0, y1, backU0, backV0, 0.5F,  0,  0,  1, light);
-                this.vertex(pose, normal, backConsumer, x0, y0, backU0, backV1, 0.5F,  0,  0,  1, light);
-                this.vertex(pose, normal, backConsumer, x1, y0, backU1, backV1, 0.5F,  0,  0,  1, light);
+                this.vertex(pose, backConsumer, x1, y1, backU1, backV0,  0.5F,  0,  0,  1, light);
+                this.vertex(pose, backConsumer, x0, y1, backU0, backV0,  0.5F,  0,  0,  1, light);
+                this.vertex(pose, backConsumer, x0, y0, backU0, backV1,  0.5F,  0,  0,  1, light);
+                this.vertex(pose, backConsumer, x1, y0, backU1, backV1,  0.5F,  0,  0,  1, light);
 
-                this.vertex(pose, normal, backConsumer, x1, y1, topU0, topV0, -0.5F,  0,  1,  0, light);
-                this.vertex(pose, normal, backConsumer, x0, y1, topU1, topV0, -0.5F,  0,  1,  0, light);
-                this.vertex(pose, normal, backConsumer, x0, y1, topU1, topV1,  0.5F,  0,  1,  0, light);
-                this.vertex(pose, normal, backConsumer, x1, y1, topU0, topV1,  0.5F,  0,  1,  0, light);
+                this.vertex(pose, backConsumer, x1, y1, topU0, topV0, -0.5F,  0,  1,  0, light);
+                this.vertex(pose, backConsumer, x0, y1, topU1, topV0, -0.5F,  0,  1,  0, light);
+                this.vertex(pose, backConsumer, x0, y1, topU1, topV1,  0.5F,  0,  1,  0, light);
+                this.vertex(pose, backConsumer, x1, y1, topU0, topV1,  0.5F,  0,  1,  0, light);
 
-                this.vertex(pose, normal, backConsumer, x1, y0, topU0, topV0,  0.5F,  0, -1,  0, light);
-                this.vertex(pose, normal, backConsumer, x0, y0, topU1, topV0,  0.5F,  0, -1,  0, light);
-                this.vertex(pose, normal, backConsumer, x0, y0, topU1, topV1, -0.5F,  0, -1,  0, light);
-                this.vertex(pose, normal, backConsumer, x1, y0, topU0, topV1, -0.5F,  0, -1,  0, light);
+                this.vertex(pose, backConsumer, x1, y0, topU0, topV0,  0.5F,  0, -1,  0, light);
+                this.vertex(pose, backConsumer, x0, y0, topU1, topV0,  0.5F,  0, -1,  0, light);
+                this.vertex(pose, backConsumer, x0, y0, topU1, topV1, -0.5F,  0, -1,  0, light);
+                this.vertex(pose, backConsumer, x1, y0, topU0, topV1, -0.5F,  0, -1,  0, light);
 
-                this.vertex(pose, normal, backConsumer, x1, y1, sideU1, sideV0,  0.5F, -1,  0,  0, light);
-                this.vertex(pose, normal, backConsumer, x1, y0, sideU1, sideV1,  0.5F, -1,  0,  0, light);
-                this.vertex(pose, normal, backConsumer, x1, y0, sideU0, sideV1, -0.5F, -1,  0,  0, light);
-                this.vertex(pose, normal, backConsumer, x1, y1, sideU0, sideV0, -0.5F, -1,  0,  0, light);
+                this.vertex(pose, backConsumer, x1, y1, sideU1, sideV0,  0.5F, -1,  0,  0, light);
+                this.vertex(pose, backConsumer, x1, y0, sideU1, sideV1,  0.5F, -1,  0,  0, light);
+                this.vertex(pose, backConsumer, x1, y0, sideU0, sideV1, -0.5F, -1,  0,  0, light);
+                this.vertex(pose, backConsumer, x1, y1, sideU0, sideV0, -0.5F, -1,  0,  0, light);
 
-                this.vertex(pose, normal, backConsumer, x0, y1, sideU1, sideV0, -0.5F,  1,  0,  0, light);
-                this.vertex(pose, normal, backConsumer, x0, y0, sideU1, sideV1, -0.5F,  1,  0,  0, light);
-                this.vertex(pose, normal, backConsumer, x0, y0, sideU0, sideV1,  0.5F,  1,  0,  0, light);
-                this.vertex(pose, normal, backConsumer, x0, y1, sideU0, sideV0,  0.5F,  1,  0,  0, light);
+                this.vertex(pose, backConsumer, x0, y1, sideU1, sideV0, -0.5F,  1,  0,  0, light);
+                this.vertex(pose, backConsumer, x0, y0, sideU1, sideV1, -0.5F,  1,  0,  0, light);
+                this.vertex(pose, backConsumer, x0, y0, sideU0, sideV1,  0.5F,  1,  0,  0, light);
+                this.vertex(pose, backConsumer, x0, y1, sideU0, sideV0,  0.5F,  1,  0,  0, light);
             }
         }
     }
 
-    @Shadow protected abstract void vertex(Matrix4f pose, Matrix3f normal, VertexConsumer consumer, float x, float y, float u, float v, float z, int normalX, int normalY, int normalZ, int lightmapUV);
+    @Shadow protected abstract void vertex(PoseStack.Pose pose, VertexConsumer consumer, float x, float y, float u, float v, float z, int normalX, int normalY, int normalZ, int lightmapUV);
+
     @Shadow public abstract @NotNull ResourceLocation getTextureLocation(@NotNull Painting entity);
 }

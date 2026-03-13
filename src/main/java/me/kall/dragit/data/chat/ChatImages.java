@@ -11,15 +11,15 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 
 import java.io.IOException;
 import java.util.Map;
 
-@Mod.EventBusSubscriber(modid = DragIt.MOD_ID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = DragIt.MOD_ID, value = Dist.CLIENT)
 public class ChatImages {
     public static final Map<ResourceLocation, DynamicTexture> CHAT_IMAGES = new Object2ObjectOpenHashMap<>();
 

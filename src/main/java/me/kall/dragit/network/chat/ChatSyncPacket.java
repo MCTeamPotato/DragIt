@@ -5,6 +5,7 @@ import me.kall.dragit.cache.ImageCache;
 import me.kall.dragit.network.DragNetworker;
 import me.kall.dragit.network.base.ChatPacket;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
@@ -38,5 +39,10 @@ public class ChatSyncPacket extends ChatPacket {
         } catch (Throwable t) {
             DragIt.LOGGER.error("Error handling ChatSyncPacket", t);
         }
+    }
+
+    @Override
+    public @NotNull Type<? extends CustomPacketPayload> type() {
+        return DragNetworker.CHAT_SYNC_TYPE;
     }
 }

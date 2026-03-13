@@ -1,6 +1,6 @@
 package me.kall.dragit.integration;
 
-import net.minecraftforge.fml.loading.FMLLoader;
+import net.neoforged.fml.loading.FMLLoader;
 
 public final class NarutoLoadingIntegration {
     private static final boolean INTEGRATABLE = FMLLoader.getLoadingModList().getModFileById("narutoloading") != null;

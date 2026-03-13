@@ -9,6 +9,7 @@ import me.kall.narutoloading.inworld.network.ScreenLifePacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.decoration.ItemFrame;
@@ -63,5 +64,10 @@ public class VideoScreenPacket extends Handler {
         } catch (Exception exception) {
             DragIt.LOGGER.error("Error handling VideoScreenPacket", exception);
         }
+    }
+
+    @Override
+    public @NotNull Type<? extends CustomPacketPayload> type() {
+        return DragNetworker.VIDEO_SCREEN_TYPE;
     }
 }
