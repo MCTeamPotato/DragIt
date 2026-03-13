@@ -10,7 +10,7 @@ import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -21,9 +21,9 @@ import java.util.Map;
 
 @EventBusSubscriber(modid = DragIt.MOD_ID, value = Dist.CLIENT)
 public class ChatImages {
-    public static final Map<ResourceLocation, DynamicTexture> CHAT_IMAGES = new Object2ObjectOpenHashMap<>();
+    public static final Map<Identifier, DynamicTexture> CHAT_IMAGES = new Object2ObjectOpenHashMap<>();
 
-    public static void registerChatImage(ResourceLocation textureLocation, byte[] textureBytes, String sender) {
+    public static void registerChatImage(Identifier textureLocation, byte[] textureBytes, String sender) {
         TextureManager textureManager = Minecraft.getInstance().getTextureManager();
         if (CHAT_IMAGES.containsKey(textureLocation)) {
             textureManager.release(textureLocation);
@@ -32,7 +32,7 @@ public class ChatImages {
 
         try {
             NativeImage nativeImage = NativeImage.read(textureBytes);
-            DynamicTexture dynamicTexture = new DynamicTexture(nativeImage);
+            DynamicTexture dynamicTexture = new DynamicTexture(textureLocation::toString, nativeImage);
             textureManager.register(textureLocation, dynamicTexture);
             CHAT_IMAGES.put(textureLocation, dynamicTexture);
 
@@ -60,7 +60,7 @@ public class ChatImages {
     @SubscribeEvent
     public static void clearImages(ClientPlayerNetworkEvent.LoggingOut event) {
         TextureManager textureManager = Minecraft.getInstance().getTextureManager();
-        for (Map.Entry<ResourceLocation, DynamicTexture> entry : CHAT_IMAGES.entrySet()) {
+        for (Map.Entry<Identifier, DynamicTexture> entry : CHAT_IMAGES.entrySet()) {
             textureManager.release(entry.getKey());
             entry.getValue().close();
         }

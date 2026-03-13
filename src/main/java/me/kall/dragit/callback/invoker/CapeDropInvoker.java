@@ -12,7 +12,7 @@ import me.kall.dragit.util.ImageCompressor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.lwjgl.glfw.GLFWDropCallback;
 
 import java.io.IOException;
@@ -31,7 +31,7 @@ public class CapeDropInvoker implements DragCallback.Invoker {
         UUID uuid = player.getUUID();
         try {
             byte[] textureBytes = ImageCompressor.compress(filePath, DragClientConfig.INSTANCE.getCapeMaxPixels());
-            ResourceLocation textureLocation = ImageCache.getOrCreate(textureBytes);
+            Identifier textureLocation = ImageCache.getOrCreate(textureBytes);
             if (DragItClient.canSync()) DragNetworker.sendToServer(new CapeSavePacket(uuid, textureLocation, textureBytes));
             ClientCapes.registerCape(uuid, textureLocation, textureBytes);
             return true;

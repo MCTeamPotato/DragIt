@@ -10,7 +10,7 @@ import me.kall.dragit.network.base.PaintingPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class PaintingSavePacket extends PaintingPacket {
-    public PaintingSavePacket(ResourceLocation dimension, long pos, ResourceLocation textureLocation, byte[] textureBytes) {
+    public PaintingSavePacket(Identifier dimension, long pos, Identifier textureLocation, byte[] textureBytes) {
         super(dimension, pos, textureLocation, textureBytes);
     }
 
@@ -31,11 +31,11 @@ public class PaintingSavePacket extends PaintingPacket {
 
             ImageCache.store(this.textureLocation, this.textureBytes);
 
-            SavedPaintings savedPaintings = SavedPaintings.get(player.serverLevel());
+            SavedPaintings savedPaintings = SavedPaintings.get(player.level());
             savedPaintings.setDirty();
             savedPaintings.paintings.computeIfAbsent(this.dimension, k -> new Long2ObjectOpenHashMap<>()).put(this.pos, new SavedTextureData(this.textureLocation, this.textureBytes));
 
-            List<ServerPlayer> syncTargets = player.server.getPlayerList().getPlayers();
+            List<ServerPlayer> syncTargets = player.level().getServer().getPlayerList().getPlayers();
             if (syncTargets.size() == 1) return;
             UUID uuid = player.getUUID();
             for (ServerPlayer syncTarget : syncTargets) {
@@ -49,7 +49,7 @@ public class PaintingSavePacket extends PaintingPacket {
     }
 
     @Override
-    public @NotNull Type<? extends CustomPacketPayload> type() {
+    public @NotNull Type<? extends @NotNull CustomPacketPayload> type() {
         return DragNetworker.PAINTING_SAVE_TYPE;
     }
 }

@@ -20,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class ItemFrameRendererMixin<T extends ItemFrame> {
     @Inject(method = "render(Lnet/minecraft/world/entity/decoration/ItemFrame;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;popPose()V", ordinal = 1))
     private void renderItemFrameImage(@NotNull T entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, CallbackInfo callbackInfo) {
-        ClientItemFrames.FrameEntry frameEntry = ClientItemFrames.getFrame(entity.level().dimension().location(), entity.blockPosition().asLong());
+        ClientItemFrames.FrameEntry frameEntry = ClientItemFrames.getFrame(entity.level().dimension().identifier(), entity.blockPosition().asLong());
         if (frameEntry == null) return;
 
         float uMin = (float) frameEntry.column() / frameEntry.totalColumns();

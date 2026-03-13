@@ -17,7 +17,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.phys.AABB;
@@ -60,9 +60,9 @@ public class ItemFrameDropInvoker implements DragCallback.Invoker {
             fillFrameArrays(frameGrid, box, facing, positions, columns, rows);
 
             byte[] textureBytes = ImageCompressor.compress(filePath, DragClientConfig.INSTANCE.getItemFrameMaxPixels());
-            ResourceLocation textureLocation = ImageCache.getOrCreate(textureBytes);
+            Identifier textureLocation = ImageCache.getOrCreate(textureBytes);
 
-            ResourceLocation dimension = level.dimension().location();
+            Identifier dimension = level.dimension().identifier();
             ClientItemFrames.registerGroup(dimension, positions, columns, rows, totalColumns, totalRows, textureLocation, textureBytes);
             if (DragItClient.canSync()) {
                 DragNetworker.sendToServer(new ItemFrameSavePacket(dimension, textureLocation, textureBytes, positions, columns, rows, totalColumns, totalRows));

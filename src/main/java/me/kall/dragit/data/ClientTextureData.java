@@ -1,19 +1,19 @@
 package me.kall.dragit.data;
 
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 @SuppressWarnings("ClassCanBeRecord")
 public class ClientTextureData {
-    private final ResourceLocation textureLocation;
+    private final Identifier textureLocation;
     private final DynamicTexture dynamicTexture;
 
-    public ClientTextureData(ResourceLocation textureLocation, DynamicTexture dynamicTexture) {
+    public ClientTextureData(Identifier textureLocation, DynamicTexture dynamicTexture) {
         this.textureLocation = textureLocation;
         this.dynamicTexture = dynamicTexture;
     }
 
-    public ResourceLocation textureLocation() {
+    public Identifier textureLocation() {
         return this.textureLocation;
     }
 

@@ -11,7 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.decoration.Painting;
 import net.neoforged.api.distmarker.Dist;
@@ -25,9 +25,9 @@ import java.io.IOException;
 
 @EventBusSubscriber(modid = DragIt.MOD_ID, value = Dist.CLIENT)
 public class ClientPaintings {
-    public static final Object2ObjectMap<ResourceLocation, Long2ObjectMap<ClientTextureData>> PAINTINGS = new Object2ObjectOpenHashMap<>();
+    public static final Object2ObjectMap<Identifier, Long2ObjectMap<ClientTextureData>> PAINTINGS = new Object2ObjectOpenHashMap<>();
 
-    public static void registerPainting(ResourceLocation dimension, long pos, byte[] textureBytes, ResourceLocation textureLocation) {
+    public static void registerPainting(Identifier dimension, long pos, byte[] textureBytes, Identifier textureLocation) {
         TextureManager textureManager = Minecraft.getInstance().getTextureManager();
         if (PAINTINGS.containsKey(dimension)) {
             Long2ObjectMap<ClientTextureData> positionMap = PAINTINGS.get(dimension);
@@ -40,7 +40,7 @@ public class ClientPaintings {
         }
 
         try {
-            DynamicTexture dynamicTexture = new DynamicTexture(NativeImage.read(textureBytes));
+            DynamicTexture dynamicTexture = new DynamicTexture(textureLocation::toString, NativeImage.read(textureBytes));
             textureManager.register(textureLocation, dynamicTexture);
             PAINTINGS.computeIfAbsent(dimension, key -> new Long2ObjectOpenHashMap<>()).put(pos, new ClientTextureData(textureLocation, dynamicTexture));
         } catch (IOException ioException) {
@@ -63,7 +63,7 @@ public class ClientPaintings {
     @SubscribeEvent
     public static void removeImage(@NotNull EntityLeaveLevelEvent event) {
         if (event.getEntity() instanceof Painting painting && painting.level() instanceof ClientLevel level) {
-            ResourceLocation dimension = level.dimension().location();
+            Identifier dimension = level.dimension().identifier();
             long pos = painting.blockPosition().asLong();
             Entity.RemovalReason removalReason = painting.getRemovalReason();
             if (removalReason != Entity.RemovalReason.KILLED && removalReason != Entity.RemovalReason.DISCARDED) return;

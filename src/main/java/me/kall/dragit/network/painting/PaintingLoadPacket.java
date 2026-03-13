@@ -8,13 +8,13 @@ import me.kall.dragit.network.base.PaintingPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class PaintingLoadPacket extends PaintingPacket {
-    public PaintingLoadPacket(ResourceLocation dimension, long pos, ResourceLocation textureLocation, byte @Nullable [] textureBytes) {
+    public PaintingLoadPacket(Identifier dimension, long pos, Identifier textureLocation, byte @Nullable [] textureBytes) {
         super(dimension, pos, textureLocation, textureBytes);
     }
 
@@ -34,7 +34,7 @@ public class PaintingLoadPacket extends PaintingPacket {
     }
 
     @Override
-    public @NotNull Type<? extends CustomPacketPayload> type() {
+    public @NotNull Type<? extends @NotNull CustomPacketPayload> type() {
         return DragNetworker.PAINTING_LOAD_TYPE;
     }
 }

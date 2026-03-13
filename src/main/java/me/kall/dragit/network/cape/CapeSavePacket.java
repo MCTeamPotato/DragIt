@@ -8,7 +8,7 @@ import me.kall.dragit.network.DragNetworker;
 import me.kall.dragit.network.base.SkinPacket;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class CapeSavePacket extends SkinPacket {
-    public CapeSavePacket(UUID uuid, ResourceLocation textureLocation, byte @Nullable [] textureBytes) {
+    public CapeSavePacket(UUID uuid, Identifier textureLocation, byte @Nullable [] textureBytes) {
         super(uuid, textureLocation, textureBytes);
     }
 
@@ -32,11 +32,11 @@ public class CapeSavePacket extends SkinPacket {
 
             ImageCache.store(this.textureLocation, this.textureBytes);
 
-            SavedCapes savedCapes = SavedCapes.get(player.serverLevel());
+            SavedCapes savedCapes = SavedCapes.get(player.level());
             savedCapes.setDirty();
             savedCapes.capes.put(this.uuid, new SavedTextureData(this.textureLocation, this.textureBytes));
 
-            List<ServerPlayer> syncTargets = player.server.getPlayerList().getPlayers();
+            List<ServerPlayer> syncTargets = player.level().getServer().getPlayerList().getPlayers();
             if (syncTargets.size() == 1) return;
             UUID senderUUID = player.getUUID();
             for (ServerPlayer syncTarget : syncTargets) {
@@ -50,7 +50,7 @@ public class CapeSavePacket extends SkinPacket {
     }
 
     @Override
-    public @NotNull Type<? extends CustomPacketPayload> type() {
+    public @NotNull Type<? extends @NotNull CustomPacketPayload> type() {
         return DragNetworker.CAPE_SAVE_TYPE;
     }
 }

@@ -1,18 +1,18 @@
 package me.kall.dragit.data;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 @SuppressWarnings("ClassCanBeRecord")
 public class SavedTextureData {
-    private final ResourceLocation textureLocation;
+    private final Identifier textureLocation;
     private final byte[] textureBytes;
 
-    public SavedTextureData(ResourceLocation textureLocation, byte[] textureBytes) {
+    public SavedTextureData(Identifier textureLocation, byte[] textureBytes) {
         this.textureLocation = textureLocation;
         this.textureBytes = textureBytes;
     }
 
-    public ResourceLocation textureLocation() {
+    public Identifier textureLocation() {
         return this.textureLocation;
     }
 

@@ -1,5 +1,9 @@
 package me.kall.dragit.data.painting;
 
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.DynamicOps;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
@@ -8,16 +12,16 @@ import me.kall.dragit.DragIt;
 import me.kall.dragit.data.SavedTextureData;
 import me.kall.dragit.network.DragNetworker;
 import me.kall.dragit.network.painting.PaintingLoadPacket;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.decoration.Painting;
+import net.minecraft.world.entity.decoration.painting.Painting;
 import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.level.saveddata.SavedDataType;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
@@ -30,9 +34,9 @@ import java.util.Map;
 public class SavedPaintings extends SavedData {
     private static final String DATA_NAME = "DragItSavedPaintings";
 
-    public final Object2ObjectMap<ResourceLocation, Long2ObjectMap<SavedTextureData>> paintings = new Object2ObjectOpenHashMap<>();
+    public final Object2ObjectMap<Identifier, Long2ObjectMap<SavedTextureData>> paintings = new Object2ObjectOpenHashMap<>();
 
-    public void removeImage(ResourceLocation dimension, long pos) {
+    public void removeImage(Identifier dimension, long pos) {
         Long2ObjectMap<SavedTextureData> imageMap = this.paintings.get(dimension);
         if (imageMap == null) return;
         imageMap.remove(pos);
@@ -43,17 +47,17 @@ public class SavedPaintings extends SavedData {
     public static @NotNull SavedPaintings load(@NotNull CompoundTag tag) {
         SavedPaintings data = new SavedPaintings();
 
-        CompoundTag imagesTag = tag.getCompound("Paintings");
-        for (String key : imagesTag.getAllKeys()) {
-            ResourceLocation resourceLocation = ResourceLocation.parse(key);
-            CompoundTag dimensionTag = imagesTag.getCompound(key);
+        CompoundTag imagesTag = tag.getCompound("Paintings").orElseThrow();
+        for (String key : imagesTag.keySet()) {
+            Identifier resourceLocation = Identifier.parse(key);
+            CompoundTag dimensionTag = imagesTag.getCompound(key).orElseThrow();
 
             Long2ObjectMap<SavedTextureData> dimensionImages = new Long2ObjectOpenHashMap<>();
-            ListTag imagesList = dimensionTag.getList("PaintingList", Tag.TAG_COMPOUND);
+            ListTag imagesList = dimensionTag.getList("PaintingList").orElseThrow();
 
             for (int i = 0; i < imagesList.size(); i++) {
-                CompoundTag imageTag = imagesList.getCompound(i);
-                dimensionImages.put(imageTag.getLong("Pos"), new SavedTextureData(ResourceLocation.parse(imageTag.getString("TextureLocation")), imageTag.getByteArray("TextureBytes")));
+                CompoundTag imageTag = imagesList.getCompound(i).orElseThrow();
+                dimensionImages.put(imageTag.getLong("Pos").orElseThrow().longValue(), new SavedTextureData(Identifier.parse(imageTag.getString("TextureLocation").orElseThrow()), imageTag.getByteArray("TextureBytes").orElseThrow()));
             }
 
             data.paintings.put(resourceLocation, dimensionImages);
@@ -62,11 +66,10 @@ public class SavedPaintings extends SavedData {
         return data;
     }
 
-    @Override
-    public @NotNull CompoundTag save(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
+    public @NotNull CompoundTag save(@NotNull CompoundTag tag) {
         CompoundTag imagesTag = new CompoundTag();
 
-        for (Object2ObjectMap.Entry<ResourceLocation, Long2ObjectMap<SavedTextureData>> entry : this.paintings.object2ObjectEntrySet()) {
+        for (Object2ObjectMap.Entry<Identifier, Long2ObjectMap<SavedTextureData>> entry : this.paintings.object2ObjectEntrySet()) {
             CompoundTag dimensionTag = new CompoundTag();
             ListTag imagesList = new ListTag();
 
@@ -88,17 +91,28 @@ public class SavedPaintings extends SavedData {
     }
 
     public static @NotNull SavedPaintings get(@NotNull ServerLevel level) {
-        return level.getDataStorage().computeIfAbsent(new Factory<>(SavedPaintings::new, (compoundTag, provider) -> load(compoundTag)), DATA_NAME);
+        return level.getDataStorage().computeIfAbsent(new SavedDataType<>(DATA_NAME, SavedPaintings::new, new Codec<>() {
+            @Override
+            public <T> DataResult<Pair<SavedPaintings, T>> decode(DynamicOps<T> ops, T input) {
+                return DataResult.success(Pair.of(load((CompoundTag) ops.convertTo(NbtOps.INSTANCE, input)), input));
+            }
+
+            @Override
+            @SuppressWarnings("unchecked")
+            public <T> DataResult<T> encode(SavedPaintings input, DynamicOps<T> ops, T prefix) {
+                return DataResult.success((T) input.save(new CompoundTag()));
+            }
+        }));
     }
 
     @SubscribeEvent
     public static void sendImages(PlayerEvent.@NotNull PlayerLoggedInEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
-        if (!(player.level() instanceof ServerLevel level)) return;
-        for (Map.Entry<ResourceLocation, Long2ObjectMap<SavedTextureData>> dimEntry : get(level).paintings.entrySet()) {
-            ResourceLocation dimension = dimEntry.getKey();
+        ServerLevel level = player.level();
+        for (Map.Entry<Identifier, Long2ObjectMap<SavedTextureData>> dimEntry : get(level).paintings.entrySet()) {
+            Identifier dimension = dimEntry.getKey();
             for (Long2ObjectMap.Entry<SavedTextureData> imgEntry : dimEntry.getValue().long2ObjectEntrySet()) {
-                ResourceLocation textureLocation = imgEntry.getValue().textureLocation();
+                Identifier textureLocation = imgEntry.getValue().textureLocation();
                 DragNetworker.send(player, new PaintingLoadPacket(dimension, imgEntry.getLongKey(), textureLocation, null));
                 DragIt.LOGGER.info("Delivering painting [{}] to {} (null bytes).", textureLocation, player.getName().getString());
             }
@@ -111,7 +125,7 @@ public class SavedPaintings extends SavedData {
             Entity.RemovalReason removalReason = painting.getRemovalReason();
             if (removalReason != Entity.RemovalReason.KILLED && removalReason != Entity.RemovalReason.DISCARDED) return;
 
-            ResourceLocation dimension = level.dimension().location();
+            Identifier dimension = level.dimension().identifier();
             long pos = painting.blockPosition().asLong();
             SavedPaintings.get(level).removeImage(dimension, pos);
         }

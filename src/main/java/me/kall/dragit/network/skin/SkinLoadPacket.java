@@ -7,7 +7,7 @@ import me.kall.dragit.network.DragNetworker;
 import me.kall.dragit.network.base.SkinPacket;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.UUID;
 
 public class SkinLoadPacket extends SkinPacket {
-    public SkinLoadPacket(UUID uuid, ResourceLocation textureLocation, byte @Nullable [] textureBytes) {
+    public SkinLoadPacket(UUID uuid, Identifier textureLocation, byte @Nullable [] textureBytes) {
         super(uuid, textureLocation, textureBytes);
     }
 
@@ -35,7 +35,7 @@ public class SkinLoadPacket extends SkinPacket {
     }
 
     @Override
-    public @NotNull Type<? extends CustomPacketPayload> type() {
+    public @NotNull Type<? extends @NotNull CustomPacketPayload> type() {
         return DragNetworker.SKIN_LOAD_TYPE;
     }
 }

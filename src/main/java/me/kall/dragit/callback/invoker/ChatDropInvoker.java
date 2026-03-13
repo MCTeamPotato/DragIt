@@ -12,7 +12,7 @@ import me.kall.dragit.util.ImageCompressor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.lwjgl.glfw.GLFWDropCallback;
 
 import java.io.IOException;
@@ -30,7 +30,7 @@ public class ChatDropInvoker implements DragCallback.Invoker {
             try {
                 String name = player.getName().getString();
                 byte[] textureBytes = ImageCompressor.compress(filePath, DragClientConfig.INSTANCE.getChatMaxPixels());
-                ResourceLocation textureLocation = ImageCache.getOrCreate(textureBytes);
+                Identifier textureLocation = ImageCache.getOrCreate(textureBytes);
                 ChatImages.registerChatImage(textureLocation, textureBytes, name);
                 if (DragItClient.canSync()) DragNetworker.sendToServer(new ChatSyncPacket(textureLocation, textureBytes, name));
                 handled = true;

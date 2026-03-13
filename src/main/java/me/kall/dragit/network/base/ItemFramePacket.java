@@ -1,13 +1,13 @@
 package me.kall.dragit.network.base;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class ItemFramePacket extends Handler {
-    public final ResourceLocation dimension;
-    public final ResourceLocation textureLocation;
+    public final Identifier dimension;
+    public final Identifier textureLocation;
     public final byte @Nullable [] textureBytes;
     public final long[] positions;
     public final int[] columns;
@@ -15,7 +15,7 @@ public abstract class ItemFramePacket extends Handler {
     public final int totalColumns;
     public final int totalRows;
 
-    public ItemFramePacket(ResourceLocation dimension, ResourceLocation textureLocation, byte @Nullable [] textureBytes, long[] positions, int[] columns, int[] rows, int totalColumns, int totalRows) {
+    public ItemFramePacket(Identifier dimension, Identifier textureLocation, byte @Nullable [] textureBytes, long[] positions, int[] columns, int[] rows, int totalColumns, int totalRows) {
         this.dimension = dimension;
         this.textureLocation = textureLocation;
         this.textureBytes = textureBytes;
@@ -27,8 +27,8 @@ public abstract class ItemFramePacket extends Handler {
     }
 
     public ItemFramePacket(@NotNull FriendlyByteBuf buffer) {
-        this.dimension = buffer.readResourceLocation();
-        this.textureLocation = buffer.readResourceLocation();
+        this.dimension = buffer.readIdentifier();
+        this.textureLocation = buffer.readIdentifier();
         this.textureBytes = buffer.readBoolean() ? buffer.readByteArray() : null;
         this.totalColumns = buffer.readInt();
         this.totalRows = buffer.readInt();
@@ -44,8 +44,8 @@ public abstract class ItemFramePacket extends Handler {
     }
 
     public void save(@NotNull FriendlyByteBuf buffer) {
-        buffer.writeResourceLocation(this.dimension);
-        buffer.writeResourceLocation(this.textureLocation);
+        buffer.writeIdentifier(this.dimension);
+        buffer.writeIdentifier(this.textureLocation);
         buffer.writeBoolean(this.textureBytes != null);
         if (this.textureBytes != null) buffer.writeByteArray(this.textureBytes);
         buffer.writeInt(this.totalColumns);

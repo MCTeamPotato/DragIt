@@ -41,7 +41,7 @@ public class VideoScreenPacket extends Handler {
     public void handle(ServerPlayer player) {
         try {
             if (player == null) return;
-            ServerLevel level = player.serverLevel();
+            ServerLevel level = player.level();
 
             if (!(level.getEntity(this.leftBottom) instanceof ItemFrame leftBottomFrame)) return;
             if (!(level.getEntity(this.rightBottom) instanceof ItemFrame rightBottomFrame)) return;
@@ -67,7 +67,7 @@ public class VideoScreenPacket extends Handler {
     }
 
     @Override
-    public @NotNull Type<? extends CustomPacketPayload> type() {
+    public @NotNull Type<? extends @NotNull CustomPacketPayload> type() {
         return DragNetworker.VIDEO_SCREEN_TYPE;
     }
 }

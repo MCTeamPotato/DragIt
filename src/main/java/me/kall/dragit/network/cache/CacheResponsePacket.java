@@ -7,26 +7,26 @@ import me.kall.dragit.network.DragNetworker;
 import me.kall.dragit.network.base.Handler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 
 public class CacheResponsePacket extends Handler {
-    public final ResourceLocation textureLocation;
+    public final Identifier textureLocation;
     public final byte[] textureBytes;
 
-    public CacheResponsePacket(ResourceLocation textureLocation, byte[] textureBytes) {
+    public CacheResponsePacket(Identifier textureLocation, byte[] textureBytes) {
         this.textureLocation = textureLocation;
         this.textureBytes = textureBytes;
     }
 
     public CacheResponsePacket(@NotNull FriendlyByteBuf buf) {
-        this.textureLocation = buf.readResourceLocation();
+        this.textureLocation = buf.readIdentifier();
         this.textureBytes = buf.readByteArray();
     }
 
     public void save(@NotNull FriendlyByteBuf buf) {
-        buf.writeResourceLocation(this.textureLocation);
+        buf.writeIdentifier(this.textureLocation);
         buf.writeByteArray(this.textureBytes);
     }
 
@@ -41,7 +41,7 @@ public class CacheResponsePacket extends Handler {
     }
 
     @Override
-    public @NotNull Type<? extends CustomPacketPayload> type() {
+    public @NotNull Type<? extends @NotNull CustomPacketPayload> type() {
         return DragNetworker.CACHE_RESPONSE_TYPE;
     }
 }

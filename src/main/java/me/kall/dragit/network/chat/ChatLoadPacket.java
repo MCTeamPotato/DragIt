@@ -7,13 +7,13 @@ import me.kall.dragit.network.DragNetworker;
 import me.kall.dragit.network.base.ChatPacket;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ChatLoadPacket extends ChatPacket {
-    public ChatLoadPacket(ResourceLocation textureLocation, byte @Nullable [] textureBytes, String sender) {
+    public ChatLoadPacket(Identifier textureLocation, byte @Nullable [] textureBytes, String sender) {
         super(textureLocation, textureBytes, sender);
     }
 
@@ -32,7 +32,7 @@ public class ChatLoadPacket extends ChatPacket {
     }
 
     @Override
-    public @NotNull Type<? extends CustomPacketPayload> type() {
+    public @NotNull Type<? extends @NotNull CustomPacketPayload> type() {
         return DragNetworker.CHAT_LOAD_TYPE;
     }
 }

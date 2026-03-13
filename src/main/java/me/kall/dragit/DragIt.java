@@ -3,7 +3,7 @@ package me.kall.dragit;
 import me.kall.dragit.config.DragClientConfig;
 import me.kall.dragit.config.DragCommonConfig;
 import me.kall.dragit.network.DragNetworker;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -27,7 +27,7 @@ public final class DragIt {
     }
 
     @Contract("_ -> new")
-    public static @NotNull ResourceLocation loc(String path) {
-        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+    public static @NotNull Identifier loc(String path) {
+        return Identifier.fromNamespaceAndPath(MOD_ID, path);
     }
 }

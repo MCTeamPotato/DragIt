@@ -3,7 +3,7 @@ package me.kall.dragit.cache;
 import me.kall.dragit.DragIt;
 import me.kall.dragit.network.DragNetworker;
 import me.kall.dragit.network.cache.CacheRequestPacket;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.fml.loading.FMLLoader;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,9 +14,9 @@ import java.nio.file.Path;
 import java.util.Arrays;
 
 public class ImageCache {
-    private static final Path CACHE = FMLLoader.getGamePath().resolve("imageCache");
+    private static final Path CACHE = FMLLoader.getCurrent().getGameDir().resolve("imageCache");
 
-    public static @NotNull ResourceLocation getOrCreate(byte @NotNull [] bytes) throws IOException {
+    public static @NotNull Identifier getOrCreate(byte @NotNull [] bytes) throws IOException {
         String hash = String.format("%08x", Arrays.hashCode(bytes));
         Files.createDirectories(CACHE);
 
@@ -27,14 +27,14 @@ public class ImageCache {
             if (!Files.exists(file)) {
                 Files.write(file, bytes);
                 DragIt.LOGGER.info("ImageCache: stored new entry [{}]", path);
-                return ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, path);
+                return Identifier.fromNamespaceAndPath(DragIt.MOD_ID, path);
             }
             byte[] existing = Files.readAllBytes(file);
-            if (Arrays.equals(existing, bytes)) return ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, path);
+            if (Arrays.equals(existing, bytes)) return Identifier.fromNamespaceAndPath(DragIt.MOD_ID, path);
         }
     }
 
-    public static byte @Nullable [] load(@NotNull ResourceLocation location) {
+    public static byte @Nullable [] load(@NotNull Identifier location) {
         Path file = CACHE.resolve(location.getPath());
         if (!Files.exists(file)) return null;
         try {
@@ -45,7 +45,7 @@ public class ImageCache {
         }
     }
 
-    public static void store(@NotNull ResourceLocation location, byte @NotNull [] bytes) {
+    public static void store(@NotNull Identifier location, byte @NotNull [] bytes) {
         try {
             Files.createDirectories(CACHE);
             Path file = CACHE.resolve(location.getPath());
@@ -55,7 +55,7 @@ public class ImageCache {
         }
     }
 
-    public static byte @Nullable [] resolveBytes(ResourceLocation location, byte @Nullable [] bytes, PendingRegistrations.Registration onResolved) {
+    public static byte @Nullable [] resolveBytes(Identifier location, byte @Nullable [] bytes, PendingRegistrations.Registration onResolved) {
         if (bytes != null) {
             store(location, bytes);
             return bytes;

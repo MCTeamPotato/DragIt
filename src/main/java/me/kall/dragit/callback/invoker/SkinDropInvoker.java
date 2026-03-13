@@ -11,7 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.lwjgl.glfw.GLFWDropCallback;
 
 import java.io.File;
@@ -35,7 +35,7 @@ public class SkinDropInvoker implements DragCallback.Invoker {
                 player.displayClientMessage(Component.translatable("note.dragit.skin"), false);
                 return false;
             }
-            ResourceLocation textureLocation = ImageCache.getOrCreate(textureBytes);
+            Identifier textureLocation = ImageCache.getOrCreate(textureBytes);
             if (DragItClient.canSync()) DragNetworker.sendToServer(new SkinSavePacket(uuid, textureLocation, textureBytes));
             ClientSkins.registerSkin(uuid, textureLocation, textureBytes);
             return true;

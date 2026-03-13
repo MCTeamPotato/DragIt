@@ -1,5 +1,9 @@
 package me.kall.dragit.data.itemframe;
 
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.DynamicOps;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
@@ -9,16 +13,16 @@ import it.unimi.dsi.fastutil.objects.ObjectList;
 import me.kall.dragit.DragIt;
 import me.kall.dragit.network.DragNetworker;
 import me.kall.dragit.network.itemframe.ItemFrameLoadPacket;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.level.saveddata.SavedDataType;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
@@ -33,7 +37,7 @@ public class SavedItemFrames extends SavedData {
     private static final String DATA_NAME = "DragItSavedItemFrames";
 
     public final List<Group> groups = new ObjectArrayList<>();
-    private final Object2ObjectMap<ResourceLocation, LongSet> positionIndex = new Object2ObjectOpenHashMap<>();
+    private final Object2ObjectMap<Identifier, LongSet> positionIndex = new Object2ObjectOpenHashMap<>();
 
     private void rebuildIndex() {
         this.positionIndex.clear();
@@ -54,7 +58,7 @@ public class SavedItemFrames extends SavedData {
         this.setDirty();
     }
 
-    public void removeGroup(ResourceLocation dimension, long position) {
+    public void removeGroup(Identifier dimension, long position) {
         LongSet positionSet = this.positionIndex.get(dimension);
         if (positionSet == null || !positionSet.contains(position)) return;
 
@@ -76,21 +80,21 @@ public class SavedItemFrames extends SavedData {
     public static @NotNull SavedItemFrames load(@NotNull CompoundTag tag) {
         SavedItemFrames data = new SavedItemFrames();
 
-        ListTag groupsList = tag.getList("Groups", Tag.TAG_COMPOUND);
+        ListTag groupsList = tag.getList("Groups").orElseThrow();
         for (int groupIndex = 0; groupIndex < groupsList.size(); groupIndex++) {
-            CompoundTag groupTag = groupsList.getCompound(groupIndex);
+            CompoundTag groupTag = groupsList.getCompound(groupIndex).orElseThrow();
 
-            ResourceLocation dimension = ResourceLocation.parse(groupTag.getString("Dimension"));
-            ResourceLocation textureLocation = ResourceLocation.parse(groupTag.getString("TextureLocation"));
-            byte[] textureBytes = groupTag.getByteArray("TextureBytes");
-            int totalColumns = groupTag.getInt("TotalColumns");
-            int totalRows = groupTag.getInt("TotalRows");
+            Identifier dimension = Identifier.parse(groupTag.getString("Dimension").orElseThrow());
+            Identifier textureLocation = Identifier.parse(groupTag.getString("TextureLocation").orElseThrow());
+            byte[] textureBytes = groupTag.getByteArray("TextureBytes").orElseThrow();
+            int totalColumns = groupTag.getInt("TotalColumns").orElseThrow();
+            int totalRows = groupTag.getInt("TotalRows").orElseThrow();
 
-            ListTag framesList = groupTag.getList("Frames", Tag.TAG_COMPOUND);
+            ListTag framesList = groupTag.getList("Frames").orElseThrow();
             ObjectList<FrameRecord> frames = new ObjectArrayList<>(framesList.size());
             for (int frameIndex = 0; frameIndex < framesList.size(); frameIndex++) {
-                CompoundTag frameTag = framesList.getCompound(frameIndex);
-                frames.add(new FrameRecord(frameTag.getLong("Position"), frameTag.getInt("Column"), frameTag.getInt("Row")));
+                CompoundTag frameTag = framesList.getCompound(frameIndex).orElseThrow();
+                frames.add(new FrameRecord(frameTag.getLong("Position").orElseThrow(), frameTag.getInt("Column").orElseThrow(), frameTag.getInt("Row").orElseThrow()));
             }
 
             data.groups.add(new Group(dimension, textureLocation, textureBytes, totalColumns, totalRows, frames));
@@ -99,8 +103,7 @@ public class SavedItemFrames extends SavedData {
         return data;
     }
 
-    @Override
-    public @NotNull CompoundTag save(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
+    public @NotNull CompoundTag save(@NotNull CompoundTag tag) {
         ListTag groupsList = new ListTag();
         for (Group group : this.groups) {
             CompoundTag groupTag = new CompoundTag();
@@ -126,13 +129,24 @@ public class SavedItemFrames extends SavedData {
     }
 
     public static @NotNull SavedItemFrames get(@NotNull ServerLevel level) {
-        return level.getDataStorage().computeIfAbsent(new Factory<>(SavedItemFrames::new, (compoundTag, provider) -> load(compoundTag)), DATA_NAME);
+        return level.getDataStorage().computeIfAbsent(new SavedDataType<>(DATA_NAME, SavedItemFrames::new, new Codec<>() {
+            @Override
+            public <T> DataResult<Pair<SavedItemFrames, T>> decode(DynamicOps<T> ops, T input) {
+                return DataResult.success(Pair.of(load((CompoundTag) ops.convertTo(NbtOps.INSTANCE, input)), input));
+            }
+
+            @Override
+            @SuppressWarnings("unchecked")
+            public <T> DataResult<T> encode(SavedItemFrames input, DynamicOps<T> ops, T prefix) {
+                return DataResult.success((T) input.save(new CompoundTag()));
+            }
+        }));
     }
 
     @SubscribeEvent
     public static void sendImages(PlayerEvent.@NotNull PlayerLoggedInEvent event) {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
-        if (!(player.level() instanceof ServerLevel level)) return;
+        ServerLevel level = player.level();
         for (Group group : get(level).groups) {
             ResolvedFrames frames = ResolvedFrames.resolve(group.frames());
             DragNetworker.send(player, new ItemFrameLoadPacket(group.dimension(), group.textureLocation(), null, frames.positions(), frames.columns(), frames.rows(), group.totalColumns(), group.totalRows()));
@@ -147,7 +161,7 @@ public class SavedItemFrames extends SavedData {
         Entity.RemovalReason removalReason = itemFrame.getRemovalReason();
         if (removalReason != Entity.RemovalReason.KILLED && removalReason != Entity.RemovalReason.DISCARDED) return;
 
-        ResourceLocation dimension = level.dimension().location();
+        Identifier dimension = level.dimension().identifier();
         long position = itemFrame.blockPosition().asLong();
         SavedItemFrames.get(level).removeGroup(dimension, position);
     }
@@ -179,14 +193,14 @@ public class SavedItemFrames extends SavedData {
 
     @SuppressWarnings("ClassCanBeRecord")
     public static class Group {
-        private final ResourceLocation dimension;
-        private final ResourceLocation textureLocation;
+        private final Identifier dimension;
+        private final Identifier textureLocation;
         private final byte[] textureBytes;
         private final int totalColumns;
         private final int totalRows;
         private final ObjectList<FrameRecord> frames;
 
-        public Group(ResourceLocation dimension, ResourceLocation textureLocation, byte[] textureBytes, int totalColumns, int totalRows, ObjectList<FrameRecord> frames) {
+        public Group(Identifier dimension, Identifier textureLocation, byte[] textureBytes, int totalColumns, int totalRows, ObjectList<FrameRecord> frames) {
             this.dimension = dimension;
             this.textureLocation = textureLocation;
             this.textureBytes = textureBytes;
@@ -195,11 +209,11 @@ public class SavedItemFrames extends SavedData {
             this.frames = new ObjectArrayList<>(frames);
         }
 
-        public ResourceLocation dimension() {
+        public Identifier dimension() {
             return this.dimension;
         }
 
-        public ResourceLocation textureLocation() {
+        public Identifier textureLocation() {
             return this.textureLocation;
         }
 

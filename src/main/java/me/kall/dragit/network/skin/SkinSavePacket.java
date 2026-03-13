@@ -8,7 +8,7 @@ import me.kall.dragit.network.DragNetworker;
 import me.kall.dragit.network.base.SkinPacket;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class SkinSavePacket extends SkinPacket {
-    public SkinSavePacket(UUID uuid, ResourceLocation textureLocation, byte[] textureBytes) {
+    public SkinSavePacket(UUID uuid, Identifier textureLocation, byte[] textureBytes) {
         super(uuid, textureLocation, textureBytes);
     }
 
@@ -31,11 +31,11 @@ public class SkinSavePacket extends SkinPacket {
 
             ImageCache.store(this.textureLocation, this.textureBytes);
 
-            SavedSkins savedSkins = SavedSkins.get(player.serverLevel());
+            SavedSkins savedSkins = SavedSkins.get(player.level());
             savedSkins.setDirty();
             savedSkins.skins.put(this.uuid, new SavedTextureData(this.textureLocation, this.textureBytes));
 
-            List<ServerPlayer> syncTargets = player.server.getPlayerList().getPlayers();
+            List<ServerPlayer> syncTargets = player.level().getServer().getPlayerList().getPlayers();
             if (syncTargets.size() == 1) return;
             UUID senderUUID = player.getUUID();
             for (ServerPlayer syncTarget : syncTargets) {
@@ -49,7 +49,7 @@ public class SkinSavePacket extends SkinPacket {
     }
 
     @Override
-    public @NotNull Type<? extends CustomPacketPayload> type() {
+    public @NotNull Type<? extends @NotNull CustomPacketPayload> type() {
         return DragNetworker.SKIN_SAVE_TYPE;
     }
 }

@@ -18,7 +18,7 @@ import net.minecraft.client.renderer.entity.PaintingRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.decoration.Painting;
 import org.jetbrains.annotations.NotNull;
@@ -49,7 +49,7 @@ public abstract class PaintingRendererMixin extends EntityRenderer<Painting> {
 
     @WrapOperation(method = "render(Lnet/minecraft/world/entity/decoration/Painting;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/PaintingRenderer;renderPainting(Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;Lnet/minecraft/world/entity/decoration/Painting;IILnet/minecraft/client/renderer/texture/TextureAtlasSprite;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;)V"))
     private void dropIt$renderDropped(PaintingRenderer paintingRenderer, PoseStack pose, VertexConsumer consumer, @NotNull Painting entity, int width, int height, TextureAtlasSprite paintingSprite, TextureAtlasSprite backSprite, Operation<Void> original) {
-        ClientTextureData clientTextureData = ClientPaintings.PAINTINGS.getOrDefault(entity.level().dimension().location(), Long2ObjectMaps.emptyMap()).get(entity.blockPosition().asLong());
+        ClientTextureData clientTextureData = ClientPaintings.PAINTINGS.getOrDefault(entity.level().dimension().identifier(), Long2ObjectMaps.emptyMap()).get(entity.blockPosition().asLong());
         if (clientTextureData == null) {
             original.call(paintingRenderer, pose, consumer, entity, width, height, paintingSprite, backSprite);
         } else {
@@ -171,5 +171,5 @@ public abstract class PaintingRendererMixin extends EntityRenderer<Painting> {
 
     @Shadow protected abstract void vertex(PoseStack.Pose pose, VertexConsumer consumer, float x, float y, float u, float v, float z, int normalX, int normalY, int normalZ, int lightmapUV);
 
-    @Shadow public abstract @NotNull ResourceLocation getTextureLocation(@NotNull Painting entity);
+    @Shadow public abstract @NotNull Identifier getTextureLocation(@NotNull Painting entity);
 }

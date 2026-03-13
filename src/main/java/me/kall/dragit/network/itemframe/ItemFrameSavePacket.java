@@ -10,7 +10,7 @@ import me.kall.dragit.network.base.ItemFramePacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,7 +18,7 @@ import java.util.Arrays;
 import java.util.UUID;
 
 public class ItemFrameSavePacket extends ItemFramePacket {
-    public ItemFrameSavePacket(ResourceLocation dimension, ResourceLocation textureLocation, byte[] textureBytes, long[] positions, int[] columns, int[] rows, int totalColumns, int totalRows) {
+    public ItemFrameSavePacket(Identifier dimension, Identifier textureLocation, byte[] textureBytes, long[] positions, int[] columns, int[] rows, int totalColumns, int totalRows) {
         super(dimension, textureLocation, textureBytes, positions, columns, rows, totalColumns, totalRows);
     }
 
@@ -36,10 +36,10 @@ public class ItemFrameSavePacket extends ItemFramePacket {
             ObjectList<SavedItemFrames.FrameRecord> frameRecords = new ObjectArrayList<>();
             for (int i = 0; i < this.positions.length; i++) frameRecords.add(new SavedItemFrames.FrameRecord(this.positions[i], this.columns[i], this.rows[i]));
 
-            SavedItemFrames.get(sender.serverLevel()).addGroup(new SavedItemFrames.Group(this.dimension, this.textureLocation, this.textureBytes, this.totalColumns, this.totalRows, frameRecords));
+            SavedItemFrames.get(sender.level()).addGroup(new SavedItemFrames.Group(this.dimension, this.textureLocation, this.textureBytes, this.totalColumns, this.totalRows, frameRecords));
 
             UUID senderUUID = sender.getUUID();
-            for (ServerPlayer syncTarget : sender.server.getPlayerList().getPlayers()) {
+            for (ServerPlayer syncTarget : sender.level().getServer().getPlayerList().getPlayers()) {
                 if (!syncTarget.getUUID().equals(senderUUID)) {
                     DragNetworker.send(syncTarget, new ItemFrameLoadPacket(this.dimension, this.textureLocation, this.textureBytes, this.positions, this.columns, this.rows, this.totalColumns, this.totalRows));
                 }
@@ -51,7 +51,7 @@ public class ItemFrameSavePacket extends ItemFramePacket {
     }
 
     @Override
-    public @NotNull Type<? extends CustomPacketPayload> type() {
+    public @NotNull Type<? extends @NotNull CustomPacketPayload> type() {
         return DragNetworker.ITEM_FRAME_SAVE_TYPE;
     }
 }

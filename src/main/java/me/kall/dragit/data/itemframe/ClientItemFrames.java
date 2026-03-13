@@ -10,7 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import net.neoforged.api.distmarker.Dist;
@@ -26,9 +26,9 @@ import java.util.Map;
 
 @EventBusSubscriber(modid = DragIt.MOD_ID, value = Dist.CLIENT)
 public class ClientItemFrames {
-    public static final Object2ObjectMap<ResourceLocation, Long2ObjectMap<FrameEntry>> ITEM_FRAMES = new Object2ObjectOpenHashMap<>();
+    public static final Object2ObjectMap<Identifier, Long2ObjectMap<FrameEntry>> ITEM_FRAMES = new Object2ObjectOpenHashMap<>();
 
-    public static void registerGroup(ResourceLocation dimension, long @NotNull [] positions, int[] columns, int[] rows, int totalColumns, int totalRows, ResourceLocation textureLocation, byte[] textureBytes) {
+    public static void registerGroup(Identifier dimension, long @NotNull [] positions, int[] columns, int[] rows, int totalColumns, int totalRows, Identifier textureLocation, byte[] textureBytes) {
         TextureManager textureManager = Minecraft.getInstance().getTextureManager();
 
         Long2ObjectMap<FrameEntry> dimensionMap = ITEM_FRAMES.computeIfAbsent(dimension, key -> new Long2ObjectOpenHashMap<>());
@@ -42,7 +42,7 @@ public class ClientItemFrames {
 
         try {
             NativeImage image = NativeImage.read(textureBytes);
-            DynamicTexture dynamicTexture = new DynamicTexture(image);
+            DynamicTexture dynamicTexture = new DynamicTexture(textureLocation::toString, image);
             textureManager.register(textureLocation, dynamicTexture);
 
             for (int index = 0; index < positions.length; index++) {
@@ -54,12 +54,12 @@ public class ClientItemFrames {
         }
     }
 
-    public static @Nullable FrameEntry getFrame(ResourceLocation dimension, long position) {
+    public static @Nullable FrameEntry getFrame(Identifier dimension, long position) {
         Long2ObjectMap<FrameEntry> dimensionMap = ITEM_FRAMES.get(dimension);
         return dimensionMap == null ? null : dimensionMap.get(position);
     }
 
-    private static boolean isUnreferenced(@NotNull Long2ObjectMap<FrameEntry> dimensionMap, ResourceLocation textureLocation) {
+    private static boolean isUnreferenced(@NotNull Long2ObjectMap<FrameEntry> dimensionMap, Identifier textureLocation) {
         for (FrameEntry entry : dimensionMap.values()) {
             if (entry.textureLocation().equals(textureLocation)) return false;
         }
@@ -70,11 +70,11 @@ public class ClientItemFrames {
     public static void clearAll(ClientPlayerNetworkEvent.LoggingOut event) {
         TextureManager textureManager = Minecraft.getInstance().getTextureManager();
         for (Long2ObjectMap<FrameEntry> dimensionMap : ITEM_FRAMES.values()) {
-            Object2ObjectMap<ResourceLocation, DynamicTexture> seenTextures = new Object2ObjectOpenHashMap<>();
+            Object2ObjectMap<Identifier, DynamicTexture> seenTextures = new Object2ObjectOpenHashMap<>();
             for (FrameEntry entry : dimensionMap.values()) {
                 seenTextures.put(entry.textureLocation(), entry.dynamicTexture());
             }
-            for (Map.Entry<ResourceLocation, DynamicTexture> textureEntry : seenTextures.entrySet()) {
+            for (Map.Entry<Identifier, DynamicTexture> textureEntry : seenTextures.entrySet()) {
                 textureManager.release(textureEntry.getKey());
                 textureEntry.getValue().close();
             }
@@ -89,7 +89,7 @@ public class ClientItemFrames {
         Entity.RemovalReason removalReason = itemFrame.getRemovalReason();
         if (removalReason != Entity.RemovalReason.KILLED && removalReason != Entity.RemovalReason.DISCARDED) return;
 
-        ResourceLocation dimension = level.dimension().location();
+        Identifier dimension = level.dimension().identifier();
         long position = itemFrame.blockPosition().asLong();
 
         Long2ObjectMap<FrameEntry> frameMap = ITEM_FRAMES.get(dimension);
@@ -97,7 +97,7 @@ public class ClientItemFrames {
         FrameEntry frameEntry = frameMap.get(position);
         if (frameEntry == null) return;
 
-        ResourceLocation textureToRemove = frameEntry.textureLocation();
+        Identifier textureToRemove = frameEntry.textureLocation();
         frameMap.values().removeIf(entry -> entry.textureLocation().equals(textureToRemove));
 
         Minecraft.getInstance().getTextureManager().release(textureToRemove);
@@ -108,14 +108,14 @@ public class ClientItemFrames {
 
     @SuppressWarnings("ClassCanBeRecord")
     public static class FrameEntry {
-        private final ResourceLocation textureLocation;
+        private final Identifier textureLocation;
         private final DynamicTexture dynamicTexture;
         private final int column;
         private final int row;
         private final int totalColumns;
         private final int totalRows;
 
-        public FrameEntry(ResourceLocation textureLocation, DynamicTexture dynamicTexture, int column, int row, int totalColumns, int totalRows) {
+        public FrameEntry(Identifier textureLocation, DynamicTexture dynamicTexture, int column, int row, int totalColumns, int totalRows) {
             this.textureLocation = textureLocation;
             this.dynamicTexture = dynamicTexture;
             this.column = column;
@@ -124,7 +124,7 @@ public class ClientItemFrames {
             this.totalRows = totalRows;
         }
 
-        public ResourceLocation textureLocation() {
+        public Identifier textureLocation() {
             return this.textureLocation;
         }
 

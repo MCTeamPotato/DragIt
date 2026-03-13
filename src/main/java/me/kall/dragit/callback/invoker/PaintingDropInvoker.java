@@ -11,7 +11,7 @@ import me.kall.dragit.network.painting.PaintingSavePacket;
 import me.kall.dragit.util.ImageCompressor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.decoration.Painting;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -31,10 +31,10 @@ public class PaintingDropInvoker implements DragCallback.Invoker {
         if (!(((EntityHitResult) target).getEntity() instanceof Painting painting)) return false;
 
         try {
-            ResourceLocation dimension = level.dimension().location();
+            Identifier dimension = level.dimension().identifier();
             long pos = painting.blockPosition().asLong();
             byte[] textureBytes = ImageCompressor.compress(filePath, DragClientConfig.INSTANCE.getPaintingMaxPixels());
-            ResourceLocation textureLocation = ImageCache.getOrCreate(textureBytes);
+            Identifier textureLocation = ImageCache.getOrCreate(textureBytes);
 
             ClientPaintings.registerPainting(dimension, pos, textureBytes, textureLocation);
             if (DragItClient.canSync()) DragNetworker.sendToServer(new PaintingSavePacket(dimension, pos, textureLocation, textureBytes));

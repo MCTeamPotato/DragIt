@@ -8,7 +8,7 @@ import me.kall.dragit.data.ClientTextureData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -21,7 +21,7 @@ import java.util.UUID;
 public class ClientCapes {
     public static final Object2ObjectMap<UUID, ClientTextureData> CAPES = new Object2ObjectOpenHashMap<>();
 
-    public static void registerCape(UUID uuid, ResourceLocation textureLocation, byte[] textureBytes) {
+    public static void registerCape(UUID uuid, Identifier textureLocation, byte[] textureBytes) {
         TextureManager textureManager = Minecraft.getInstance().getTextureManager();
         try {
             if (CAPES.containsKey(uuid)) {
@@ -30,7 +30,7 @@ public class ClientCapes {
                 removed.dynamicTexture().close();
             }
 
-            DynamicTexture dynamicTexture = new DynamicTexture(NativeImage.read(textureBytes));
+            DynamicTexture dynamicTexture = new DynamicTexture(textureLocation::toString, NativeImage.read(textureBytes));
             textureManager.register(textureLocation, dynamicTexture);
             CAPES.put(uuid, new ClientTextureData(textureLocation, dynamicTexture));
             DragIt.LOGGER.info("Cape {} is registered", textureLocation.toString());

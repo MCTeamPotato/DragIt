@@ -12,7 +12,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.FormattedCharSequence;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
@@ -25,7 +25,7 @@ public abstract class ChatComponentMixin {
     private int renderImage(GuiGraphics guiGraphics, Font font, FormattedCharSequence text, int x, int y, int color, @NotNull Operation<Integer> original) {
         String message = this.dragIt$toString(text);
         if (message.startsWith("!image:")) {
-            ResourceLocation textureLocation = ResourceLocation.parse(message.split("image:")[1]);
+            Identifier textureLocation = Identifier.parse(message.split("image:")[1]);
             DynamicTexture texture = ChatImages.CHAT_IMAGES.get(textureLocation);
             if (texture != null) {
                 NativeImage pixels = texture.getPixels();
