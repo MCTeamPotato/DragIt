@@ -10,7 +10,7 @@ import me.kall.dragit.network.skin.SkinSavePacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.glfw.GLFWDropCallback;
 
@@ -32,7 +32,7 @@ public class SkinDropInvoker implements DragCallback.Invoker {
         try {
             byte[] textureBytes = Files.readAllBytes(new File(filePath).toPath());
             if (textureBytes.length > 10000) {
-                player.displayClientMessage(Component.translatable("note.dragit.skin"), false);
+                player.displayClientMessage(new TranslatableComponent("note.dragit.skin"), false);
                 return false;
             }
             ResourceLocation textureLocation = ImageCache.getOrCreate(textureBytes);

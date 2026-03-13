@@ -1,6 +1,7 @@
 package me.kall.dragit.network;
 
 import me.kall.dragit.DragIt;
+import me.kall.dragit.network.base.Handler;
 import me.kall.dragit.network.cache.CacheRequestPacket;
 import me.kall.dragit.network.cache.CacheResponsePacket;
 import me.kall.dragit.network.cape.CapeLoadPacket;
@@ -11,17 +12,18 @@ import me.kall.dragit.network.itemframe.ItemFrameLoadPacket;
 import me.kall.dragit.network.itemframe.ItemFrameSavePacket;
 import me.kall.dragit.network.painting.PaintingLoadPacket;
 import me.kall.dragit.network.painting.PaintingSavePacket;
+import me.kall.dragit.network.remove.HangingRemovePacket;
 import me.kall.dragit.network.skin.SkinLoadPacket;
 import me.kall.dragit.network.skin.SkinSavePacket;
 import me.kall.dragit.network.video.VideoScreenPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.network.simple.SimpleChannel;
+import net.minecraftforge.fml.network.NetworkRegistry;
+import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 public class DragNetworker {
-    public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, "main"), () -> "1", version -> version.equals("1"), version -> version.equals("1"));
+    public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(new ResourceLocation(DragIt.MOD_ID, "main"), () -> "1", version -> version.equals("1"), version -> version.equals("1"));
 
     public static int id = 0;
 
@@ -39,6 +41,7 @@ public class DragNetworker {
         INSTANCE.registerMessage(id++, CacheRequestPacket.class, CacheRequestPacket::save, CacheRequestPacket::new, CacheRequestPacket::handle);
         INSTANCE.registerMessage(id++, CacheResponsePacket.class, CacheResponsePacket::save, CacheResponsePacket::new, CacheResponsePacket::handle);
         INSTANCE.registerMessage(id++, VideoScreenPacket.class, VideoScreenPacket::save, VideoScreenPacket::new, VideoScreenPacket::handle);
+        INSTANCE.registerMessage(id++, HangingRemovePacket.class, HangingRemovePacket::save, HangingRemovePacket::new, Handler::handle);
     }
 
     public static <MSG> void sendToServer(MSG msg) {

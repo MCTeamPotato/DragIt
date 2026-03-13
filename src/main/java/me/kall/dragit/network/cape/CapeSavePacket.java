@@ -31,7 +31,7 @@ public class CapeSavePacket extends SkinPacket {
 
             ImageCache.store(this.textureLocation, this.textureBytes);
 
-            SavedCapes savedCapes = SavedCapes.get(player.serverLevel());
+            SavedCapes savedCapes = SavedCapes.get(player.getLevel());
             savedCapes.setDirty();
             savedCapes.capes.put(this.uuid, new SavedTextureData(this.textureLocation, this.textureBytes));
 

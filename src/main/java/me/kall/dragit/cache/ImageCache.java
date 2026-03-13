@@ -27,10 +27,10 @@ public class ImageCache {
             if (!Files.exists(file)) {
                 Files.write(file, bytes);
                 DragIt.LOGGER.info("ImageCache: stored new entry [{}]", path);
-                return ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, path);
+                return new ResourceLocation(DragIt.MOD_ID, path);
             }
             byte[] existing = Files.readAllBytes(file);
-            if (Arrays.equals(existing, bytes)) return ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, path);
+            if (Arrays.equals(existing, bytes)) return new ResourceLocation(DragIt.MOD_ID, path);
         }
     }
 

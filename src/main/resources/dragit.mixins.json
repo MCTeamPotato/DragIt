@@ -15,11 +15,15 @@
     "CapeLayerMixin",
     "ChatComponentMixin",
     "ItemFrameRendererMixin",
+    "LevelRendererInvoker",
     "PaintingRendererMixin",
     "PlayerInfoMixin",
-    "PlayerRendererMixin"
+    "PlayerRendererMixin",
+    "SodiumOptionsGUIMixin"
   ],
   "mixins": [
+    "EntityMixin",
+    "ServerLevelMixin",
     "ServerScreenCheckerInvoker"
   ]
 }

@@ -14,6 +14,7 @@ import org.lwjgl.glfw.GLFWDropCallback;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 public class NoWorldDropInvoker implements DragCallback.Invoker {
@@ -35,7 +36,7 @@ public class NoWorldDropInvoker implements DragCallback.Invoker {
     }
 
     public static @NotNull String copyFileToConfig(String filePath) throws IOException {
-        Path source = Path.of(filePath);
+        Path source = Paths.get(filePath);
 
         String hash = String.valueOf(filePath.hashCode());
 

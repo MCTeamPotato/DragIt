@@ -28,7 +28,8 @@ public class PaintingDropInvoker implements DragCallback.Invoker {
         HitResult target = minecraft.hitResult;
 
         if (level == null || target == null || !target.getType().equals(HitResult.Type.ENTITY)) return false;
-        if (!(((EntityHitResult) target).getEntity() instanceof Painting painting)) return false;
+        if (!(((EntityHitResult) target).getEntity() instanceof Painting)) return false;
+        Painting painting = (Painting) ((EntityHitResult) target).getEntity();
 
         try {
             ResourceLocation dimension = level.dimension().location();

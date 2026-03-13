@@ -35,7 +35,7 @@ public class ItemFrameSavePacket extends ItemFramePacket {
             ObjectList<SavedItemFrames.FrameRecord> frameRecords = new ObjectArrayList<>();
             for (int i = 0; i < this.positions.length; i++) frameRecords.add(new SavedItemFrames.FrameRecord(this.positions[i], this.columns[i], this.rows[i]));
 
-            SavedItemFrames.get(sender.serverLevel()).addGroup(new SavedItemFrames.Group(this.dimension, this.textureLocation, this.textureBytes, this.totalColumns, this.totalRows, frameRecords));
+            SavedItemFrames.get(sender.getLevel()).addGroup(new SavedItemFrames.Group(this.dimension, this.textureLocation, this.textureBytes, this.totalColumns, this.totalRows, frameRecords));
 
             UUID senderUUID = sender.getUUID();
             for (ServerPlayer syncTarget : sender.server.getPlayerList().getPlayers()) {

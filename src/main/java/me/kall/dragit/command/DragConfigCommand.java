@@ -7,7 +7,7 @@ import me.kall.dragit.config.DragCommonConfig;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -59,10 +59,10 @@ public class DragConfigCommand {
         for (ServerPlayer player : players) {
             UUID uuid = player.getUUID();
             if (config.whitelisted(uuid)) {
-                ctx.getSource().sendFailure(Component.translatable("commands.dragit.whitelist.add.already", player.getName()));
+                ctx.getSource().sendFailure(new TranslatableComponent("commands.dragit.whitelist.add.already", player.getName()));
             } else {
                 config.setWhitelisted(uuid);
-                ctx.getSource().sendSuccess(() -> Component.translatable("commands.dragit.whitelist.add.success", player.getName()), true);
+                ctx.getSource().sendSuccess(new TranslatableComponent("commands.dragit.whitelist.add.success", player.getName()), true);
                 count++;
             }
         }
@@ -75,10 +75,10 @@ public class DragConfigCommand {
         for (ServerPlayer player : players) {
             UUID uuid = player.getUUID();
             if (!config.whitelisted(uuid)) {
-                ctx.getSource().sendFailure(Component.translatable("commands.dragit.whitelist.remove.not_found", player.getName()));
+                ctx.getSource().sendFailure(new TranslatableComponent("commands.dragit.whitelist.remove.not_found", player.getName()));
             } else {
                 config.removeWhitelisted(uuid);
-                ctx.getSource().sendSuccess(() -> Component.translatable("commands.dragit.whitelist.remove.success", player.getName()), true);
+                ctx.getSource().sendSuccess(new TranslatableComponent("commands.dragit.whitelist.remove.success", player.getName()), true);
                 count++;
             }
         }
@@ -91,10 +91,10 @@ public class DragConfigCommand {
         for (ServerPlayer player : players) {
             UUID uuid = player.getUUID();
             if (config.blacklisted(uuid)) {
-                ctx.getSource().sendFailure(Component.translatable("commands.dragit.blacklist.add.already", player.getName()));
+                ctx.getSource().sendFailure(new TranslatableComponent("commands.dragit.blacklist.add.already", player.getName()));
             } else {
                 config.setBlacklisted(uuid);
-                ctx.getSource().sendSuccess(() -> Component.translatable("commands.dragit.blacklist.add.success", player.getName()), true);
+                ctx.getSource().sendSuccess(new TranslatableComponent("commands.dragit.blacklist.add.success", player.getName()), true);
                 count++;
             }
         }
@@ -107,10 +107,10 @@ public class DragConfigCommand {
         for (ServerPlayer player : players) {
             UUID uuid = player.getUUID();
             if (!config.blacklisted(uuid)) {
-                ctx.getSource().sendFailure(Component.translatable("commands.dragit.blacklist.remove.not_found", player.getName()));
+                ctx.getSource().sendFailure(new TranslatableComponent("commands.dragit.blacklist.remove.not_found", player.getName()));
             } else {
                 config.removeBlacklisted(uuid);
-                ctx.getSource().sendSuccess(() -> Component.translatable("commands.dragit.blacklist.remove.success", player.getName()), true);
+                ctx.getSource().sendSuccess(new TranslatableComponent("commands.dragit.blacklist.remove.success", player.getName()), true);
                 count++;
             }
         }

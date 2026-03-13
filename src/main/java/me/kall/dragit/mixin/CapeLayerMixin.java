@@ -5,6 +5,8 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Matrix3f;
+import com.mojang.math.Matrix4f;
 import me.kall.dragit.data.ClientTextureData;
 import me.kall.dragit.data.cape.ClientCapes;
 import net.minecraft.client.model.PlayerModel;
@@ -14,8 +16,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.layers.CapeLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Matrix3f;
-import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
@@ -28,9 +28,11 @@ public abstract class CapeLayerMixin {
             original.call(model, poseStack, ignored, packedLight, packedOverlay);
             return;
         }
+
         VertexConsumer vertexConsumer = buffer.getBuffer(RenderType.entityCutoutNoCull(cape.textureLocation()));
         Matrix4f pose = poseStack.last().pose();
         Matrix3f normal = poseStack.last().normal();
+
         vertexConsumer.vertex(pose, -0.3125F, 0.0F, 0.0F).color(255, 255, 255, 255).uv(0, 0).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLight).normal(normal, 0, 0, -1).endVertex();
         vertexConsumer.vertex(pose, -0.3125F, 1.0F, 0.0F).color(255, 255, 255, 255).uv(0, 1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLight).normal(normal, 0, 0, -1).endVertex();
         vertexConsumer.vertex(pose, +0.3125F, 1.0F, 0.0F).color(255, 255, 255, 255).uv(1, 1).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLight).normal(normal, 0, 0, -1).endVertex();

@@ -11,8 +11,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.decoration.ItemFrame;
-import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.fml.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.LongPredicate;
@@ -41,10 +42,15 @@ public class VideoScreenPacket extends Handler {
     public void handle(ServerPlayer player) {
         try {
             if (player == null) return;
-            ServerLevel level = player.serverLevel();
+            
+            ServerLevel level = player.getLevel();
+            Entity leftBottomEntity = level.getEntity(this.leftBottom);
+            Entity rightBottomEntity = level.getEntity(this.rightBottom);
 
-            if (!(level.getEntity(this.leftBottom) instanceof ItemFrame leftBottomFrame)) return;
-            if (!(level.getEntity(this.rightBottom) instanceof ItemFrame rightBottomFrame)) return;
+            if (!(leftBottomEntity instanceof ItemFrame)) return;
+            if (!(rightBottomEntity instanceof ItemFrame)) return;
+            ItemFrame leftBottomFrame = (ItemFrame) leftBottomEntity;
+            ItemFrame rightBottomFrame = (ItemFrame) rightBottomEntity;
 
             Direction facing = leftBottomFrame.getDirection();
 

@@ -7,18 +7,19 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import me.kall.dragit.DragIt;
+import me.kall.dragit.ext.Leaving;
 import me.kall.dragit.network.DragNetworker;
 import me.kall.dragit.network.itemframe.ItemFrameLoadPacket;
+import me.kall.dragit.network.remove.HangingRemovePacket;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.level.saveddata.SavedData;
-import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.event.entity.EntityLeaveWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -33,6 +34,10 @@ public class SavedItemFrames extends SavedData {
 
     public final List<Group> groups = new ObjectArrayList<>();
     private final Object2ObjectMap<ResourceLocation, LongSet> positionIndex = new Object2ObjectOpenHashMap<>();
+
+    public SavedItemFrames() {
+        super(DATA_NAME);
+    }
 
     private void rebuildIndex() {
         this.positionIndex.clear();
@@ -72,30 +77,28 @@ public class SavedItemFrames extends SavedData {
         this.setDirty();
     }
 
-    public static @NotNull SavedItemFrames load(@NotNull CompoundTag tag) {
-        SavedItemFrames data = new SavedItemFrames();
+    public void load(@NotNull CompoundTag tag) {
 
-        ListTag groupsList = tag.getList("Groups", Tag.TAG_COMPOUND);
+        ListTag groupsList = tag.getList("Groups", Constants.NBT.TAG_COMPOUND);
         for (int groupIndex = 0; groupIndex < groupsList.size(); groupIndex++) {
             CompoundTag groupTag = groupsList.getCompound(groupIndex);
 
-            ResourceLocation dimension = ResourceLocation.parse(groupTag.getString("Dimension"));
-            ResourceLocation textureLocation = ResourceLocation.parse(groupTag.getString("TextureLocation"));
+            ResourceLocation dimension = new ResourceLocation(groupTag.getString("Dimension"));
+            ResourceLocation textureLocation = new ResourceLocation(groupTag.getString("TextureLocation"));
             byte[] textureBytes = groupTag.getByteArray("TextureBytes");
             int totalColumns = groupTag.getInt("TotalColumns");
             int totalRows = groupTag.getInt("TotalRows");
 
-            ListTag framesList = groupTag.getList("Frames", Tag.TAG_COMPOUND);
+            ListTag framesList = groupTag.getList("Frames", Constants.NBT.TAG_COMPOUND);
             ObjectList<FrameRecord> frames = new ObjectArrayList<>(framesList.size());
             for (int frameIndex = 0; frameIndex < framesList.size(); frameIndex++) {
                 CompoundTag frameTag = framesList.getCompound(frameIndex);
                 frames.add(new FrameRecord(frameTag.getLong("Position"), frameTag.getInt("Column"), frameTag.getInt("Row")));
             }
 
-            data.groups.add(new Group(dimension, textureLocation, textureBytes, totalColumns, totalRows, frames));
+            this.groups.add(new Group(dimension, textureLocation, textureBytes, totalColumns, totalRows, frames));
         }
-        data.rebuildIndex();
-        return data;
+        this.rebuildIndex();
     }
 
     @Override
@@ -125,14 +128,14 @@ public class SavedItemFrames extends SavedData {
     }
 
     public static @NotNull SavedItemFrames get(@NotNull ServerLevel level) {
-        return level.getDataStorage().computeIfAbsent(SavedItemFrames::load, SavedItemFrames::new, DATA_NAME);
+        return level.getDataStorage().computeIfAbsent(SavedItemFrames::new, DATA_NAME);
     }
 
     @SubscribeEvent
     public static void sendImages(PlayerEvent.@NotNull PlayerLoggedInEvent event) {
-        if (!(event.getEntity() instanceof ServerPlayer player)) return;
-        if (!(player.level() instanceof ServerLevel level)) return;
-        for (Group group : get(level).groups) {
+        if (!(event.getEntity() instanceof ServerPlayer)) return;
+        ServerPlayer player = (ServerPlayer) event.getEntity();
+        for (Group group : get(player.getLevel()).groups) {
             ResolvedFrames frames = ResolvedFrames.resolve(group.frames());
             DragNetworker.send(player, new ItemFrameLoadPacket(group.dimension(), group.textureLocation(), null, frames.positions(), frames.columns(), frames.rows(), group.totalColumns(), group.totalRows()));
             DragIt.LOGGER.info("Delivering item-frame group [{}] to {} (null bytes).", group.textureLocation(), player.getName().getString());
@@ -140,18 +143,19 @@ public class SavedItemFrames extends SavedData {
     }
 
     @SubscribeEvent
-    public static void removeImage(@NotNull EntityLeaveLevelEvent event) {
-        if (!(event.getEntity() instanceof ItemFrame itemFrame)) return;
-        if (!(event.getLevel() instanceof ServerLevel level)) return;
-        Entity.RemovalReason removalReason = itemFrame.getRemovalReason();
-        if (removalReason != Entity.RemovalReason.KILLED && removalReason != Entity.RemovalReason.DISCARDED) return;
+    public static void removeImage(@NotNull EntityLeaveWorldEvent event) {
+        if (!(event.getEntity() instanceof ItemFrame)) return;
+        if (!(event.getWorld() instanceof ServerLevel)) return;
+        ItemFrame itemFrame = (ItemFrame) event.getEntity();
+        ServerLevel level = (ServerLevel) event.getWorld();
+        if (((Leaving)itemFrame).dragIt$keepData()) return;
 
         ResourceLocation dimension = level.dimension().location();
         long position = itemFrame.blockPosition().asLong();
         SavedItemFrames.get(level).removeGroup(dimension, position);
+        DragNetworker.send(new HangingRemovePacket(dimension, position, HangingRemovePacket.ITEM_FRAME));
     }
 
-    @SuppressWarnings("ClassCanBeRecord")
     public static class FrameRecord {
         private final long position;
         private final int column;
@@ -176,7 +180,6 @@ public class SavedItemFrames extends SavedData {
         }
     }
 
-    @SuppressWarnings("ClassCanBeRecord")
     public static class Group {
         private final ResourceLocation dimension;
         private final ResourceLocation textureLocation;
@@ -219,7 +222,6 @@ public class SavedItemFrames extends SavedData {
         }
     }
 
-    @SuppressWarnings("ClassCanBeRecord")
     private static class ResolvedFrames {
         private final long[] positions;
         private final int[] columns;

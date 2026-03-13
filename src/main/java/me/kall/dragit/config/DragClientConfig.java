@@ -2,6 +2,7 @@ package me.kall.dragit.config;
 
 import me.kall.dragit.config.integration.SodiumIntegration;
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLLoader;
@@ -34,9 +35,8 @@ public class DragClientConfig {
         this.configSpec = builder.build();
     }
 
-    public void register(@NotNull FMLJavaModLoadingContext context) {
+    public void register(@NotNull ModLoadingContext context) {
         context.registerConfig(ModConfig.Type.CLIENT, this.configSpec);
-        if (FMLLoader.getLoadingModList().getModFileById("embeddium") != null) SodiumIntegration.register();
     }
 
     public int getChatMaxWidth() {

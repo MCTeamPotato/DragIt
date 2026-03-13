@@ -8,11 +8,11 @@ import me.kall.dragit.network.DragNetworker;
 import me.kall.dragit.network.cape.CapeLoadPacket;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -27,23 +27,23 @@ public class SavedCapes extends SavedData {
 
     public final Object2ObjectMap<UUID, SavedTextureData> capes = new Object2ObjectOpenHashMap<>();
 
-    public static @NotNull SavedCapes load(@NotNull CompoundTag tag) {
-        SavedCapes data = new SavedCapes();
+    public SavedCapes() {
+        super(DATA_NAME);
+    }
 
-        ListTag capesList = tag.getList("Capes", Tag.TAG_COMPOUND);
+    public void load(@NotNull CompoundTag tag) {
+        ListTag capesList = tag.getList("Capes", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < capesList.size(); i++) {
             CompoundTag capeTag = capesList.getCompound(i);
-            data.capes.put(capeTag.getUUID("UUID"), new SavedTextureData(ResourceLocation.parse(capeTag.getString("TextureLocation")), capeTag.getByteArray("TextureBytes")));
+            this.capes.put(capeTag.getUUID("UUID"), new SavedTextureData(new ResourceLocation(capeTag.getString("TextureLocation")), capeTag.getByteArray("TextureBytes")));
         }
 
-        return data;
     }
 
     @Override
     public @NotNull CompoundTag save(@NotNull CompoundTag tag) {
         ListTag capesList = new ListTag();
-
-        for (var entry : this.capes.object2ObjectEntrySet()) {
+        for (Object2ObjectMap.Entry<UUID, SavedTextureData> entry : this.capes.object2ObjectEntrySet()) {
             CompoundTag capeTag = new CompoundTag();
             capeTag.putUUID("UUID", entry.getKey());
             capeTag.putString("TextureLocation", entry.getValue().textureLocation().toString());
@@ -56,14 +56,14 @@ public class SavedCapes extends SavedData {
     }
 
     public static @NotNull SavedCapes get(@NotNull ServerLevel level) {
-        return level.getDataStorage().computeIfAbsent(SavedCapes::load, SavedCapes::new, DATA_NAME);
+        return level.getDataStorage().computeIfAbsent(SavedCapes::new, DATA_NAME);
     }
 
     @SubscribeEvent
     public static void sendSkins(PlayerEvent.@NotNull PlayerLoggedInEvent event) {
-        if (!(event.getEntity() instanceof ServerPlayer player)) return;
-        if (!(player.level() instanceof ServerLevel level)) return;
-        for (Map.Entry<UUID, SavedTextureData> entry : get(level).capes.entrySet()) {
+        if (!(event.getEntity() instanceof ServerPlayer)) return;
+        ServerPlayer player = (ServerPlayer) event.getEntity();
+        for (Map.Entry<UUID, SavedTextureData> entry : get(player.getLevel()).capes.entrySet()) {
             UUID uuid = entry.getKey();
             ResourceLocation textureLocation = entry.getValue().textureLocation();
             DragNetworker.send(player, new CapeLoadPacket(uuid, textureLocation, null));

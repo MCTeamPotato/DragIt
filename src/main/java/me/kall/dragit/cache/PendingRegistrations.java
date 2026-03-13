@@ -38,7 +38,7 @@ public class PendingRegistrations {
     }
 
     @SubscribeEvent
-    public static void onLogout(ClientPlayerNetworkEvent.LoggingOut event) {
+    public static void onLogout(ClientPlayerNetworkEvent.LoggedOutEvent event) {
         PENDING.clear();
     }
 }

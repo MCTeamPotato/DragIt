@@ -30,7 +30,7 @@ public class SkinSavePacket extends SkinPacket {
 
             ImageCache.store(this.textureLocation, this.textureBytes);
 
-            SavedSkins savedSkins = SavedSkins.get(player.serverLevel());
+            SavedSkins savedSkins = SavedSkins.get(player.getLevel());
             savedSkins.setDirty();
             savedSkins.skins.put(this.uuid, new SavedTextureData(this.textureLocation, this.textureBytes));
 

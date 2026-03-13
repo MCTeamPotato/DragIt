@@ -6,9 +6,8 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import me.kall.dragit.DragIt;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -30,8 +29,8 @@ public class DragCommonConfig {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
         builder.push("DragCommonConfig");
         this.all = builder.comment("If enabled, all the players can send their skin/painting/chat images data to server.").define("All", true);
-        this.blacklist = builder.comment("Put UUIDs here so these players can never send their skin/painting/chat images data to server even if 'All' is enabled.").defineListAllowEmpty("Blacklist", Lists.newArrayList(), Predicates.alwaysTrue());
-        this.whitelist = builder.comment("Require 'All' to be false.", "Put UUIDs here so only these players can send their skin/painting/chat images data to server.").defineListAllowEmpty("Whitelist", Lists.newArrayList(), Predicates.alwaysTrue());
+        this.blacklist = builder.comment("Put UUIDs here so these players can never send their skin/painting/chat images data to server even if 'All' is enabled.").defineList("Blacklist", Lists.newArrayList(), Predicates.alwaysTrue());
+        this.whitelist = builder.comment("Require 'All' to be false.", "Put UUIDs here so only these players can send their skin/painting/chat images data to server.").defineList("Whitelist", Lists.newArrayList(), Predicates.alwaysTrue());
         this.maxPixels = builder.comment("All the painting/chat images will be compressed to be less than this size before they are sent to server.").defineInRange("MaxSendablePixels", 16384, 0, Integer.MAX_VALUE);
         builder.pop();
         this.configSpec = builder.build();
@@ -40,7 +39,7 @@ public class DragCommonConfig {
         this.blacklistCache = new ObjectOpenHashSet<>();
     }
 
-    public void register(@NotNull FMLJavaModLoadingContext context, @NotNull IEventBus modBus) {
+    public void register(@NotNull ModLoadingContext context, @NotNull IEventBus modBus) {
         context.registerConfig(ModConfig.Type.COMMON, this.configSpec);
         modBus.addListener(this::invalidateCache);
     }
@@ -103,7 +102,7 @@ public class DragCommonConfig {
         this.blacklistCache.clear();
     }
 
-    private void invalidateCache(ModConfigEvent.@NotNull Reloading event) {
+    private void invalidateCache(ModConfig.Reloading event) {
         if (event.getConfig().getModId().equals(DragIt.MOD_ID)) {
             this.whitelistCache.clear();
             this.blacklistCache.clear();

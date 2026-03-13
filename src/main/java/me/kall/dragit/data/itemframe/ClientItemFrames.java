@@ -7,21 +7,18 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import me.kall.dragit.DragIt;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.Map;
 
 @Mod.EventBusSubscriber(modid = DragIt.MOD_ID, value = Dist.CLIENT)
@@ -41,7 +38,7 @@ public class ClientItemFrames {
         }
 
         try {
-            NativeImage image = NativeImage.read(textureBytes);
+            NativeImage image = NativeImage.read(ByteBuffer.wrap(textureBytes));
             DynamicTexture dynamicTexture = new DynamicTexture(image);
             textureManager.register(textureLocation, dynamicTexture);
 
@@ -67,7 +64,7 @@ public class ClientItemFrames {
     }
 
     @SubscribeEvent
-    public static void clearAll(ClientPlayerNetworkEvent.LoggingOut event) {
+    public static void clearAll(ClientPlayerNetworkEvent.LoggedOutEvent event) {
         TextureManager textureManager = Minecraft.getInstance().getTextureManager();
         for (Long2ObjectMap<FrameEntry> dimensionMap : ITEM_FRAMES.values()) {
             Object2ObjectMap<ResourceLocation, DynamicTexture> seenTextures = new Object2ObjectOpenHashMap<>();
@@ -82,31 +79,6 @@ public class ClientItemFrames {
         ITEM_FRAMES.clear();
     }
 
-    @SubscribeEvent
-    public static void removeImage(@NotNull EntityLeaveLevelEvent event) {
-        if (!(event.getEntity() instanceof ItemFrame itemFrame)) return;
-        if (!(event.getLevel() instanceof ClientLevel level)) return;
-        Entity.RemovalReason removalReason = itemFrame.getRemovalReason();
-        if (removalReason != Entity.RemovalReason.KILLED && removalReason != Entity.RemovalReason.DISCARDED) return;
-
-        ResourceLocation dimension = level.dimension().location();
-        long position = itemFrame.blockPosition().asLong();
-
-        Long2ObjectMap<FrameEntry> frameMap = ITEM_FRAMES.get(dimension);
-        if (frameMap == null) return;
-        FrameEntry frameEntry = frameMap.get(position);
-        if (frameEntry == null) return;
-
-        ResourceLocation textureToRemove = frameEntry.textureLocation();
-        frameMap.values().removeIf(entry -> entry.textureLocation().equals(textureToRemove));
-
-        Minecraft.getInstance().getTextureManager().release(textureToRemove);
-        frameEntry.dynamicTexture().close();
-
-        if (frameMap.isEmpty()) ITEM_FRAMES.remove(dimension);
-    }
-
-    @SuppressWarnings("ClassCanBeRecord")
     public static class FrameEntry {
         private final ResourceLocation textureLocation;
         private final DynamicTexture dynamicTexture;

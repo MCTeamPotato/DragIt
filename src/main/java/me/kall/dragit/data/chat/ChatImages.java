@@ -9,7 +9,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
@@ -17,6 +18,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.Map;
 
 @Mod.EventBusSubscriber(modid = DragIt.MOD_ID, value = Dist.CLIENT)
@@ -31,14 +33,14 @@ public class ChatImages {
         }
 
         try {
-            NativeImage nativeImage = NativeImage.read(textureBytes);
+            NativeImage nativeImage = NativeImage.read(ByteBuffer.wrap(textureBytes));
             DynamicTexture dynamicTexture = new DynamicTexture(nativeImage);
             textureManager.register(textureLocation, dynamicTexture);
             CHAT_IMAGES.put(textureLocation, dynamicTexture);
 
             ChatComponent chatComponent = Minecraft.getInstance().gui.getChat();
-            chatComponent.addMessage(Component.translatable("chat.dragit.shared_image", sender));
-            chatComponent.addMessage(Component.literal("!image:" + textureLocation));
+            chatComponent.addMessage(new TranslatableComponent("chat.dragit.shared_image", sender));
+            chatComponent.addMessage(new TextComponent("!image:" + textureLocation));
 
             double maxWidth = DragClientConfig.INSTANCE.getChatMaxWidth();
             double maxHeight = DragClientConfig.INSTANCE.getChatMaxHeight();
@@ -58,7 +60,7 @@ public class ChatImages {
     }
 
     @SubscribeEvent
-    public static void clearImages(ClientPlayerNetworkEvent.LoggingOut event) {
+    public static void clearImages(ClientPlayerNetworkEvent.LoggedOutEvent event) {
         TextureManager textureManager = Minecraft.getInstance().getTextureManager();
         for (Map.Entry<ResourceLocation, DynamicTexture> entry : CHAT_IMAGES.entrySet()) {
             textureManager.release(entry.getKey());

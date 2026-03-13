@@ -43,7 +43,8 @@ public class ItemFrameDropInvoker implements DragCallback.Invoker {
 
         if (level == null || target == null) return false;
         if (target.getType() != HitResult.Type.ENTITY) return false;
-        if (!(((EntityHitResult) target).getEntity() instanceof ItemFrame targetFrame)) return false;
+        if (!(((EntityHitResult) target).getEntity() instanceof ItemFrame)) return false;
+        ItemFrame targetFrame = (ItemFrame) ((EntityHitResult) target).getEntity();
 
         Direction facing = targetFrame.getDirection();
 
@@ -77,17 +78,33 @@ public class ItemFrameDropInvoker implements DragCallback.Invoker {
     }
 
     private static int getTotalColumns(@NotNull Direction facing, BoundingBox box) {
-        return switch (facing) {
-            case NORTH, SOUTH, UP, DOWN -> box.maxX() - box.minX() + 1;
-            case EAST, WEST -> box.maxZ() - box.minZ() + 1;
-        };
+        switch (facing) {
+            case NORTH:
+            case SOUTH:
+            case UP:
+            case DOWN:
+                return box.x1 - box.x0 + 1;
+            case EAST:
+            case WEST:
+                return box.z1 - box.z0 + 1;
+            default:
+                return 0;
+        }
     }
 
     private static int getTotalRows(@NotNull Direction facing, BoundingBox box) {
-        return switch (facing) {
-            case NORTH, SOUTH, EAST, WEST -> box.maxY() - box.minY() + 1;
-            case UP, DOWN -> box.maxZ() - box.minZ() + 1;
-        };
+        switch (facing) {
+            case NORTH:
+            case SOUTH:
+            case EAST:
+            case WEST:
+                return box.y1 - box.y0 + 1;
+            case UP:
+            case DOWN:
+                return box.z1 - box.z0 + 1;
+            default:
+                return 0;
+        }
     }
 
     private static void fillFrameArrays(@NotNull Long2ObjectMap<int[]> frameGrid, @NotNull BoundingBox box, Direction facing, long[] positions, int[] columns, int[] rows) {
@@ -97,34 +114,34 @@ public class ItemFrameDropInvoker implements DragCallback.Invoker {
             int x = BlockPos.getX(packed), y = BlockPos.getY(packed), z = BlockPos.getZ(packed);
             int column, row;
             switch (facing) {
-                case NORTH -> {
-                    column = box.maxX() - x;
-                    row = box.maxY() - y;
-                }
-                case SOUTH -> {
-                    column = x - box.minX();
-                    row = box.maxY() - y;
-                }
-                case EAST -> {
-                    column = box.maxZ() - z;
-                    row = box.maxY() - y;
-                }
-                case WEST -> {
-                    column = z - box.minZ();
-                    row = box.maxY() - y;
-                }
-                case UP -> {
-                    column = x - box.minX();
-                    row = z - box.minZ();
-                }
-                case DOWN -> {
-                    column = x - box.minX();
-                    row = box.maxZ() - z;
-                }
-                default -> {
+                case NORTH:
+                    column = box.x1 - x;
+                    row = box.y1 - y;
+                    break;
+                case SOUTH:
+                    column = x - box.x0;
+                    row = box.y1 - y;
+                    break;
+                case EAST:
+                    column = box.z1 - z;
+                    row = box.y1 - y;
+                    break;
+                case WEST:
+                    column = z - box.z0;
+                    row = box.y1 - y;
+                    break;
+                case UP:
+                    column = x - box.x0;
+                    row = z - box.z0;
+                    break;
+                case DOWN:
+                    column = x - box.x0;
+                    row = box.z1 - z;
+                    break;
+                default:
                     column = 0;
                     row = 0;
-                }
+                    break;
             }
 
             entry.setValue(new int[]{column, row});
@@ -164,9 +181,18 @@ public class ItemFrameDropInvoker implements DragCallback.Invoker {
 
         while (!queue.isEmpty()) {
             long current = queue.dequeueLong();
-            Direction[] neighbors = switch (facing.getAxis()) {
-                case X -> X_NEIGHBORS; case Z -> Z_NEIGHBORS; case Y -> Y_NEIGHBORS;
-            };
+            Direction[] neighbors;
+            switch (facing.getAxis()) {
+                case X:
+                    neighbors = X_NEIGHBORS;
+                    break;
+                case Z:
+                    neighbors = Z_NEIGHBORS;
+                    break;
+                default:
+                    neighbors = Y_NEIGHBORS;
+                    break;
+            }
             for (Direction neighbor : neighbors) resolveNeighbor(frameGrid, queue, level, facing, BlockPos.offset(current, neighbor));
         }
         return frameGrid;

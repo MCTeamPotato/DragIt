@@ -30,7 +30,7 @@ public class PaintingSavePacket extends PaintingPacket {
 
             ImageCache.store(this.textureLocation, this.textureBytes);
 
-            SavedPaintings savedPaintings = SavedPaintings.get(player.serverLevel());
+            SavedPaintings savedPaintings = SavedPaintings.get(player.getLevel());
             savedPaintings.setDirty();
             savedPaintings.paintings.computeIfAbsent(this.dimension, k -> new Long2ObjectOpenHashMap<>()).put(this.pos, new SavedTextureData(this.textureLocation, this.textureBytes));
 

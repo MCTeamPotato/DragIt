@@ -15,6 +15,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.UUID;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = DragIt.MOD_ID)
@@ -30,7 +31,7 @@ public class ClientSkins {
                 removed.dynamicTexture().close();
             }
 
-            DynamicTexture dynamicTexture = new DynamicTexture(NativeImage.read(textureBytes));
+            DynamicTexture dynamicTexture = new DynamicTexture(NativeImage.read(ByteBuffer.wrap(textureBytes)));
             textureManager.register(textureLocation, dynamicTexture);
             SKINS.put(uuid, new ClientTextureData(textureLocation, dynamicTexture));
             DragIt.LOGGER.info("Skin {} is registered", textureLocation.toString());
@@ -40,7 +41,7 @@ public class ClientSkins {
     }
 
     @SubscribeEvent
-    public static void clearImages(ClientPlayerNetworkEvent.LoggingOut event) {
+    public static void clearImages(ClientPlayerNetworkEvent.LoggedOutEvent event) {
         TextureManager textureManager = Minecraft.getInstance().getTextureManager();
         for (ClientTextureData clientTextureData : SKINS.values()) {
             textureManager.release(clientTextureData.textureLocation());
