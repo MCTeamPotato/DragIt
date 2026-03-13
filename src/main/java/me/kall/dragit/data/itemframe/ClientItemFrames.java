@@ -106,5 +106,29 @@ public class ClientItemFrames {
         if (frameMap.isEmpty()) ITEM_FRAMES.remove(dimension);
     }
 
-    public record FrameEntry(ResourceLocation textureLocation, DynamicTexture dynamicTexture, int column, int row, int totalColumns, int totalRows) {}
+    @SuppressWarnings("ClassCanBeRecord")
+    public static class FrameEntry {
+        private final ResourceLocation textureLocation;
+        private final DynamicTexture dynamicTexture;
+        private final int column;
+        private final int row;
+        private final int totalColumns;
+        private final int totalRows;
+
+        public FrameEntry(ResourceLocation textureLocation, DynamicTexture dynamicTexture, int column, int row, int totalColumns, int totalRows) {
+            this.textureLocation = textureLocation;
+            this.dynamicTexture = dynamicTexture;
+            this.column = column;
+            this.row = row;
+            this.totalColumns = totalColumns;
+            this.totalRows = totalRows;
+        }
+
+        public ResourceLocation textureLocation() { return this.textureLocation; }
+        public DynamicTexture dynamicTexture() { return this.dynamicTexture; }
+        public int column() { return this.column; }
+        public int row() { return this.row; }
+        public int totalColumns() { return this.totalColumns; }
+        public int totalRows() { return this.totalRows; }
+    }
 }

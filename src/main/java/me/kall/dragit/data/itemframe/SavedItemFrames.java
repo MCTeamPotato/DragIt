@@ -38,8 +38,8 @@ public class SavedItemFrames extends SavedData {
     private void rebuildIndex() {
         this.positionIndex.clear();
         for (Group group : this.groups) {
-            LongSet positionSet = this.positionIndex.computeIfAbsent(group.dimension, key -> new LongOpenHashSet());
-            for (FrameRecord record : group.frames) {
+            LongSet positionSet = this.positionIndex.computeIfAbsent(group.dimension(), key -> new LongOpenHashSet());
+            for (FrameRecord record : group.frames()) {
                 positionSet.add(record.position());
             }
         }
@@ -47,8 +47,8 @@ public class SavedItemFrames extends SavedData {
 
     public void addGroup(Group group) {
         this.groups.add(group);
-        LongSet positionSet = this.positionIndex.computeIfAbsent(group.dimension, key -> new LongOpenHashSet());
-        for (FrameRecord record : group.frames) {
+        LongSet positionSet = this.positionIndex.computeIfAbsent(group.dimension(), key -> new LongOpenHashSet());
+        for (FrameRecord record : group.frames()) {
             positionSet.add(record.position());
         }
         this.setDirty();
@@ -59,10 +59,10 @@ public class SavedItemFrames extends SavedData {
         if (positionSet == null || !positionSet.contains(position)) return;
 
         this.groups.removeIf(group -> {
-            if (!group.dimension.equals(dimension)) return false;
-            boolean contains = group.frames.stream().anyMatch(r -> r.position() == position);
+            if (!group.dimension().equals(dimension)) return false;
+            boolean contains = group.frames().stream().anyMatch(r -> r.position() == position);
             if (contains) {
-                for (FrameRecord record : group.frames) {
+                for (FrameRecord record : group.frames()) {
                     positionSet.remove(record.position());
                 }
             }
@@ -104,14 +104,14 @@ public class SavedItemFrames extends SavedData {
         ListTag groupsList = new ListTag();
         for (Group group : this.groups) {
             CompoundTag groupTag = new CompoundTag();
-            groupTag.putString("Dimension", group.dimension.toString());
-            groupTag.putString("TextureLocation", group.textureLocation.toString());
-            groupTag.putByteArray("TextureBytes", group.textureBytes);
-            groupTag.putInt("TotalColumns", group.totalColumns);
-            groupTag.putInt("TotalRows", group.totalRows);
+            groupTag.putString("Dimension", group.dimension().toString());
+            groupTag.putString("TextureLocation", group.textureLocation().toString());
+            groupTag.putByteArray("TextureBytes", group.textureBytes());
+            groupTag.putInt("TotalColumns", group.totalColumns());
+            groupTag.putInt("TotalRows", group.totalRows());
 
             ListTag framesList = new ListTag();
-            for (FrameRecord record : group.frames) {
+            for (FrameRecord record : group.frames()) {
                 CompoundTag frameTag = new CompoundTag();
                 frameTag.putLong("Position", record.position());
                 frameTag.putInt("Column", record.column());
@@ -134,9 +134,9 @@ public class SavedItemFrames extends SavedData {
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
         if (!(player.level() instanceof ServerLevel level)) return;
         for (Group group : get(level).groups) {
-            ResolvedFrames frames = ResolvedFrames.resolve(group.frames);
-            DragNetworker.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new ItemFrameLoadPacket(group.dimension, group.textureLocation, null, frames.positions, frames.columns, frames.rows, group.totalColumns, group.totalRows));
-            DragIt.LOGGER.info("Delivering item-frame group [{}] to {} (null bytes).", group.textureLocation, player.getName().getString());
+            ResolvedFrames frames = ResolvedFrames.resolve(group.frames());
+            DragNetworker.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), new ItemFrameLoadPacket(group.dimension(), group.textureLocation(), null, frames.positions(), frames.columns(), frames.rows(), group.totalColumns(), group.totalRows()));
+            DragIt.LOGGER.info("Delivering item-frame group [{}] to {} (null bytes).", group.textureLocation(), player.getName().getString());
         }
     }
 
@@ -152,9 +152,40 @@ public class SavedItemFrames extends SavedData {
         SavedItemFrames.get(level).removeGroup(dimension, position);
     }
 
-    public record FrameRecord(long position, int column, int row) {}
+    @SuppressWarnings("ClassCanBeRecord")
+    public static class FrameRecord {
+        private final long position;
+        private final int column;
+        private final int row;
 
-    public record Group(ResourceLocation dimension, ResourceLocation textureLocation, byte[] textureBytes, int totalColumns, int totalRows, ObjectList<FrameRecord> frames) {
+        public FrameRecord(long position, int column, int row) {
+            this.position = position;
+            this.column = column;
+            this.row = row;
+        }
+
+        public long position() {
+            return this.position;
+        }
+
+        public int column() {
+            return this.column;
+        }
+
+        public int row() {
+            return this.row;
+        }
+    }
+
+    @SuppressWarnings("ClassCanBeRecord")
+    public static class Group {
+        private final ResourceLocation dimension;
+        private final ResourceLocation textureLocation;
+        private final byte[] textureBytes;
+        private final int totalColumns;
+        private final int totalRows;
+        private final ObjectList<FrameRecord> frames;
+
         public Group(ResourceLocation dimension, ResourceLocation textureLocation, byte[] textureBytes, int totalColumns, int totalRows, ObjectList<FrameRecord> frames) {
             this.dimension = dimension;
             this.textureLocation = textureLocation;
@@ -163,9 +194,56 @@ public class SavedItemFrames extends SavedData {
             this.totalRows = totalRows;
             this.frames = new ObjectArrayList<>(frames);
         }
+
+        public ResourceLocation dimension() {
+            return this.dimension;
+        }
+
+        public ResourceLocation textureLocation() {
+            return this.textureLocation;
+        }
+
+        public byte[] textureBytes() {
+            return this.textureBytes;
+        }
+
+        public int totalColumns() {
+            return this.totalColumns;
+        }
+
+        public int totalRows() {
+            return this.totalRows;
+        }
+
+        public ObjectList<FrameRecord> frames() {
+            return this.frames;
+        }
     }
 
-    private record ResolvedFrames(long[] positions, int[] columns, int[] rows) {
+    @SuppressWarnings("ClassCanBeRecord")
+    private static class ResolvedFrames {
+        private final long[] positions;
+        private final int[] columns;
+        private final int[] rows;
+
+        private ResolvedFrames(long[] positions, int[] columns, int[] rows) {
+            this.positions = positions;
+            this.columns = columns;
+            this.rows = rows;
+        }
+
+        public long[] positions() {
+            return this.positions;
+        }
+
+        public int[] columns() {
+            return this.columns;
+        }
+
+        public int[] rows() {
+            return this.rows;
+        }
+
         @Contract("_ -> new")
         public static @NotNull ResolvedFrames resolve(@NotNull List<FrameRecord> frames) {
             int size = frames.size();
@@ -174,9 +252,9 @@ public class SavedItemFrames extends SavedData {
             int[] rows = new int[size];
             for (int index = 0; index < size; index++) {
                 FrameRecord record = frames.get(index);
-                positions[index] = record.position;
-                columns[index] = record.column;
-                rows[index] = record.row;
+                positions[index] = record.position();
+                columns[index] = record.column();
+                rows[index] = record.row();
             }
             return new ResolvedFrames(positions, columns, rows);
         }
