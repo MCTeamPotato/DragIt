@@ -3,6 +3,7 @@ package me.kall.dragit.data.chat;
 import com.mojang.blaze3d.platform.NativeImage;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import me.kall.dragit.DragIt;
+import me.kall.dragit.DragItClient;
 import me.kall.dragit.config.DragClientConfig;
 import me.kall.dragit.network.base.ChatPacket;
 import net.minecraft.client.Minecraft;
@@ -18,7 +19,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.Map;
 
 @Mod.EventBusSubscriber(modid = DragIt.MOD_ID, value = Dist.CLIENT)
@@ -33,7 +33,7 @@ public class ChatImages {
         }
 
         try {
-            NativeImage nativeImage = NativeImage.read(ByteBuffer.wrap(textureBytes));
+            NativeImage nativeImage = DragItClient.buildImage(textureBytes);
             DynamicTexture dynamicTexture = new DynamicTexture(nativeImage);
             textureManager.register(textureLocation, dynamicTexture);
             CHAT_IMAGES.put(textureLocation, dynamicTexture);

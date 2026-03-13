@@ -1,9 +1,9 @@
 package me.kall.dragit.data.skin;
 
-import com.mojang.blaze3d.platform.NativeImage;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import me.kall.dragit.DragIt;
+import me.kall.dragit.DragItClient;
 import me.kall.dragit.data.ClientTextureData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
@@ -15,7 +15,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.UUID;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = DragIt.MOD_ID)
@@ -31,7 +30,7 @@ public class ClientSkins {
                 removed.dynamicTexture().close();
             }
 
-            DynamicTexture dynamicTexture = new DynamicTexture(NativeImage.read(ByteBuffer.wrap(textureBytes)));
+            DynamicTexture dynamicTexture = new DynamicTexture(DragItClient.buildImage(textureBytes));
             textureManager.register(textureLocation, dynamicTexture);
             SKINS.put(uuid, new ClientTextureData(textureLocation, dynamicTexture));
             DragIt.LOGGER.info("Skin {} is registered", textureLocation.toString());

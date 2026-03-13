@@ -1,11 +1,11 @@
 package me.kall.dragit.data.painting;
 
-import com.mojang.blaze3d.platform.NativeImage;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import me.kall.dragit.DragIt;
+import me.kall.dragit.DragItClient;
 import me.kall.dragit.data.ClientTextureData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
@@ -17,7 +17,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
 @Mod.EventBusSubscriber(modid = DragIt.MOD_ID, value = Dist.CLIENT)
 public class ClientPaintings {
@@ -36,7 +35,7 @@ public class ClientPaintings {
         }
 
         try {
-            DynamicTexture dynamicTexture = new DynamicTexture(NativeImage.read(ByteBuffer.wrap(textureBytes)));
+            DynamicTexture dynamicTexture = new DynamicTexture(DragItClient.buildImage(textureBytes));
             textureManager.register(textureLocation, dynamicTexture);
             PAINTINGS.computeIfAbsent(dimension, key -> new Long2ObjectOpenHashMap<>()).put(pos, new ClientTextureData(textureLocation, dynamicTexture));
         } catch (IOException ioException) {

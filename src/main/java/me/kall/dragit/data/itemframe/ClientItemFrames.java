@@ -6,6 +6,7 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import me.kall.dragit.DragIt;
+import me.kall.dragit.DragItClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -18,7 +19,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.Map;
 
 @Mod.EventBusSubscriber(modid = DragIt.MOD_ID, value = Dist.CLIENT)
@@ -38,7 +38,7 @@ public class ClientItemFrames {
         }
 
         try {
-            NativeImage image = NativeImage.read(ByteBuffer.wrap(textureBytes));
+            NativeImage image = DragItClient.buildImage(textureBytes);
             DynamicTexture dynamicTexture = new DynamicTexture(image);
             textureManager.register(textureLocation, dynamicTexture);
 
