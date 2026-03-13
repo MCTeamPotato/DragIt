@@ -1,16 +1,13 @@
 package me.kall.dragit.network.base;
 
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.NetworkEvent;
-import org.jetbrains.annotations.NotNull;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Supplier;
-
-public abstract class Handler {
-    public void handle(@NotNull Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> this.handle(ctx.get().getSender()));
-        ctx.get().setPacketHandled(true);
+public abstract class Handler implements CustomPacketPayload {
+    public void handle(IPayloadContext context) {
+        context.enqueueWork(() -> this.handle(context.player() instanceof ServerPlayer player ? player : null));
     }
 
     public abstract void handle(@Nullable ServerPlayer player);

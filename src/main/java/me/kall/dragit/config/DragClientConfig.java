@@ -1,20 +1,20 @@
 package me.kall.dragit.config;
 
 import me.kall.dragit.config.integration.SodiumIntegration;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLLoader;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.loading.FMLLoader;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import org.jetbrains.annotations.NotNull;
 
 public class DragClientConfig {
     public static final DragClientConfig INSTANCE = new DragClientConfig();
 
-    private final ForgeConfigSpec configSpec;
-    private final ForgeConfigSpec.IntValue chatMaxWidth, chatMaxHeight, chatMaxPixels, paintingMaxPixels, itemFrameMaxPixels, capeMaxPixels;
+    private final ModConfigSpec configSpec;
+    private final ModConfigSpec.IntValue chatMaxWidth, chatMaxHeight, chatMaxPixels, paintingMaxPixels, itemFrameMaxPixels, capeMaxPixels;
 
     private DragClientConfig() {
-        ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
+        ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
         builder.push("DragClientConfig");
         builder.push("Chat");
         this.chatMaxWidth = builder.defineInRange("MaxWidth", 64, 0, Integer.MAX_VALUE);
@@ -34,8 +34,8 @@ public class DragClientConfig {
         this.configSpec = builder.build();
     }
 
-    public void register(@NotNull FMLJavaModLoadingContext context) {
-        context.registerConfig(ModConfig.Type.CLIENT, this.configSpec);
+    public void register(@NotNull ModContainer container) {
+        container.registerConfig(ModConfig.Type.CLIENT, this.configSpec);
         if (FMLLoader.getLoadingModList().getModFileById("embeddium") != null) SodiumIntegration.register();
     }
 

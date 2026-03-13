@@ -3,9 +3,10 @@ package me.kall.dragit;
 import me.kall.dragit.config.DragClientConfig;
 import me.kall.dragit.config.DragCommonConfig;
 import me.kall.dragit.network.DragNetworker;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLLoader;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -14,11 +15,11 @@ public final class DragIt {
     public static final String MOD_ID = "dragit";
     public static final Logger LOGGER = LogManager.getLogger(DragIt.class);
 
-    public DragIt(FMLJavaModLoadingContext context) {
+    public DragIt(IEventBus modBus, Dist dist, ModContainer container) {
         DragNetworker.register();
-        DragCommonConfig.INSTANCE.register(context, context.getModEventBus());
-        if (FMLLoader.getDist().isClient()) {
-            DragClientConfig.INSTANCE.register(context);
+        DragCommonConfig.INSTANCE.register(container, modBus);
+        if (dist.isClient()) {
+            DragClientConfig.INSTANCE.register(container);
         }
     }
 }

@@ -6,6 +6,7 @@ import me.kall.dragit.DragIt;
 import me.kall.dragit.data.SavedTextureData;
 import me.kall.dragit.network.DragNetworker;
 import me.kall.dragit.network.cape.CapeLoadPacket;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -13,15 +14,15 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.saveddata.SavedData;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.UUID;
 
-@Mod.EventBusSubscriber(modid = DragIt.MOD_ID)
+@EventBusSubscriber(modid = DragIt.MOD_ID)
 public class SavedCapes extends SavedData {
     private static final String DATA_NAME = "DragItSavedCapes";
 
@@ -40,7 +41,7 @@ public class SavedCapes extends SavedData {
     }
 
     @Override
-    public @NotNull CompoundTag save(@NotNull CompoundTag tag) {
+    public @NotNull CompoundTag save(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
         ListTag capesList = new ListTag();
 
         for (var entry : this.capes.object2ObjectEntrySet()) {
@@ -56,7 +57,7 @@ public class SavedCapes extends SavedData {
     }
 
     public static @NotNull SavedCapes get(@NotNull ServerLevel level) {
-        return level.getDataStorage().computeIfAbsent(SavedCapes::load, SavedCapes::new, DATA_NAME);
+        return level.getDataStorage().computeIfAbsent(new Factory<>(SavedCapes::new, (compoundTag, provider) -> load(compoundTag)), DATA_NAME);
     }
 
     @SubscribeEvent

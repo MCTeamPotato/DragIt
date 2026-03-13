@@ -76,7 +76,7 @@ public class ItemFrameLocator {
     private static @Nullable ItemFrame getItemFrameAt(@NotNull Level level, BlockPos pos, Direction facing) {
         List<ItemFrame> itemFrames = level.getEntitiesOfClass(ItemFrame.class, new AABB(pos), frame -> frame.getDirection() == facing);
         if (itemFrames.isEmpty()) return null;
-        return itemFrames.get(0);
+        return itemFrames.getFirst();
     }
 
     private static double minDistToSegmentXZ(Vec3 p, @NotNull Vec3 a, @NotNull Vec3 b) {

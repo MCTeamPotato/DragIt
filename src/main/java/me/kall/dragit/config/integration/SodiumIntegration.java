@@ -1,28 +1,28 @@
 package me.kall.dragit.config.integration;
 
 import com.google.common.collect.ImmutableList;
-import me.jellysquid.mods.sodium.client.gui.SodiumGameOptions;
-import me.jellysquid.mods.sodium.client.gui.options.OptionGroup;
-import me.jellysquid.mods.sodium.client.gui.options.OptionImpact;
-import me.jellysquid.mods.sodium.client.gui.options.OptionImpl;
-import me.jellysquid.mods.sodium.client.gui.options.OptionPage;
-import me.jellysquid.mods.sodium.client.gui.options.control.ControlValueFormatter;
-import me.jellysquid.mods.sodium.client.gui.options.control.SliderControl;
-import me.jellysquid.mods.sodium.client.gui.options.storage.SodiumOptionsStorage;
 import me.kall.dragit.DragIt;
 import me.kall.dragit.config.DragClientConfig;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.MinecraftForge;
+import net.neoforged.neoforge.common.NeoForge;
 import org.embeddedt.embeddium.api.OptionGUIConstructionEvent;
-import org.embeddedt.embeddium.client.gui.options.OptionIdentifier;
+import org.embeddedt.embeddium.api.options.OptionIdentifier;
+import org.embeddedt.embeddium.api.options.control.ControlValueFormatter;
+import org.embeddedt.embeddium.api.options.control.SliderControl;
+import org.embeddedt.embeddium.api.options.structure.OptionGroup;
+import org.embeddedt.embeddium.api.options.structure.OptionImpact;
+import org.embeddedt.embeddium.api.options.structure.OptionImpl;
+import org.embeddedt.embeddium.api.options.structure.OptionPage;
+import org.embeddedt.embeddium.impl.gui.EmbeddiumOptions;
+import org.embeddedt.embeddium.impl.gui.options.storage.EmbeddiumOptionsStorage;
 import org.jetbrains.annotations.NotNull;
 
 public class SodiumIntegration {
-    private static final SodiumOptionsStorage sodiumOpts = new SodiumOptionsStorage();
+    private static final EmbeddiumOptionsStorage sodiumOpts = new EmbeddiumOptionsStorage();
 
     private static void addConfigPage(@NotNull OptionGUIConstructionEvent event) {
-        OptionImpl<SodiumGameOptions, Integer> chatWidth = OptionImpl.createBuilder(Integer.TYPE, sodiumOpts)
+        OptionImpl<EmbeddiumOptions, Integer> chatWidth = OptionImpl.createBuilder(Integer.TYPE, sodiumOpts)
                 .setId(ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, "chat_width"))
                 .setName(Component.translatable("config.dragit.chat_width.name"))
                 .setTooltip(Component.translatable("config.dragit.chat_width.tooltip"))
@@ -30,7 +30,7 @@ public class SodiumIntegration {
                 .setBinding((options, value) -> DragClientConfig.INSTANCE.setChatMaxWidth(value), sodiumGameOptions -> DragClientConfig.INSTANCE.getChatMaxWidth())
                 .build();
 
-        OptionImpl<SodiumGameOptions, Integer> chatHeight = OptionImpl.createBuilder(Integer.TYPE, sodiumOpts)
+        OptionImpl<EmbeddiumOptions, Integer> chatHeight = OptionImpl.createBuilder(Integer.TYPE, sodiumOpts)
                 .setId(ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, "chat_height"))
                 .setName(Component.translatable("config.dragit.chat_height.name"))
                 .setTooltip(Component.translatable("config.dragit.chat_height.tooltip"))
@@ -38,7 +38,7 @@ public class SodiumIntegration {
                 .setBinding((options, value) -> DragClientConfig.INSTANCE.setChatMaxHeight(value), sodiumGameOptions -> DragClientConfig.INSTANCE.getChatMaxHeight())
                 .build();
 
-        OptionImpl<SodiumGameOptions, Integer> chatPixels = OptionImpl.createBuilder(Integer.TYPE, sodiumOpts)
+        OptionImpl<EmbeddiumOptions, Integer> chatPixels = OptionImpl.createBuilder(Integer.TYPE, sodiumOpts)
                 .setId(ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, "chat_pixels"))
                 .setName(Component.translatable("config.dragit.chat_pixels.name"))
                 .setTooltip(Component.translatable("config.dragit.chat_pixels.tooltip"))
@@ -49,8 +49,7 @@ public class SodiumIntegration {
 
         OptionGroup chatGroup = OptionGroup.createBuilder().setId(ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, "chat_group")).add(chatWidth).add(chatHeight).add(chatPixels).build();
 
-
-        OptionImpl<SodiumGameOptions, Integer> paintingPixels = OptionImpl.createBuilder(Integer.TYPE, sodiumOpts)
+        OptionImpl<EmbeddiumOptions, Integer> paintingPixels = OptionImpl.createBuilder(Integer.TYPE, sodiumOpts)
                 .setId(ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, "painting_pixels"))
                 .setName(Component.translatable("config.dragit.painting_pixels.name"))
                 .setTooltip(Component.translatable("config.dragit.painting_pixels.tooltip"))
@@ -61,7 +60,7 @@ public class SodiumIntegration {
 
         OptionGroup paintingGroup = OptionGroup.createBuilder().setId(ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, "painting_group")).add(paintingPixels).build();
 
-        OptionImpl<SodiumGameOptions, Integer> itemFramePixels = OptionImpl.createBuilder(Integer.TYPE, sodiumOpts)
+        OptionImpl<EmbeddiumOptions, Integer> itemFramePixels = OptionImpl.createBuilder(Integer.TYPE, sodiumOpts)
                 .setId(ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, "item_frame_pixels"))
                 .setName(Component.translatable("config.dragit.item_frame_pixels.name"))
                 .setTooltip(Component.translatable("config.dragit.item_frame_pixels.tooltip"))
@@ -72,7 +71,7 @@ public class SodiumIntegration {
 
         OptionGroup itemFrameGroup = OptionGroup.createBuilder().setId(ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, "item_frame_group")).add(itemFramePixels).build();
 
-        OptionImpl<SodiumGameOptions, Integer> capePixels = OptionImpl.createBuilder(Integer.TYPE, sodiumOpts)
+        OptionImpl<EmbeddiumOptions, Integer> capePixels = OptionImpl.createBuilder(Integer.TYPE, sodiumOpts)
                 .setId(ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, "cape_pixels"))
                 .setName(Component.translatable("config.dragit.cape_pixels.name"))
                 .setTooltip(Component.translatable("config.dragit.cape_pixels.tooltip"))
@@ -88,6 +87,6 @@ public class SodiumIntegration {
     }
 
     public static void register() {
-        MinecraftForge.EVENT_BUS.addListener(SodiumIntegration::addConfigPage);
+        NeoForge.EVENT_BUS.addListener(SodiumIntegration::addConfigPage);
     }
 }

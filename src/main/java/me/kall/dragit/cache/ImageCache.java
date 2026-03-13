@@ -4,7 +4,7 @@ import me.kall.dragit.DragIt;
 import me.kall.dragit.network.DragNetworker;
 import me.kall.dragit.network.cache.CacheRequestPacket;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fml.loading.FMLLoader;
+import net.neoforged.fml.loading.FMLLoader;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

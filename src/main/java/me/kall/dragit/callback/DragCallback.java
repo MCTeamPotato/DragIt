@@ -4,15 +4,15 @@ import me.kall.dragit.DragIt;
 import me.kall.dragit.callback.invoker.*;
 import me.kall.dragit.integration.NarutoLoadingIntegration;
 import net.minecraft.client.Minecraft;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWDropCallback;
 
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, modid = DragIt.MOD_ID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = DragIt.MOD_ID, value = Dist.CLIENT)
 public class DragCallback extends GLFWDropCallback {
 
     private static @Nullable GLFWDropCallback lastCallback;

@@ -14,11 +14,10 @@ import me.kall.dragit.network.painting.PaintingSavePacket;
 import me.kall.dragit.network.skin.SkinLoadPacket;
 import me.kall.dragit.network.skin.SkinSavePacket;
 import me.kall.dragit.network.video.VideoScreenPacket;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.network.simple.SimpleChannel;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 public class DragNetworker {
     public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, "main"), () -> "1", version -> version.equals("1"), version -> version.equals("1"));
@@ -41,15 +40,15 @@ public class DragNetworker {
         INSTANCE.registerMessage(id++, VideoScreenPacket.class, VideoScreenPacket::save, VideoScreenPacket::new, VideoScreenPacket::handle);
     }
 
-    public static <MSG> void sendToServer(MSG msg) {
-        INSTANCE.sendToServer(msg);
+    public static void sendToServer(CustomPacketPayload msg) {
+        PacketDistributor.sendToServer(msg);
     }
 
-    public static <MSG> void send(ServerPlayer player, MSG msg) {
-        INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), msg);
+    public static void send(ServerPlayer player, CustomPacketPayload msg) {
+        PacketDistributor.sendToPlayer(player, msg);
     }
 
-    public static <MSG> void send(MSG msg)  {
-        INSTANCE.send(PacketDistributor.ALL.noArg(), msg);
+    public static void send(CustomPacketPayload msg)  {
+        PacketDistributor.sendToAllPlayers(msg);
     }
 }
