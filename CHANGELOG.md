@@ -12,3 +12,5 @@
 # 1.2.0
 - Fix data saving and image removal on entities discard for paintings
 - Introduce ItemFrameDropInvoker. Now you can drag images onto item frames!
+# 1.2.1
+- Fix audio issue when integrating with NarutoLoading
