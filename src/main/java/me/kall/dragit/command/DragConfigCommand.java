@@ -25,7 +25,7 @@ public class DragConfigCommand {
 
         dispatcher.register(
                 Commands.literal("dragit")
-                        .requires(src -> src.hasPermission(2))
+                        .requires(src -> Commands.LEVEL_GAMEMASTERS.check(src.permissions()))
                         .then(Commands.literal("whitelist")
                                 .then(Commands.literal("add")
                                         .then(Commands.argument("players", EntityArgument.players())

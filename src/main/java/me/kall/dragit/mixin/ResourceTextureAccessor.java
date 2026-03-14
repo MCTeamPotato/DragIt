@@ -1,14 +1,14 @@
 package me.kall.dragit.mixin;
 
 import net.minecraft.core.ClientAsset;
-import net.minecraft.world.entity.player.PlayerSkin;
+import net.minecraft.resources.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-@Mixin(PlayerSkin.class)
-public interface PlayerSkinAccessor {
+@Mixin(ClientAsset.ResourceTexture.class)
+public interface ResourceTextureAccessor {
     @Mutable
-    @Accessor("body")
-    void setBody(ClientAsset.Texture body);
+    @Accessor("id")
+    void setId(Identifier identifier);
 }

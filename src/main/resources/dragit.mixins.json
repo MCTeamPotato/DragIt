@@ -13,6 +13,7 @@
     "AbstractClientPlayerMixin",
     "CapeLayerMixin",
     "ChatComponentMixin",
+    "ChatComponentMixin$GuiGraphicsCapturer",
     "ItemFrameRendererMixin",
     "PaintingRendererMixin",
     "PlayerInfoMixin",
@@ -20,6 +21,8 @@
     "PlayerSkinAccessor"
   ],
   "mixins": [
+    "DownloadedTextureAccessor",
+    "ResourceTextureAccessor",
     "ServerScreenCheckerInvoker"
   ]
 }

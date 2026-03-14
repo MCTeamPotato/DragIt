@@ -8,7 +8,8 @@ import me.kall.dragit.data.skin.ClientSkins;
 import me.kall.dragit.network.DragNetworker;
 import me.kall.dragit.network.skin.SkinSavePacket;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
+import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -26,7 +27,7 @@ public class SkinDropInvoker implements DragCallback.Invoker {
         Minecraft minecraft = Minecraft.getInstance();
         LocalPlayer player = minecraft.player;
 
-        if (!(minecraft.screen instanceof EffectRenderingInventoryScreen) || player == null) return false;
+        if (!(minecraft.screen instanceof InventoryScreen) && !(minecraft.screen instanceof CreativeModeInventoryScreen) || player == null) return false;
 
         UUID uuid = player.getUUID();
         try {

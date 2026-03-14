@@ -40,7 +40,7 @@ public class DragCallback extends GLFWDropCallback {
 
     @SubscribeEvent
     public static void clientSetup(FMLClientSetupEvent event) {
-        lastCallback = GLFW.glfwSetDropCallback(Minecraft.getInstance().getWindow().getWindow(), new DragCallback());
+        lastCallback = GLFW.glfwSetDropCallback(Minecraft.getInstance().getWindow().handle(), new DragCallback());
     }
 
     public interface Invoker {

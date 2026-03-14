@@ -1,9 +1,7 @@
 package me.kall.dragit.config;
 
-import me.kall.dragit.config.integration.SodiumIntegration;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,7 +34,6 @@ public class DragClientConfig {
 
     public void register(@NotNull ModContainer container) {
         container.registerConfig(ModConfig.Type.CLIENT, this.configSpec);
-        if (FMLLoader.getLoadingModList().getModFileById("embeddium") != null) SodiumIntegration.register();
     }
 
     public int getChatMaxWidth() {

@@ -39,7 +39,7 @@ public class NoWorldDropInvoker implements DragCallback.Invoker {
 
         String hash = String.valueOf(filePath.hashCode());
 
-        Path targetDir = FMLLoader.getGamePath().resolve("config").resolve("narutoloading-sources").resolve(hash);
+        Path targetDir = FMLLoader.getCurrent().getGameDir().resolve("config").resolve("narutoloading-sources").resolve(hash);
 
         Files.createDirectories(targetDir);
 

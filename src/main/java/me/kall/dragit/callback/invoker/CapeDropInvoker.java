@@ -10,7 +10,8 @@ import me.kall.dragit.network.DragNetworker;
 import me.kall.dragit.network.cape.CapeSavePacket;
 import me.kall.dragit.util.ImageCompressor;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
+import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.Identifier;
 import org.lwjgl.glfw.GLFWDropCallback;
@@ -26,7 +27,7 @@ public class CapeDropInvoker implements DragCallback.Invoker {
         LocalPlayer player = minecraft.player;
         if (player == null || minecraft.options.getCameraType().isFirstPerson()) return false;
 
-        if (!(minecraft.screen instanceof EffectRenderingInventoryScreen)) return false;
+        if (!(minecraft.screen instanceof InventoryScreen) && !(minecraft.screen instanceof CreativeModeInventoryScreen)) return false;
 
         UUID uuid = player.getUUID();
         try {
