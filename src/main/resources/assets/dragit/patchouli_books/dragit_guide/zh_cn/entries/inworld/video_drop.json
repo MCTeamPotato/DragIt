@@ -1,0 +1,33 @@
+{
+  "name": "展示框视频屏幕",
+  "category": "dragit:inworld",
+  "icon": "minecraft:observer",
+  "sortnum": 2,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "title": "视频屏幕",
+      "text": "$(warn)需要 NarutoLoading 模组。$()$(br2)DragIt 支持将视频文件拖入游戏，在$(bold)多个相邻物品展示框$()上创建一块“视频屏幕”，实时播放视频内容。$(br2)视频由 NarutoLoading 提供的 FFmpeg 引擎解码渲染。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "操作步骤",
+      "text": "$(bold)1.$() 排列好$(bold)同朝向、相邻$()的物品展示框阵列（例如 4×3 格）。$(br2)$(bold)2.$() 将准星对准$(italic)任意一个$()展示框。$(br2)$(bold)3.$() 将视频文件（mp4、mkv、avi 等）从资源管理器拖入游戏窗口并松手。$(br2)$(note)视频文件会被复制到 config/narutoloading-sources/ 目录下。$()"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "两角点算法",
+      "text": "DragIt 将目标展示框作为$(bold)左下角$()，然后通过 $(bold)ItemFrameLocator$() 工具类找到对角的$(bold)右下角$()展示框。$(br2)对于水平朝向的屏幕，沿顺时针与逆时针方向各扫描一条边，取更长的一侧；对于上/下朝向，取离玩家位置最近的两条边各自的端点。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "屏幕构建流程",
+      "text": "确定左下与右下两个角点后，通过 $(bold)ServerScreenChecker$()（NarutoLoading 的 API）构建 $(bold)InWorldScreen$() 对象，设置视频路径，并广播 $(bold)ScreenLifePacket$() 给所有在线玩家。$(br2)NarutoLoading 接管后续的渲染与播放控制。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "与普通图片的区别",
+      "text": "$(bold)视频屏幕$()由 NarutoLoading 完全接管渲染，展示框实体在激活后会变为$(bold)不可见$()，图像由 NarutoLoading 直接绘制在屏幕上。$(br2)$(bold)图片展示框$()则由 DragIt 通过 Mixin 在原版展示框渲染管线中插入贴图，展示框本体仍然可见。"
+    }
+  ]
+}

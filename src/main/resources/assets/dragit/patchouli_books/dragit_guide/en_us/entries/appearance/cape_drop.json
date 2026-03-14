@@ -1,0 +1,33 @@
+{
+  "name": "Cape Drop",
+  "category": "dragit:appearance",
+  "icon": "minecraft:leather_chestplate",
+  "sortnum": 1,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "title": "Cape Replacement",
+      "text": "Drag an image or video file into the game window to replace the cape displayed on your character's back.$(br2)DragIt supports both $(bold)static image capes$() and $(bold)animated video capes$() (the latter requires NarutoLoading). The cape is rendered as a full-frame texture over the character's back."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "How to Use",
+      "text": "$(bold)1.$() Open your inventory (default key $(key)E$()).$(br2)$(bold)2.$() Switch to third-person view (default $(key)F5$()) so you can see your character's back.$(br2)$(bold)3.$() Drag an image or video file into the game window and release.$(br2)$(note)Both conditions must be met: inventory screen open AND third-person view active. First-person drops are ignored.$()"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Supported Formats",
+      "text": "$(bold)Static cape (no NarutoLoading needed):$()$(br)png, jpg, jpeg, and other common image formats.$(br2)$(bold)Video cape (requires NarutoLoading):$()$(br)mp4, gif, mkv, webm, avi, mov, flv, m4v$(br2)$(note)When a video file extension is detected, DragIt first attempts to register it as a video cape. If NarutoLoading is unavailable, the drop falls through to static image processing.$()"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Video Cape Details",
+      "text": "Video capes are rendered at a fixed resolution of $(bold)256×128 px$(). Each frame is decoded via FFmpeg, written into a DynamicTexture, and uploaded to the GPU every render tick.$(br2)The video $(bold)loops indefinitely$() and all resources are properly released when you leave the world.$(br2)$(note)Switching to a new video cape correctly shuts down the previous video executor before starting the new one, preventing resource leaks.$()"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Server Sync",
+      "text": "$(bold)Static capes:$() The raw image bytes are broadcast to all online players and saved to the world's $(bold)DragItSavedCapes$() data file. Joining players receive the cape automatically.$(br2)$(bold)Video capes:$() Only the $(bold)relative file path$() is synced. Other players must have the video file at the same path locally in order to play it back. The path is saved in $(bold)DragItSavedVideoCapes$()."
+    }
+  ]
+}

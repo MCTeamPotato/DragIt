@@ -1,0 +1,28 @@
+{
+  "name": "Skin Drop",
+  "category": "dragit:appearance",
+  "icon": "minecraft:player_head",
+  "sortnum": 0,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "title": "Skin Replacement",
+      "text": "DragIt lets you replace your character's skin by dragging a local image file into the Minecraft window — no need to upload to a Mojang account.$(br2)The change takes effect immediately on the client, and other players on the same server will also see your new skin (subject to server sync permissions)."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "How to Use",
+      "text": "$(bold)1.$() Open your inventory (default key $(key)E$()).$(br2)$(bold)2.$() While the inventory screen is open, drag a $(bold).png$() skin file from your file explorer into the game window.$(br2)$(bold)3.$() Release the file — your skin updates instantly.$(br2)$(note)The inventory (or any EffectRenderingInventoryScreen) must be open. Dropping while in-game with no screen open will not trigger skin replacement.$()"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "File Size Limit",
+      "text": "$(warn)Skin files must be 128×128 pixels or smaller.$()$(br2)Files exceeding this size will be rejected and a warning message will appear in chat.$(br2)$(note)Standard Minecraft skin dimensions are 64×64 px (new format with outer layer) or 64×32 px (legacy format). Using standard dimensions is recommended for best compatibility.$()"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Server Sync",
+      "text": "When a skin is dropped, the raw image bytes are sent to the server via a network packet. The server then:$(br2)• Stores the skin data in the world's $(bold)DragItSavedSkins$() save file$(br)• Broadcasts the skin to all other online players$(br)• Re-sends the skin to any player who joins later$(br2)$(note)If your UUID is on the server blacklist, your skin will not be synced to other players.$()"
+    }
+  ]
+}

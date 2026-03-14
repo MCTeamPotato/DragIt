@@ -1,0 +1,12 @@
+{
+  "name": "dragit.guide.book.name",
+  "landing_text": "dragit.guide.book.landing_text",
+  "version": 1,
+  "creative_tab": "minecraft:tools_and_utilities",
+  "use_resource_pack": true,
+  "macros": {
+    "$(key)": "$(#b06000)$(bold)",
+    "$(note)": "$(#555555)$(italic)",
+    "$(warn)": "$(#cc0000)$(bold)"
+  }
+}

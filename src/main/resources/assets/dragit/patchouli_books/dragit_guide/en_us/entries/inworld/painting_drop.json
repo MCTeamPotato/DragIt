@@ -1,0 +1,33 @@
+{
+  "name": "Painting Drop",
+  "category": "dragit:inworld",
+  "icon": "minecraft:painting",
+  "sortnum": 0,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "title": "Custom Paintings",
+      "text": "Aim your crosshair at any painting entity and drag an image file into the game window to replace that painting with your custom image.$(br2)The replacement is saved to the world and is visible to all players, including those who join later."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "How to Use",
+      "text": "$(bold)1.$() Place a painting on a wall in the world.$(br2)$(bold)2.$() Aim your crosshair directly at the painting entity.$(br2)$(bold)3.$() Drag an image file from your file explorer into the game window and release.$(br2)$(note)You must be looking at the painting $(italic)entity$(italic) itself, not the wall behind it. If the hit result is not an entity hit, the drop is ignored.$()"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Tiled Rendering",
+      "text": "DragIt renders the image across the painting using a $(bold)tile-based approach$(). Each 16×16-pixel region of the painting is treated as one tile, and the corresponding portion of your image is mapped to it.$(br2)This means a 4×4-block painting receives a 4×4 grid of image tiles, correctly scaling the image across the entire surface."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Back Face Rendering",
+      "text": "DragIt fully preserves the vanilla $(bold)painting back face$() rendering — the wooden frame edges and back texture remain intact. Only the front face is replaced with your custom image.$(br2)When a painting is $(bold)destroyed$() or $(bold)discarded$(), the server automatically removes the associated image data to prevent stale data accumulation."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Persistence & Sync",
+      "text": "Image data is stored in the world's $(bold)DragItSavedPaintings$() save file.$(br2)When a player joins, the server only sends the texture's $(bold)ResourceLocation$() — not the full byte array. The client first checks its local $(bold)image cache$(); on a cache miss, it requests the raw bytes from the server and writes them to the cache."
+    }
+  ]
+}

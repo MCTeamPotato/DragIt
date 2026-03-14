@@ -1,0 +1,6 @@
+{
+  "name": "聊天分享",
+  "description": "在聊天栏中分享图片给服务器上的所有玩家。",
+  "icon": "minecraft:paper",
+  "sortnum": 2
+}

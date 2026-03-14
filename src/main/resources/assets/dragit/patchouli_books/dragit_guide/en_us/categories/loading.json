@@ -1,0 +1,6 @@
+{
+  "name": "Loading Screen",
+  "description": "Requires NarutoLoading. Replace the game loading screen with a custom video background.",
+  "icon": "minecraft:clock",
+  "sortnum": 3
+}

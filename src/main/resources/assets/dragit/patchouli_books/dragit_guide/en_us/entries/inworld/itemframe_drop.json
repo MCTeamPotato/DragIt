@@ -1,0 +1,38 @@
+{
+  "name": "Item Frame Drop",
+  "category": "dragit:inworld",
+  "icon": "minecraft:item_frame",
+  "sortnum": 1,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "title": "Item Frame Images",
+      "text": "DragIt can display a custom image across one or more item frames. When multiple item frames are placed adjacent to each other facing the same direction, DragIt automatically detects the entire grid and distributes the image proportionally across all frames — creating a large seamless mural."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "How to Use",
+      "text": "$(bold)1.$() Arrange item frames on a wall (or floor/ceiling), making sure they are $(bold)adjacent and all facing the same direction$().$(br2)$(bold)2.$() Aim your crosshair at $(italic)any one$() of the frames in the group.$(br2)$(bold)3.$() Drag an image file into the game window and release.$(br2)$(note)You do not need to aim at a specific corner. DragIt calculates the full grid bounds automatically.$()"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Grid Detection",
+      "text": "After the drop, DragIt performs a $(bold)breadth-first search$() starting from the targeted frame, expanding outward to collect all adjacent frames with the same facing direction.$(br2)It then computes the overall $(bold)BoundingBox$() of the collected frames and assigns each frame a $(bold)column and row$() coordinate within that grid."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Facing Direction Rules",
+      "text": "Column/row assignments vary by facing direction:$(br2)$(bold)North:$() col = right→left (X dec), row = top→bottom$(br)$(bold)South:$() col = left→right (X inc), row = top→bottom$(br)$(bold)East:$() col = right→left (Z dec), row = top→bottom$(br)$(bold)West:$() col = left→right (Z inc), row = top→bottom$(br)$(bold)Up/Down:$() col = X axis, row = Z axis (mirrored for Down)"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Frame Removal",
+      "text": "When a frame is $(bold)killed$() or $(bold)discarded$() (not just teleported), DragIt automatically:$(br2)• Client: releases the texture for that position and frees the GPU resource$(br)• Server: removes the entire image group from $(bold)DragItSavedItemFrames$()$(br2)$(note)Destroying any single frame in a group removes the image data for the entire group.$()"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Persistence & Sync",
+      "text": "Each group's data (texture location, frame positions, column/row assignments) is stored in $(bold)DragItSavedItemFrames$().$(br2)Sync works the same as paintings: joining players receive only the ResourceLocation; the client reads from its local cache or requests the full bytes from the server on a cache miss."
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "name": "In-World",
+  "description": "Place custom images or videos onto paintings and item frames in the world.",
+  "icon": "minecraft:painting",
+  "sortnum": 1
+}

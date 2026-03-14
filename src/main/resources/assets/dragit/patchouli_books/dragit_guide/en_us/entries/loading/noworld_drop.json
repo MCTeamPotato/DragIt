@@ -1,0 +1,29 @@
+{
+  "name": "Loading Screen Video",
+  "category": "dragit:loading",
+  "icon": "minecraft:clock",
+  "sortnum": 0,
+  "priority": true,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "title": "Custom Loading Video",
+      "text": "$(warn)Requires NarutoLoading.$()$(br2)While on the main menu or a loading screen (i.e. no world is currently loaded), drag a video file into the Minecraft window to replace NarutoLoading's background video with your chosen file.$(br2)The change takes effect immediately — no restart required."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Trigger Conditions",
+      "text": "This drop handler fires when $(bold)all$() of the following are true:$(br2)• No world is currently loaded ($(bold)player == null$() and $(bold)level == null$())$(br)• NarutoLoading is installed and available$(br2)$(note)If you are inside a world, dragging a video will instead try to trigger the video cape or video screen handlers, not this one.$()"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "File Handling",
+      "text": "$(bold)1.$() The source video is $(bold)copied$() to $(bold)config/narutoloading-sources/<hash>/$() using the source path's hash code as the folder name. The original file is not moved or deleted.$(br2)$(bold)2.$() NarutoLoading's config is updated: $(bold)videoFileName$() is set to the new path, and $(bold)audioFileName$() is reset to a blank audio placeholder.$(br2)$(bold)3.$() The environment is rebuilt via $(bold)BaseEnv.setupEnv()$() and the renderer is restarted."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Notes",
+      "text": "• This handler always $(bold)returns false$(), meaning it never consumes the drop event. Subsequent handlers (e.g. video cape) will still be checked even if this handler ran successfully.$(br2)• Each drop $(bold)overwrites$() the previously configured loading video.$(br2)• The same source path will not be copied again if the target folder already exists, avoiding duplicate files."
+    }
+  ]
+}

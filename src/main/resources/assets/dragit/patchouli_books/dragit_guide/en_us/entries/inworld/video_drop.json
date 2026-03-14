@@ -1,0 +1,33 @@
+{
+  "name": "Item Frame Video Screen",
+  "category": "dragit:inworld",
+  "icon": "minecraft:observer",
+  "sortnum": 2,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "title": "Video Screen",
+      "text": "$(warn)Requires NarutoLoading.$()$(br2)Drag a video file onto a group of adjacent item frames to create a live $(bold)video screen$() in the world. Video decoding and playback are handled by NarutoLoading's built-in FFmpeg engine."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "How to Use",
+      "text": "$(bold)1.$() Arrange adjacent item frames all facing the same direction (e.g. a 4×3 grid on a wall).$(br2)$(bold)2.$() Aim your crosshair at any frame in the group.$(br2)$(bold)3.$() Drag a video file (mp4, mkv, avi, etc.) into the game window and release.$(br2)$(note)The video file is copied to config/narutoloading-sources/ before being registered.$()"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Two-Corner Algorithm",
+      "text": "DragIt treats the targeted frame as the $(bold)left-bottom corner$(). It then uses $(bold)ItemFrameLocator$() to find the opposite $(bold)right-bottom corner$():$(br2)• For horizontal-facing screens, it scans clockwise and counter-clockwise, picking the farther end.$(br)• For up/down-facing screens, it finds the two closest edge endpoints relative to the player's position."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Screen Construction",
+      "text": "Once both corner frames are identified, DragIt calls NarutoLoading's $(bold)ServerScreenChecker$() API to build an $(bold)InWorldScreen$() object with the video path set. It then broadcasts a $(bold)ScreenLifePacket$() to all online players.$(br2)NarutoLoading takes full control of subsequent rendering and playback."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Difference from Image Frames",
+      "text": "A $(bold)video screen$() is fully managed by NarutoLoading — the item frame entities become $(bold)invisible$() and the video is drawn directly by NarutoLoading's renderer.$(br2)An $(bold)image frame$() is handled by DragIt's own Mixin into the vanilla ItemFrameRenderer, leaving the frame entities visible with the custom texture layered on top."
+    }
+  ]
+}
