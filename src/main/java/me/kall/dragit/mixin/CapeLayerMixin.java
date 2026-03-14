@@ -3,36 +3,65 @@ package me.kall.dragit.mixin;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import me.kall.dragit.data.ClientTextureData;
 import me.kall.dragit.data.cape.ClientCapes;
-import net.minecraft.client.model.PlayerModel;
-import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.CubeDeformation;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.player.PlayerCapeModel;
+import net.minecraft.client.model.player.PlayerModel;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.entity.layers.CapeLayer;
-import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.NotNull;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(CapeLayer.class)
 public abstract class CapeLayerMixin {
+    @Unique private HumanoidModel<@NotNull AvatarRenderState> dragIt$customCapeModel;
 
-    @WrapOperation(method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/client/player/AbstractClientPlayer;FFFFFF)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/model/PlayerModel;renderCloak(Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;II)V"))
-    private void wrapRenderCloak(PlayerModel<?> model, PoseStack poseStack, VertexConsumer ignored, int packedLight, int packedOverlay, Operation<Void> original, @Local(argsOnly = true) @NotNull AbstractClientPlayer player, @Local(argsOnly = true) MultiBufferSource buffer) {
-        ClientTextureData cape = ClientCapes.CAPES.get(player.getUUID());
-        if (cape == null) {
-            original.call(model, poseStack, ignored, packedLight, packedOverlay);
-            return;
+    @Inject(method = "<init>(Lnet/minecraft/client/renderer/entity/RenderLayerParent;Lnet/minecraft/client/model/geom/EntityModelSet;Lnet/minecraft/client/resources/model/EquipmentAssetManager;)V", at = @At("TAIL"))
+    private void dragIt$init(CallbackInfo ci) {
+        MeshDefinition meshDefinition = PlayerModel.createMesh(CubeDeformation.NONE, false);
+        meshDefinition.getRoot().clearRecursively();
+        meshDefinition.getRoot().getChild("body").addOrReplaceChild("cape", CubeListBuilder.create().texOffs(-1, -1).addBox(-5.0F, 0.0F, -1.0F, 10.0F, 16.0F, 1.0F), PartPose.offsetAndRotation(0.0F, 0.0F, 2.0F, 0.0F, (float) Math.PI, 0.0F));
+        this.dragIt$customCapeModel = new PlayerCapeModel(LayerDefinition.create(meshDefinition, 10, 16).bakeRoot());
+    }
+
+    @WrapOperation(method = "submit(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;ILnet/minecraft/client/renderer/entity/state/AvatarRenderState;FF)V", at = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/entity/layers/CapeLayer;model:Lnet/minecraft/client/model/HumanoidModel;", opcode = Opcodes.GETFIELD))
+    private HumanoidModel<@NotNull AvatarRenderState> dragIt$swapModel(CapeLayer instance, Operation<HumanoidModel<@NotNull AvatarRenderState>> original, @Local(argsOnly = true) AvatarRenderState state) {
+        ClientLevel level = Minecraft.getInstance().level;
+        if (level != null) {
+            Entity entity = level.getEntity(state.id);
+            if (entity != null && ClientCapes.CAPES.containsKey(entity.getUUID())) {
+                return this.dragIt$customCapeModel;
+            }
         }
-        VertexConsumer vertexConsumer = buffer.getBuffer(RenderType.entityCutoutNoCull(cape.textureLocation()));
-        PoseStack.Pose pose = poseStack.last();
+        return original.call(instance);
+    }
 
-        vertexConsumer.addVertex(pose, -0.3125F, 0.0F, 0.0F).setColor(255, 255, 255, 255).setUv(0, 0).setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight).setNormal(pose, 0, 0, -1);
-        vertexConsumer.addVertex(pose, -0.3125F, 1.0F, 0.0F).setColor(255, 255, 255, 255).setUv(0, 1).setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight).setNormal(pose, 0, 0, -1);
-        vertexConsumer.addVertex(pose, +0.3125F, 1.0F, 0.0F).setColor(255, 255, 255, 255).setUv(1, 1).setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight).setNormal(pose, 0, 0, -1);
-        vertexConsumer.addVertex(pose, +0.3125F, 0.0F, 0.0F).setColor(255, 255, 255, 255).setUv(1, 0).setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight).setNormal(pose, 0, 0, -1);
+    @WrapOperation(method = "submit(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;ILnet/minecraft/client/renderer/entity/state/AvatarRenderState;FF)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/rendertype/RenderTypes;entitySolid(Lnet/minecraft/resources/Identifier;)Lnet/minecraft/client/renderer/rendertype/RenderType;"))
+    private RenderType dragIt$swapTexture(Identifier texturePath, Operation<RenderType> original, @Local(argsOnly = true) AvatarRenderState state) {
+        ClientLevel level = Minecraft.getInstance().level;
+        if (level != null) {
+            Entity entity = level.getEntity(state.id);
+            if (entity != null) {
+                ClientTextureData cape = ClientCapes.CAPES.get(entity.getUUID());
+                if (cape != null) return original.call(cape.textureLocation());
+            }
+        }
+        return original.call(texturePath);
     }
 }
