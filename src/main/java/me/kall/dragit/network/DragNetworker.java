@@ -2,10 +2,13 @@ package me.kall.dragit.network;
 
 import me.kall.dragit.DragIt;
 import me.kall.dragit.network.base.Handler;
+import me.kall.dragit.network.base.VideoCapeBasePacket;
 import me.kall.dragit.network.cache.CacheRequestPacket;
 import me.kall.dragit.network.cache.CacheResponsePacket;
 import me.kall.dragit.network.cape.CapeLoadPacket;
 import me.kall.dragit.network.cape.CapeSavePacket;
+import me.kall.dragit.network.cape.VideoCapeLoadPacket;
+import me.kall.dragit.network.cape.VideoCapeSavePacket;
 import me.kall.dragit.network.chat.ChatLoadPacket;
 import me.kall.dragit.network.chat.ChatSyncPacket;
 import me.kall.dragit.network.itemframe.ItemFrameLoadPacket;
@@ -65,9 +68,16 @@ public final class DragNetworker {
     public static final Type<VideoScreenPacket> VIDEO_SCREEN_TYPE = new Type<>(DragIt.loc("video_screen"));
     public static final StreamCodec<FriendlyByteBuf, VideoScreenPacket> VIDEO_SCREEN_CODEC = CustomPacketPayload.codec(VideoScreenPacket::save, VideoScreenPacket::new);
 
+    public static final Type<VideoCapeSavePacket> VIDEO_CAPE_SAVE_TYPE = new Type<>(DragIt.loc("video_cape_save"));
+    public static final StreamCodec<FriendlyByteBuf, VideoCapeSavePacket> VIDEO_CAPE_SAVE_CODEC = CustomPacketPayload.codec(VideoCapeBasePacket::save, VideoCapeSavePacket::new);
+
+    public static final Type<VideoCapeLoadPacket> VIDEO_CAPE_LOAD_TYPE = new Type<>(DragIt.loc("video_cape_load"));
+    public static final StreamCodec<FriendlyByteBuf, VideoCapeLoadPacket> VIDEO_CAPE_LOAD_CODEC = CustomPacketPayload.codec(VideoCapeLoadPacket::save, VideoCapeLoadPacket::new);
+
     public static void register(@NotNull RegisterPayloadHandlersEvent event) {
         final PayloadRegistrar registrar = event.registrar("1");
 
+        registrar.playToServer(VIDEO_CAPE_SAVE_TYPE, VIDEO_CAPE_SAVE_CODEC, Handler::handle);
         registrar.playToServer(PAINTING_SAVE_TYPE, PAINTING_SAVE_CODEC, Handler::handle);
         registrar.playToServer(SKIN_SAVE_TYPE, SKIN_SAVE_CODEC, Handler::handle);
         registrar.playToServer(CAPE_SAVE_TYPE, CAPE_SAVE_CODEC, Handler::handle);
@@ -75,6 +85,8 @@ public final class DragNetworker {
         registrar.playToServer(ITEM_FRAME_SAVE_TYPE, ITEM_FRAME_SAVE_CODEC, Handler::handle);
         registrar.playToServer(CACHE_REQUEST_TYPE, CACHE_REQUEST_CODEC, Handler::handle);
         registrar.playToServer(VIDEO_SCREEN_TYPE, VIDEO_SCREEN_CODEC, Handler::handle);
+
+        registrar.playToClient(VIDEO_CAPE_LOAD_TYPE, VIDEO_CAPE_LOAD_CODEC, Handler::handle);
         registrar.playToClient(PAINTING_LOAD_TYPE,  PAINTING_LOAD_CODEC, Handler::handle);
         registrar.playToClient(SKIN_LOAD_TYPE, SKIN_LOAD_CODEC, Handler::handle);
         registrar.playToClient(CAPE_LOAD_TYPE, CAPE_LOAD_CODEC, Handler::handle);

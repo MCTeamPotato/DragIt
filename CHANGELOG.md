@@ -14,3 +14,5 @@
 - Introduce ItemFrameDropInvoker. Now you can drag images onto item frames!
 # 1.2.1
 - Fix audio issue when integrating with NarutoLoading
+# 1.3.0
+- Now you can drag video (mp4/gif/avi/... etc.) file for your capes! (Require NarutoLoading)
