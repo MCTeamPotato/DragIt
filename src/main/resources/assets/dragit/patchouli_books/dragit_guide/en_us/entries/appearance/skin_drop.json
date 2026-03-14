@@ -1,0 +1,28 @@
+{
+  "name": "Skin Drop",
+  "category": "dragit:appearance",
+  "icon": "minecraft:player_head",
+  "sortnum": 0,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "title": "Skin Replacement",
+      "text": "DragIt lets you change your character's skin on the fly by dragging a skin file straight into the Minecraft window — no need to upload anything to your Mojang account!$(br2)Your new skin appears instantly, and other players on the same server will see it too."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "How to Use",
+      "text": "$(bold)1.$() Open your inventory (default key $(key)E$()).$(br2)$(bold)2.$() While the inventory is open, drag a $(bold).png$() skin file from your file explorer into the game window.$(br2)$(bold)3.$() Let go — your skin updates immediately.$(br2)$(note)The inventory screen must be open when you drop the file. Dropping while you're in the normal game view won't trigger a skin change.$()"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "File Size Limit",
+      "text": "$(warn)Skin files must be 128×128 pixels or smaller.$()$(br2)Files larger than this will be rejected and a warning will appear in chat.$(br2)$(note)Standard Minecraft skins are 64×64 px (modern format) or 64×32 px (legacy format). Sticking to standard sizes gives the best results.$()"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Server Sync",
+      "text": "When you drop a skin, it is sent to the server and:$(br2)• Saved to the world so it persists across sessions$(br)• Shared with all currently online players$(br)• Automatically shown to any player who joins later$(br2)$(note)If your account is on the server blacklist, your skin will only be visible to yourself.$()"
+    }
+  ]
+}

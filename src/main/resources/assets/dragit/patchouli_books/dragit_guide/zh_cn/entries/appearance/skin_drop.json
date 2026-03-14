@@ -1,0 +1,29 @@
+{
+  "name": "拖拽皮肤",
+  "category": "dragit:appearance",
+  "icon": "minecraft:player_head",
+  "sortnum": 0,
+  "priority": true,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "title": "皮肤替换",
+      "text": "DragIt 让你可以直接把皮肤文件拖进 Minecraft 窗口来更换角色外观，完全不需要上传到 Mojang 账号！$(br2)更换即时生效，同服的其他玩家也能看到你的新皮肤。"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "操作步骤",
+      "text": "$(bold)1.$() 打开背包界面（默认键 $(key)E$()）。$(br2)$(bold)2.$() 保持背包界面开着，把 $(bold).png$() 皮肤文件从文件浏览器拖进游戏窗口。$(br2)$(bold)3.$() 松手，皮肤即刻更换。$(br2)$(note)必须在背包等物品栏界面开着的情况下操作。在正常游戏视角下拖拽不会触发皮肤替换。$()"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "文件限制",
+      "text": "$(warn)皮肤文件尺寸上限：128 × 128 像素。$()$(br2)超出尺寸的文件会被拒绝，聊天栏会弹出提示消息。$(br2)$(note)标准 Minecraft 皮肤规格为 64×64 像素（新版含外层）或 64×32 像素（旧版），建议使用标准尺寸以获得最佳兼容效果。$()"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "服务器同步",
+      "text": "拖入皮肤后，数据会发送到服务器，并且：$(br2)• 保存在存档中，下次进入仍然有效$(br)• 同步给所有当前在线的玩家$(br)• 之后加入的玩家也会自动看到你的皮肤$(br2)$(note)如果你的账号在服务器黑名单里，皮肤只有你自己可见，不会同步给他人。$()"
+    }
+  ]
+}

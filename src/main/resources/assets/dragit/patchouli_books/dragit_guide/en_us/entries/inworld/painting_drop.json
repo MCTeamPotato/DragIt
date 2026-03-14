@@ -1,0 +1,33 @@
+{
+  "name": "Painting Drop",
+  "category": "dragit:inworld",
+  "icon": "minecraft:painting",
+  "sortnum": 0,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "title": "Custom Paintings",
+      "text": "Tired of the vanilla painting selection? Aim your crosshair at any painting and drag an image file into the game window to replace it with your own picture!$(br2)The custom painting is saved to the world and visible to all players, including those who join later."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "How to Use",
+      "text": "$(bold)1.$() Place a painting on a wall.$(br2)$(bold)2.$() Aim your crosshair directly at the painting.$(br2)$(bold)3.$() Drag an image file from your computer into the game window and let go.$(br2)$(note)Make sure you're looking at the painting itself, not the wall behind it. If your crosshair isn't on the painting, the drop won't do anything.$()"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Fitting Your Image",
+      "text": "DragIt stretches your image to fill the entire painting surface, no matter how large the painting is.$(br2)The wooden frame edges and back of the painting are kept exactly as they are in vanilla — only the front face is replaced with your image."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Removing the Image",
+      "text": "Breaking the painting removes it from the world as normal. DragIt also cleans up the custom image data automatically, so there's no leftover clutter.$(br2)To swap the image, just drag a new one onto the painting — the old one is replaced instantly."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Saving & Sharing",
+      "text": "Custom painting images are saved to the world file and shared with other players automatically.$(br2)Images are cached locally on each player's computer, so they only need to download the picture once — even across play sessions."
+    }
+  ]
+}
