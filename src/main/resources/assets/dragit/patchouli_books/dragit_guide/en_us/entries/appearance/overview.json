@@ -13,7 +13,7 @@
     {
       "type": "patchouli:text",
       "title": "Appearance",
-      "text": "$(bold)Skin$() — Open your inventory, drag a .png file in.$(br)$(note)Limit: 128×128 px max.$()$(br2)$(bold)Cape (static)$() — Open inventory, switch to third-person, drag an image in.$(br2)$(bold)Cape (video)$() — Same as above, drag a video file instead.$(br)$(note)Requires NarutoLoading.$()"
+      "text": "$(bold)Skin$() — Open your inventory, drag a .png file in.$(br)$(note)Limit: 128×128 px max.$()$(br2)$(bold)Cape (static)$() —Switch to third person, open inventory, drag an image in.$(br2)$(bold)Cape (video)$() — Same as above, drag a video file instead.$(br)$(note)Requires NarutoLoading.$()"
     },
     {
       "type": "patchouli:text",

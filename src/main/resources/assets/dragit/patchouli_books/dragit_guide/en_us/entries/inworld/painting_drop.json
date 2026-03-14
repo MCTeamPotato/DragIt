@@ -7,27 +7,27 @@
     {
       "type": "patchouli:text",
       "title": "Custom Paintings",
-      "text": "Aim your crosshair at any painting entity and drag an image file into the game window to replace that painting with your custom image.$(br2)The replacement is saved to the world and is visible to all players, including those who join later."
+      "text": "Tired of the vanilla painting selection? Aim your crosshair at any painting and drag an image file into the game window to replace it with your own picture!$(br2)The custom painting is saved to the world and visible to all players, including those who join later."
     },
     {
       "type": "patchouli:text",
       "title": "How to Use",
-      "text": "$(bold)1.$() Place a painting on a wall in the world.$(br2)$(bold)2.$() Aim your crosshair directly at the painting entity.$(br2)$(bold)3.$() Drag an image file from your file explorer into the game window and release.$(br2)$(note)You must be looking at the painting $(italic)entity$(italic) itself, not the wall behind it. If the hit result is not an entity hit, the drop is ignored.$()"
+      "text": "$(bold)1.$() Place a painting on a wall.$(br2)$(bold)2.$() Aim your crosshair directly at the painting.$(br2)$(bold)3.$() Drag an image file from your computer into the game window and let go.$(br2)$(note)Make sure you're looking at the painting itself, not the wall behind it. If your crosshair isn't on the painting, the drop won't do anything.$()"
     },
     {
       "type": "patchouli:text",
-      "title": "Tiled Rendering",
-      "text": "DragIt renders the image across the painting using a $(bold)tile-based approach$(). Each 16×16-pixel region of the painting is treated as one tile, and the corresponding portion of your image is mapped to it.$(br2)This means a 4×4-block painting receives a 4×4 grid of image tiles, correctly scaling the image across the entire surface."
+      "title": "Fitting Your Image",
+      "text": "DragIt stretches your image to fill the entire painting surface, no matter how large the painting is.$(br2)The wooden frame edges and back of the painting are kept exactly as they are in vanilla — only the front face is replaced with your image."
     },
     {
       "type": "patchouli:text",
-      "title": "Back Face Rendering",
-      "text": "DragIt fully preserves the vanilla $(bold)painting back face$() rendering — the wooden frame edges and back texture remain intact. Only the front face is replaced with your custom image.$(br2)When a painting is $(bold)destroyed$() or $(bold)discarded$(), the server automatically removes the associated image data to prevent stale data accumulation."
+      "title": "Removing the Image",
+      "text": "Breaking the painting removes it from the world as normal. DragIt also cleans up the custom image data automatically, so there's no leftover clutter.$(br2)To swap the image, just drag a new one onto the painting — the old one is replaced instantly."
     },
     {
       "type": "patchouli:text",
-      "title": "Persistence & Sync",
-      "text": "Image data is stored in the world's $(bold)DragItSavedPaintings$() save file.$(br2)When a player joins, the server only sends the texture's $(bold)ResourceLocation$() — not the full byte array. The client first checks its local $(bold)image cache$(); on a cache miss, it requests the raw bytes from the server and writes them to the cache."
+      "title": "Saving & Sharing",
+      "text": "Custom painting images are saved to the world file and shared with other players automatically.$(br2)Images are cached locally on each player's computer, so they only need to download the picture once — even across play sessions."
     }
   ]
 }

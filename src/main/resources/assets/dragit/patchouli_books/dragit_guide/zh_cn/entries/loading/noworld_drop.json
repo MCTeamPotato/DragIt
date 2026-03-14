@@ -7,23 +7,23 @@
   "pages": [
     {
       "type": "patchouli:text",
-      "title": "加载界面视频",
-      "text": "$(warn)需要 NarutoLoading 模组。$()$(br2)在游戏的“无世界”状态（即主菜单或切换服务器的加载界面）下，将视频文件拖入 Minecraft 窗口，可以将 NarutoLoading 的背景视频替换为指定文件。$(br2)替换立即生效，无需重启游戏。"
+      "title": "自定义加载视频",
+      "text": "$(warn)需要 NarutoLoading 模组。$()$(br2)看腻了默认的加载界面了？在游戏主菜单（没有进入任何世界的状态下），把视频文件拖进 Minecraft 窗口，就能把加载界面的背景视频换成你自己的！$(br2)替换立即生效，不需要重启游戏。"
     },
     {
       "type": "patchouli:text",
-      "title": "触发条件",
-      "text": "此拖拽功能在以下条件同时满足时触发：$(br2)$(bold)• 当前没有加载任何世界$()（player == null 且 level == null）$(br)$(bold)• NarutoLoading 模组已安装且可用$(br2)$(note)若当前正在游戏世界中，拖拽视频不会触发此功能（而是尝试触发视频披风或视频屏幕）。$()"
+      "title": "什么时候能用？",
+      "text": "此功能只在$(bold)没有加载任何世界$()时触发——比如主菜单或切换服务器的连接界面。$(br2)$(note)如果你正在游戏世界里，拖入视频不会触发这个功能，而是会尝试设置视频披风或视频屏幕。$()"
     },
     {
       "type": "patchouli:text",
-      "title": "文件处理流程",
-      "text": "$(bold)1.$() 将源视频文件$(bold)复制$()到 NarutoLoading 配置目录下（$(bold)config/narutoloading-sources/<文件哈希>/$()），避免直接引用原始路径。$(br2)$(bold)2.$() 将 NarutoLoading 配置中的 $(bold)videoFileName$() 更新为新路径，$(bold)audioFileName$() 重置为空白音频。$(br2)$(bold)3.$() 重建渲染环境（$(bold)BaseEnv.setupEnv$()），并重启视频渲染器（$(bold)NarutoRenderer$()）。"
+      "title": "发生了什么",
+      "text": "$(bold)1.$() 你的视频文件会被自动复制到 NarutoLoading 专用文件夹中，原文件不会被移动或删除。$(br2)$(bold)2.$() NarutoLoading 的配置更新为使用新视频。$(br2)$(bold)3.$() 加载界面渲染器重启，新视频立即开始播放。"
     },
     {
       "type": "patchouli:text",
       "title": "注意事项",
-      "text": "• 此功能$(bold)始终返回 false$()（不消费拖拽事件），即使成功替换视频，后续的拖拽处理器仍会继续检查$(br2)• 每次拖拽都会$(bold)覆盖$()上一次设置的视频$(br2)• 视频文件会以$(bold)文件路径哈希值$()作为目录名存储，同一路径的文件不会重复复制"
+      "text": "• 每次拖入新视频都会$(bold)覆盖$()上一次设置的视频。$(br)• 同一个文件不会被重复复制，不用担心占用多余空间。$(br2)$(note)这个功能不会阻止其他拖拽操作继续执行，即使视频替换成功，其他处理器也还会继续检查。$()"
     }
   ]
 }
