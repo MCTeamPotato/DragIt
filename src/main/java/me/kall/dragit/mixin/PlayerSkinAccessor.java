@@ -11,4 +11,8 @@ public interface PlayerSkinAccessor {
     @Mutable
     @Accessor("body")
     void setBody(ClientAsset.Texture body);
+
+    @Mutable
+    @Accessor("cape")
+    void setCape(ClientAsset.Texture cape);
 }

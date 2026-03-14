@@ -25,7 +25,7 @@ public class VideoCapeSavePacket extends VideoCapeBasePacket {
     public void handle(@Nullable ServerPlayer sender) {
         if (sender == null) return;
 
-        SavedVideoCapes data = SavedVideoCapes.get(sender.serverLevel());
+        SavedVideoCapes data = SavedVideoCapes.get(sender.level());
         if (this.relativePath == null || this.relativePath.isBlank()) {
             data.videoCapes.remove(this.uuid);
         } else {
@@ -34,7 +34,7 @@ public class VideoCapeSavePacket extends VideoCapeBasePacket {
         data.setDirty();
 
         UUID senderUUID = sender.getUUID();
-        for (ServerPlayer other : sender.server.getPlayerList().getPlayers()) {
+        for (ServerPlayer other : sender.level().getServer().getPlayerList().getPlayers()) {
             if (!other.getUUID().equals(senderUUID)) {
                 DragNetworker.send(other, new VideoCapeLoadPacket(this.uuid, this.relativePath));
             }

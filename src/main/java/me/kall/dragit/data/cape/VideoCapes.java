@@ -13,7 +13,7 @@ import me.kall.narutoloading.common.env.ffmpeg.VideoArgReader;
 import me.kall.narutoloading.common.executor.NarutoVideoExecutor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -78,8 +78,9 @@ public class VideoCapes {
                     ClientCapes.CAPES.remove(uuid);
 
                     try {
-                        DynamicTexture texture = new DynamicTexture(CAPE_WIDTH, CAPE_HEIGHT, false);
-                        ResourceLocation location = Minecraft.getInstance().getTextureManager().register("dragit_video_cape_" + uuid.toString().replace("-", ""), texture);
+                        DynamicTexture texture = new DynamicTexture(absoluteVideoPath, CAPE_WIDTH, CAPE_HEIGHT, false);
+                        Identifier location = Identifier.fromNamespaceAndPath(DragIt.MOD_ID, "dragit_video_cape_" + uuid.toString().replace("-", ""));
+                        Minecraft.getInstance().getTextureManager().register(location, texture);
 
                         VideoCape entry = new VideoCape(absoluteVideoPath, location, texture, fps, duration, CAPE_WIDTH, CAPE_HEIGHT);
                         entry.start();
@@ -116,14 +117,14 @@ public class VideoCapes {
         });
     }
 
-    public static @Nullable ResourceLocation getTexture(UUID uuid) {
+    public static @Nullable Identifier getTexture(UUID uuid) {
         VideoCape entry = VIDEO_CAPES.get(uuid);
         return entry != null ? entry.location() : null;
     }
 
     public static final class VideoCape {
         private final String absoluteVideoPath;
-        private final ResourceLocation location;
+        private final Identifier location;
         private final DynamicTexture texture;
         private final double fps;
         private final long duration;
@@ -133,7 +134,7 @@ public class VideoCapes {
         private volatile NarutoVideoExecutor executor;
         private volatile LifetimeController  lifetime;
 
-        public VideoCape(String absoluteVideoPath, ResourceLocation location, DynamicTexture texture, double fps, long duration, int width, int height) {
+        public VideoCape(String absoluteVideoPath, Identifier location, DynamicTexture texture, double fps, long duration, int width, int height) {
             this.absoluteVideoPath = absoluteVideoPath;
             this.location = location;
             this.texture = texture;
@@ -207,7 +208,7 @@ public class VideoCapes {
             DragIt.LOGGER.debug("VideoCape shutdown: path={}", absoluteVideoPath);
         }
 
-        public ResourceLocation location() {
+        public Identifier location() {
             return this.location;
         }
     }
