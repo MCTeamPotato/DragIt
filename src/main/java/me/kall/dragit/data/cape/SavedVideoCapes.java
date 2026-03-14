@@ -23,17 +23,19 @@ public class SavedVideoCapes extends SavedData {
 
     public final Map<UUID, String> videoCapes = new Object2ObjectOpenHashMap<>();
 
-    public static @NotNull SavedVideoCapes load(@NotNull CompoundTag tag) {
-        SavedVideoCapes data = new SavedVideoCapes();
+    public SavedVideoCapes() {
+        super(DATA_NAME);
+    }
+
+    public void load(@NotNull CompoundTag tag) {
         CompoundTag list = tag.getCompound(TAG_LIST);
         for (String key : list.getAllKeys()) {
             try {
-                data.videoCapes.put(UUID.fromString(key), list.getString(key));
+                this.videoCapes.put(UUID.fromString(key), list.getString(key));
             } catch (IllegalArgumentException e) {
                 DragIt.LOGGER.warn("SavedVideoCapes: skipping invalid UUID key '{}'", key);
             }
         }
-        return data;
     }
 
     @Override
@@ -47,15 +49,16 @@ public class SavedVideoCapes extends SavedData {
     }
 
     public static @NotNull SavedVideoCapes get(@NotNull ServerLevel level) {
-        return level.getDataStorage().computeIfAbsent(SavedVideoCapes::load, SavedVideoCapes::new, DATA_NAME);
+        return level.getDataStorage().computeIfAbsent(SavedVideoCapes::new, DATA_NAME);
     }
 
     @SubscribeEvent
     public static void onPlayerLoggedIn(PlayerEvent.@NotNull PlayerLoggedInEvent event) {
-        if (!(event.getEntity() instanceof ServerPlayer joiningPlayer)) return;
-        if (!(joiningPlayer.level() instanceof ServerLevel level))       return;
+        if (!(event.getEntity() instanceof ServerPlayer)) return;
+        ServerPlayer joiningPlayer = (ServerPlayer) event.getEntity();
+        if (!(joiningPlayer.level instanceof ServerLevel))       return;
 
-        SavedVideoCapes data = get(level);
+        SavedVideoCapes data = get(joiningPlayer.getLevel());
         UUID  joiningUUID = joiningPlayer.getUUID();
 
         for (Map.Entry<UUID, String> entry : data.videoCapes.entrySet()) {

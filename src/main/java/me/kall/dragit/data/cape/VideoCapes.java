@@ -6,6 +6,7 @@ import me.kall.dragit.DragIt;
 import me.kall.dragit.callback.invoker.NoWorldDropInvoker;
 import me.kall.dragit.network.DragNetworker;
 import me.kall.dragit.network.cape.VideoCapeSavePacket;
+import me.kall.narutoloading.Strings;
 import me.kall.narutoloading.common.LifetimeController;
 import me.kall.narutoloading.common.env.BaseEnv;
 import me.kall.narutoloading.common.env.config.NarutoConfig;
@@ -48,7 +49,7 @@ public class VideoCapes {
             String absolute = NoWorldDropInvoker.copyFileToConfig(filePath);
             String relative = NarutoConfig.relative(absolute);
 
-            if (relative.isBlank()) {
+            if (Strings.isBlank(relative)) {
                 DragIt.LOGGER.error("CapeDropInvoker: could not get relative path for '{}'", absolute);
                 return false;
             }
@@ -109,7 +110,7 @@ public class VideoCapes {
     }
 
     @SubscribeEvent
-    public static void onLogout(ClientPlayerNetworkEvent.LoggingOut event) {
+    public static void onLogout(ClientPlayerNetworkEvent.LoggedOutEvent event) {
         Minecraft.getInstance().execute(() -> {
             VIDEO_CAPES.values().forEach(VideoCape::shutdown);
             VIDEO_CAPES.clear();

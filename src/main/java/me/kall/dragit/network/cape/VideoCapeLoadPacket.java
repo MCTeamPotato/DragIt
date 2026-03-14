@@ -3,6 +3,7 @@ package me.kall.dragit.network.cape;
 import me.kall.dragit.DragIt;
 import me.kall.dragit.data.cape.VideoCapes;
 import me.kall.dragit.network.base.VideoCapeBasePacket;
+import me.kall.narutoloading.Strings;
 import me.kall.narutoloading.common.env.config.NarutoConfig;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -23,13 +24,13 @@ public class VideoCapeLoadPacket extends VideoCapeBasePacket {
 
     @Override
     public void handle(@Nullable ServerPlayer player) {
-        if (this.relativePath == null || this.relativePath.isBlank()) {
+        if (this.relativePath == null || Strings.isBlank(this.relativePath)) {
             VideoCapes.unregister(this.uuid);
             return;
         }
 
         String absolutePath = NarutoConfig.absolute(this.relativePath);
-        if (absolutePath.isBlank() || !new File(absolutePath).isFile()) {
+        if (Strings.isBlank(absolutePath) || !new File(absolutePath).isFile()) {
             DragIt.LOGGER.warn("VideoCapeLoadPacket: video file not found locally, path='{}' (relative='{}')", absolutePath, this.relativePath);
             return;
         }

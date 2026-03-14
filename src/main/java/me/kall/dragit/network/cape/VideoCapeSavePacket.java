@@ -4,6 +4,7 @@ import me.kall.dragit.DragIt;
 import me.kall.dragit.data.cape.SavedVideoCapes;
 import me.kall.dragit.network.DragNetworker;
 import me.kall.dragit.network.base.VideoCapeBasePacket;
+import me.kall.narutoloading.Strings;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
@@ -24,8 +25,8 @@ public class VideoCapeSavePacket extends VideoCapeBasePacket {
     public void handle(@Nullable ServerPlayer sender) {
         if (sender == null) return;
 
-        SavedVideoCapes data = SavedVideoCapes.get(sender.serverLevel());
-        if (this.relativePath == null || this.relativePath.isBlank()) {
+        SavedVideoCapes data = SavedVideoCapes.get(sender.getLevel());
+        if (this.relativePath == null || Strings.isBlank(this.relativePath)) {
             data.videoCapes.remove(this.uuid);
         } else {
             data.videoCapes.put(this.uuid, this.relativePath);
