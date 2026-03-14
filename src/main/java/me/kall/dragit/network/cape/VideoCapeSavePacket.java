@@ -5,6 +5,7 @@ import me.kall.dragit.data.cape.SavedVideoCapes;
 import me.kall.dragit.network.DragNetworker;
 import me.kall.dragit.network.base.VideoCapeBasePacket;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -40,5 +41,10 @@ public class VideoCapeSavePacket extends VideoCapeBasePacket {
         }
 
         DragIt.LOGGER.info("VideoCapeSavePacket: uuid={} path={} saved and broadcasted", this.uuid, this.relativePath);
+    }
+
+    @Override
+    public @NotNull Type<? extends CustomPacketPayload> type() {
+        return DragNetworker.VIDEO_CAPE_SAVE_TYPE;
     }
 }

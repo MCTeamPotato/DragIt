@@ -4,19 +4,20 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import me.kall.dragit.DragIt;
 import me.kall.dragit.network.DragNetworker;
 import me.kall.dragit.network.cape.VideoCapeLoadPacket;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.saveddata.SavedData;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.UUID;
 
-@Mod.EventBusSubscriber(modid = DragIt.MOD_ID)
+@EventBusSubscriber(modid = DragIt.MOD_ID)
 public class SavedVideoCapes extends SavedData {
     private static final String DATA_NAME = "DragItSavedVideoCapes";
     private static final String TAG_LIST = "VideoCapes";
@@ -37,7 +38,7 @@ public class SavedVideoCapes extends SavedData {
     }
 
     @Override
-    public @NotNull CompoundTag save(@NotNull CompoundTag tag) {
+    public @NotNull CompoundTag save(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registries) {
         CompoundTag list = new CompoundTag();
         for (Map.Entry<UUID, String> e : videoCapes.entrySet()) {
             list.putString(e.getKey().toString(), e.getValue());
@@ -47,7 +48,7 @@ public class SavedVideoCapes extends SavedData {
     }
 
     public static @NotNull SavedVideoCapes get(@NotNull ServerLevel level) {
-        return level.getDataStorage().computeIfAbsent(SavedVideoCapes::load, SavedVideoCapes::new, DATA_NAME);
+        return level.getDataStorage().computeIfAbsent(new Factory<>(SavedVideoCapes::new, (compoundTag, provider) -> load(compoundTag)), DATA_NAME);
     }
 
     @SubscribeEvent

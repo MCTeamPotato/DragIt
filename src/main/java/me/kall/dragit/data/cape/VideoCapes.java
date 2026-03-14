@@ -14,11 +14,11 @@ import me.kall.narutoloading.common.executor.NarutoVideoExecutor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
+import net.neoforged.neoforge.client.event.RenderFrameEvent;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,7 +29,7 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Mod.EventBusSubscriber(modid = DragIt.MOD_ID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = DragIt.MOD_ID, value = Dist.CLIENT)
 public class VideoCapes {
     public static final Map<UUID, VideoCape> VIDEO_CAPES = new Object2ObjectOpenHashMap<>();
 
@@ -103,8 +103,8 @@ public class VideoCapes {
     }
 
     @SubscribeEvent
-    public static void onRenderTick(TickEvent.@NotNull RenderTickEvent event) {
-        if (event.phase != TickEvent.Phase.START || VIDEO_CAPES.isEmpty()) return;
+    public static void onRenderTick(RenderFrameEvent.Pre event) {
+        if (VIDEO_CAPES.isEmpty()) return;
         for (VideoCape entry : VIDEO_CAPES.values()) entry.tick();
     }
 

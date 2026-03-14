@@ -2,9 +2,11 @@ package me.kall.dragit.network.cape;
 
 import me.kall.dragit.DragIt;
 import me.kall.dragit.data.cape.VideoCapes;
+import me.kall.dragit.network.DragNetworker;
 import me.kall.dragit.network.base.VideoCapeBasePacket;
 import me.kall.narutoloading.common.env.config.NarutoConfig;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,5 +38,10 @@ public class VideoCapeLoadPacket extends VideoCapeBasePacket {
 
         VideoCapes.register(this.uuid, absolutePath);
         DragIt.LOGGER.info("VideoCapeLoadPacket: uuid={} path={}", this.uuid, absolutePath);
+    }
+
+    @Override
+    public @NotNull Type<? extends CustomPacketPayload> type() {
+        return DragNetworker.VIDEO_CAPE_LOAD_TYPE;
     }
 }
