@@ -27,6 +27,7 @@ public class SkinDropInvoker implements DragCallback.Invoker {
         LocalPlayer player = minecraft.player;
 
         if (!(minecraft.screen instanceof EffectRenderingInventoryScreen) || player == null) return false;
+        if (!minecraft.options.getCameraType().isFirstPerson()) return false;
 
         UUID uuid = player.getUUID();
         try {
