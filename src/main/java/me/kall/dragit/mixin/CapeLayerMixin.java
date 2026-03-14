@@ -21,6 +21,7 @@ import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -41,27 +42,26 @@ public abstract class CapeLayerMixin {
     }
 
     @WrapOperation(method = "submit(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;ILnet/minecraft/client/renderer/entity/state/AvatarRenderState;FF)V", at = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/entity/layers/CapeLayer;model:Lnet/minecraft/client/model/HumanoidModel;", opcode = Opcodes.GETFIELD))
-    private HumanoidModel<@NotNull AvatarRenderState> dragIt$swapModel(CapeLayer instance, Operation<HumanoidModel<@NotNull AvatarRenderState>> original, @Local(argsOnly = true) AvatarRenderState state) {
-        ClientLevel level = Minecraft.getInstance().level;
-        if (level != null) {
-            Entity entity = level.getEntity(state.id);
-            if (entity != null && ClientCapes.CAPES.containsKey(entity.getUUID())) {
-                return this.dragIt$customCapeModel;
-            }
-        }
-        return original.call(instance);
+    private HumanoidModel<@NotNull AvatarRenderState> dragIt$swapModel(CapeLayer capeLayer, Operation<HumanoidModel<@NotNull AvatarRenderState>> original, @Local(argsOnly = true) AvatarRenderState state) {
+        return this.dragIt$customCape(state) != null ? this.dragIt$customCapeModel : original.call(capeLayer);
     }
 
     @WrapOperation(method = "submit(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;ILnet/minecraft/client/renderer/entity/state/AvatarRenderState;FF)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/rendertype/RenderTypes;entitySolid(Lnet/minecraft/resources/Identifier;)Lnet/minecraft/client/renderer/rendertype/RenderType;"))
-    private RenderType dragIt$swapTexture(Identifier texturePath, Operation<RenderType> original, @Local(argsOnly = true) AvatarRenderState state) {
+    private RenderType dragIt$swapTexture(Identifier texturePath, @NotNull Operation<RenderType> original, @Local(argsOnly = true) AvatarRenderState state) {
+        Identifier customCape = this.dragIt$customCape(state);
+        return original.call(customCape == null ? texturePath : customCape);
+    }
+
+    @Unique
+    private @Nullable Identifier dragIt$customCape(AvatarRenderState state) {
         ClientLevel level = Minecraft.getInstance().level;
         if (level != null) {
             Entity entity = level.getEntity(state.id);
             if (entity != null) {
                 ClientTextureData cape = ClientCapes.CAPES.get(entity.getUUID());
-                if (cape != null) return original.call(cape.textureLocation());
+                if (cape != null) return cape.textureLocation();
             }
         }
-        return original.call(texturePath);
+        return null;
     }
 }
