@@ -3,6 +3,7 @@ package me.kall.dragit.mixin;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
+import me.kall.dragit.DragIt;
 import me.kall.dragit.data.ClientTextureData;
 import me.kall.dragit.data.cape.ClientCapes;
 import net.minecraft.client.Minecraft;
@@ -18,8 +19,10 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.entity.layers.CapeLayer;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.core.ClientAsset;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.PlayerSkin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
@@ -32,6 +35,22 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(CapeLayer.class)
 public abstract class CapeLayerMixin {
     @Unique private HumanoidModel<@NotNull AvatarRenderState> dragIt$customCapeModel;
+
+    @Unique
+    private static final ClientAsset.Texture NOT_NULL = new ClientAsset.Texture() {
+
+        private static final Identifier PLACEHOLDER = Identifier.fromNamespaceAndPath(DragIt.MOD_ID, "placeholder");
+
+        @Override
+        public @NotNull Identifier texturePath() {
+            return PLACEHOLDER;
+        }
+
+        @Override
+        public @NotNull Identifier id() {
+            return PLACEHOLDER;
+        }
+    };
 
     @Inject(method = "<init>(Lnet/minecraft/client/renderer/entity/RenderLayerParent;Lnet/minecraft/client/model/geom/EntityModelSet;Lnet/minecraft/client/resources/model/EquipmentAssetManager;)V", at = @At("TAIL"))
     private void dragIt$init(CallbackInfo ci) {
@@ -50,6 +69,11 @@ public abstract class CapeLayerMixin {
     private RenderType dragIt$swapTexture(Identifier texturePath, @NotNull Operation<RenderType> original, @Local(argsOnly = true) AvatarRenderState state) {
         Identifier customCape = this.dragIt$customCape(state);
         return original.call(customCape == null ? texturePath : customCape);
+    }
+
+    @WrapOperation(method = "submit(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;ILnet/minecraft/client/renderer/entity/state/AvatarRenderState;FF)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/PlayerSkin;cape()Lnet/minecraft/core/ClientAsset$Texture;"))
+    private ClientAsset.Texture skipCapeCheck(PlayerSkin instance, @NotNull Operation<ClientAsset.Texture> original, @Local(argsOnly = true) AvatarRenderState state) {
+        return this.dragIt$customCape(state) != null ? NOT_NULL : original.call(instance);
     }
 
     @Unique
