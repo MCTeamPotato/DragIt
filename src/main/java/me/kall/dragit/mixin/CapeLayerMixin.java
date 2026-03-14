@@ -6,6 +6,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import me.kall.dragit.DragIt;
 import me.kall.dragit.data.ClientTextureData;
 import me.kall.dragit.data.cape.ClientCapes;
+import me.kall.dragit.data.cape.VideoCapes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.PartPose;
@@ -82,6 +83,8 @@ public abstract class CapeLayerMixin {
         if (level != null) {
             Entity entity = level.getEntity(state.id);
             if (entity != null) {
+                Identifier videoTexture = VideoCapes.getTexture(entity.getUUID());
+                if (videoTexture != null) return videoTexture;
                 ClientTextureData cape = ClientCapes.CAPES.get(entity.getUUID());
                 if (cape != null) return cape.textureLocation();
             }
