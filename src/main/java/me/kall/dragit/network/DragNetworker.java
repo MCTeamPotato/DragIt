@@ -6,6 +6,8 @@ import me.kall.dragit.network.cache.CacheRequestPacket;
 import me.kall.dragit.network.cache.CacheResponsePacket;
 import me.kall.dragit.network.cape.CapeLoadPacket;
 import me.kall.dragit.network.cape.CapeSavePacket;
+import me.kall.dragit.network.cape.VideoCapeLoadPacket;
+import me.kall.dragit.network.cape.VideoCapeSavePacket;
 import me.kall.dragit.network.chat.ChatLoadPacket;
 import me.kall.dragit.network.chat.ChatSyncPacket;
 import me.kall.dragit.network.itemframe.ItemFrameLoadPacket;
@@ -42,6 +44,8 @@ public class DragNetworker {
         INSTANCE.registerMessage(id++, CacheResponsePacket.class, CacheResponsePacket::save, CacheResponsePacket::new, CacheResponsePacket::handle);
         INSTANCE.registerMessage(id++, VideoScreenPacket.class, VideoScreenPacket::save, VideoScreenPacket::new, VideoScreenPacket::handle);
         INSTANCE.registerMessage(id++, HangingRemovePacket.class, HangingRemovePacket::save, HangingRemovePacket::new, Handler::handle);
+        INSTANCE.registerMessage(id++, VideoCapeSavePacket.class, VideoCapeSavePacket::save, VideoCapeSavePacket::new, VideoCapeSavePacket::handle);
+        INSTANCE.registerMessage(id++, VideoCapeLoadPacket.class, VideoCapeLoadPacket::save, VideoCapeLoadPacket::new, VideoCapeLoadPacket::handle);
     }
 
     public static <MSG> void sendToServer(MSG msg) {
