@@ -12,15 +12,15 @@ import vazkii.patchouli.api.PatchouliAPI;
 
 public final class PatchouliIntegration {
     private static final String GIVEN = "drag_it_patchouli_mark";
-    private static final ResourceLocation BOOK = ResourceLocation.fromNamespaceAndPath(DragIt.MOD_ID, "dragit_guide");
+    private static final ResourceLocation BOOK = new ResourceLocation(DragIt.MOD_ID, "dragit_guide");
 
     private static void onLogin(PlayerEvent.@NotNull PlayerLoggedInEvent event) {
-        Player player = event.getEntity();
+        Player player = event.getPlayer();
         if (event.getEntity() instanceof ServerPlayer && !player.getPersistentData().getBoolean(GIVEN)) {
             player.getPersistentData().putBoolean(GIVEN, true);
             ItemStack book = PatchouliAPI.get().getBookStack(BOOK);
             if (book.isEmpty()) return;
-            if (!player.getInventory().add(book)) {
+            if (!player.inventory.add(book)) {
                 player.drop(book, false);
             }
         }
