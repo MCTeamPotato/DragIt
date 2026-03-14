@@ -62,7 +62,7 @@ public class VideoScreenPacket extends Handler {
             InWorldScreen screen = ServerScreenCheckerInvoker.tryBuildScreen(player, level, lastCorner, currentCorner, predicate);
 
             if (screen != null) {
-                screen.setPath(this.video, "");
+                screen.setPath(this.video, this.video);
                 NarutoPackets.INSTANCE.send(PacketDistributor.ALL.noArg(), new ScreenLifePacket(screen, true));
                 NarutoPackets.INSTANCE.send(PacketDistributor.ALL.noArg(), new ScreenLifePacket(screen, false));
                 ServerScreenCheckerInvoker.setHangingEntitiesInvisible(level, screen, facing, true);
