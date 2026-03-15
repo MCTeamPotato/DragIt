@@ -30,6 +30,12 @@
 
   "chat.dragit.shared_image": "%s share this image: ",
 
-  "dragit.guide.book.name": "DragIt Guidebook",
-  "dragit.guide.book.landing_text": "Welcome to the $(bold)DragIt$() Guidebook!$(br2)This mod lets you $(italic)drag and drop$() files onto the Minecraft window to change skins, capes, paintings, item frame art, and share images in chat.$(br2)Pick a category on the left to get started."
+  "paper.dragit.guide": "Right Click To Show DragIt Usage Note",
+  "guide.dragit.skin": "Custom skin: switch to first-person view -> open inventory -> drag in an image -> done.",
+  "guide.dragit.cape": "Custom cape: switch to third-person view -> open inventory -> drag in an image -> done. Vanilla cape format is not supported yet; it must be a regular image.",
+  "guide.dragit.chat": "Send images in chat: open the chat box -> drag in an image -> done.",
+  "guide.dragit.item_frame": "Custom item frame display: build an item frame wall of at least 4×4 -> aim the crosshair at one item frame (or need to be a corner item frame if you want to drag a video) -> drag in an image -> done.",
+  "guide.dragit.painting": "Custom painting: place a painting -> aim the crosshair at it -> drag in an image -> done.",
+  "guide.dragit.naruto_loading": "NarutoLoading integration: drag a video onto the title screen to directly change the current background; item frames and capes can also accept videos instead of being limited to images.",
+  "guide.dragit.naruto_loading.note": "Videos are only visible locally. For multiplayer synchronization, other players must have the same video file at the same relative path."
 }

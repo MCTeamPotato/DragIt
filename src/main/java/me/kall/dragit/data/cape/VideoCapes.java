@@ -3,9 +3,9 @@ package me.kall.dragit.data.cape;
 import com.mojang.blaze3d.platform.NativeImage;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import me.kall.dragit.DragIt;
-import me.kall.dragit.callback.invoker.NoWorldDropInvoker;
 import me.kall.dragit.network.DragNetworker;
 import me.kall.dragit.network.cape.VideoCapeSavePacket;
+import me.kall.dragit.util.VideoFiles;
 import me.kall.narutoloading.common.LifetimeController;
 import me.kall.narutoloading.common.env.BaseEnv;
 import me.kall.narutoloading.common.env.config.NarutoConfig;
@@ -23,7 +23,6 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
@@ -44,24 +43,19 @@ public class VideoCapes {
 
     public static boolean integrate(String filePath, UUID uuid) {
         if (!BaseEnv.available()) return false;
-        try {
-            String absolute = NoWorldDropInvoker.copyFileToConfig(filePath);
-            String relative = NarutoConfig.relative(absolute);
+        String absolute = VideoFiles.copyFileToConfig(filePath);
+        String relative = NarutoConfig.relative(absolute);
 
-            if (relative.isBlank()) {
-                DragIt.LOGGER.error("CapeDropInvoker: could not get relative path for '{}'", absolute);
-                return false;
-            }
-
-            VideoCapes.register(uuid, absolute);
-            DragNetworker.sendToServer(new VideoCapeSavePacket(uuid, relative));
-            DragIt.LOGGER.info("CapeDropInvoker: video cape set, relative='{}'", relative);
-            return true;
-        } catch (IOException e) {
-            DragIt.LOGGER.error("CapeDropInvoker: error setting video cape", e);
+        if (relative.isBlank()) {
+            DragIt.LOGGER.error("CapeDropInvoker: could not get relative path for '{}'", absolute);
+            return false;
         }
 
-        return false;
+        VideoCapes.register(uuid, absolute);
+        DragNetworker.sendToServer(new VideoCapeSavePacket(uuid, relative));
+        DragIt.LOGGER.info("CapeDropInvoker: video cape set, relative='{}'", relative);
+        return true;
+
     }
 
     public static void register(UUID uuid, String absoluteVideoPath) {

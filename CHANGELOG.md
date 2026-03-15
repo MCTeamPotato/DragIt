@@ -17,5 +17,6 @@
 # 1.3.0
 - Now you can drag video (mp4/gif/avi/... etc.) file for your capes! (Require NarutoLoading)
 # 1.4.0
-- Add patchouli guidebook
+- Add a guide paper
 - Now you have to be on first person view when you want to customize your skin
+- Fix video check logic
