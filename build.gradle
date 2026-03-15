@@ -53,6 +53,7 @@ loom {
 }
 
 repositories {
+    maven { name = "BlameJared";     url = 'https://maven.blamejared.com' }
     maven { name = "ParchmentMC";    url = 'https://maven.parchmentmc.org' }
     maven { name = "MinecraftForge"; url = "https://files.minecraftforge.net/maven/" }
     maven { name = "NeoForged";      url = 'https://maven.neoforged.net/releases' }
@@ -75,10 +76,10 @@ repositories {
 }
 
 def versionMap = [
-    "1.20.1" : [forge: "47.4.2"       , parchment: "2023.09.03", duplicationless: "7349275", embeddium: "5681725", narutoloading: "7742556"],
-    "1.16.5" : [forge: "36.2.42"      , parchment: "2022.03.06", duplicationless: "7349267", embeddium: "5322311", narutoloading: "7742572"],
-    "1.21.1" : [neo  : "21.1.192"     , parchment: "2024.11.17", duplicationless: "7349264", embeddium: "6118392", narutoloading: "7742550"],
-    "1.21.11": [neo  : "21.11.30-beta", parchment: "2025.12.20", duplicationless: "7479295", sodium: "7527475", narutoloading: "7742552"]
+    "1.20.1" : [forge: "47.4.2"       , parchment: "2023.09.03", duplicationless: "7349275", embeddium: "5681725", narutoloading: "7742556", "patchouli" : "1.20.1-84.1-FORGE"],
+    "1.16.5" : [forge: "36.2.42"      , parchment: "2022.03.06", duplicationless: "7349267", embeddium: "5322311", narutoloading: "7742572", "patchouli" : "1.16.4-53.3"],
+    "1.21.1" : [neo  : "21.1.192"     , parchment: "2024.11.17", duplicationless: "7349264", embeddium: "6118392", narutoloading: "7742550", "patchouli" : "1.21.1-93-NEOFORGE"],
+    "1.21.11": [neo  : "21.11.30-beta", parchment: "2025.12.20", duplicationless: "7479295", sodium: "7527475",    narutoloading: "7742552", "patchouli" : ""]
 ]
 
 HashMap<String, String> versionInfo = versionMap[minecraft_version]
@@ -164,6 +165,7 @@ tasks.register("publishCurseForge", TaskPublishCurseForge) {
         }
         mainFile.addGameVersion(minecraft_version)
         mainFile.addOptional(minecraft_version == "1.21.11" ? "sodium" : "embeddium")
+        if (minecraft_version != "1.21.11") mainFile.addOptional("patchouli")
     
         UploadArtifact sourcesFile = mainFile.withAdditionalFile(sourcesJar)
         sourcesFile.changelog = CHANGELOG

@@ -28,6 +28,7 @@ public class SkinDropInvoker implements DragCallback.Invoker {
         LocalPlayer player = minecraft.player;
 
         if (!(minecraft.screen instanceof InventoryScreen) && !(minecraft.screen instanceof CreativeModeInventoryScreen) || player == null) return false;
+        if (!minecraft.options.getCameraType().isFirstPerson()) return false;
 
         UUID uuid = player.getUUID();
         try {

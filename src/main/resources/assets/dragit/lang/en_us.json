@@ -28,5 +28,8 @@
   "commands.dragit.blacklist.remove.not_found": "%s is not blacklisted.",
   "commands.dragit.blacklist.remove.success": "Removed %s from blacklist.",
 
-  "chat.dragit.shared_image": "%s share this image: "
+  "chat.dragit.shared_image": "%s share this image: ",
+
+  "dragit.guide.book.name": "DragIt Guidebook",
+  "dragit.guide.book.landing_text": "Welcome to the $(bold)DragIt$() Guidebook!$(br2)This mod lets you $(italic)drag and drop$() files onto the Minecraft window to change skins, capes, paintings, item frame art, and share images in chat.$(br2)Pick a category on the left to get started."
 }

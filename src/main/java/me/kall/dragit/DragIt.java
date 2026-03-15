@@ -2,6 +2,7 @@ package me.kall.dragit;
 
 import me.kall.dragit.config.DragClientConfig;
 import me.kall.dragit.config.DragCommonConfig;
+import me.kall.dragit.integration.PatchouliIntegration;
 import me.kall.dragit.network.DragNetworker;
 import net.minecraft.resources.Identifier;
 import net.neoforged.api.distmarker.Dist;
@@ -23,6 +24,10 @@ public final class DragIt {
         DragCommonConfig.INSTANCE.register(container, modBus);
         if (dist.isClient()) {
             DragClientConfig.INSTANCE.register(container);
+        }
+
+        if (FMLLoader.getLoadingModList().getModFileById("patchouli") != null) {
+            PatchouliIntegration.register();
         }
     }
 
