@@ -12,19 +12,17 @@ import me.kall.dragit.network.DragNetworker;
 import me.kall.dragit.network.cape.CapeSavePacket;
 import me.kall.dragit.network.cape.VideoCapeSavePacket;
 import me.kall.dragit.util.ImageCompressor;
+import me.kall.dragit.util.VideoFiles;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFWDropCallback;
 
 import java.io.IOException;
 import java.util.UUID;
 
 public class CapeDropInvoker implements DragCallback.Invoker {
-    private static final String[] VIDEO_EXTENSIONS = {".mp4", ".gif", ".mkv", ".webm", ".avi", ".mov", ".flv", ".m4v"};
-
     @Override
     public boolean invoke(long window, int count, long names) {
         String filePath = GLFWDropCallback.getName(names, 0);
@@ -36,7 +34,7 @@ public class CapeDropInvoker implements DragCallback.Invoker {
 
         UUID uuid = player.getUUID();
 
-        if (isVideoFile(filePath) && NarutoLoadingIntegration.isIntegratable()) {
+        if (VideoFiles.isVideoFile(filePath) && NarutoLoadingIntegration.isIntegratable()) {
             if (VideoCapes.integrate(filePath, uuid)) return true;
         }
 
@@ -54,14 +52,6 @@ public class CapeDropInvoker implements DragCallback.Invoker {
             return true;
         } catch (IOException exception) {
             DragIt.LOGGER.error("CapeDropInvoker: error registering static cape", exception);
-        }
-        return false;
-    }
-
-    private static boolean isVideoFile(@NotNull String path) {
-        String lower = path.toLowerCase();
-        for (String videoExtension : VIDEO_EXTENSIONS) {
-            if (lower.endsWith(videoExtension)) return true;
         }
         return false;
     }
