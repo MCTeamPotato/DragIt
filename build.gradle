@@ -102,8 +102,6 @@ dependencies {
     if (project.minecraft_version == "1.21.11") {
         modImplementation("curse.maven:sodium-394468:${versionInfo.sodium}")
     } else {
-        modImplementation("vazkii.patchouli:Patchouli:${versionInfo.patchouli}:api")
-        modImplementation("vazkii.patchouli:Patchouli:${versionInfo.patchouli}")
         modImplementation("curse.maven:embeddium-908741:${versionInfo.embeddium}")
     }
 }
