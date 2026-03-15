@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import me.kall.dragit.DragIt;
 import me.kall.dragit.network.DragNetworker;
 import me.kall.dragit.network.cape.VideoCapeSavePacket;
+import me.kall.dragit.util.VideoFiles;
 import me.kall.narutoloading.Strings;
 import me.kall.narutoloading.common.LifetimeController;
 import me.kall.narutoloading.common.env.BaseEnv;

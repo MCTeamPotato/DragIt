@@ -13,6 +13,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
+import org.lwjgl.BufferUtils;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -49,7 +50,7 @@ public class DragItClient {
         if (interval > 0) return;
         ItemStack stack = event.getItemStack();
         //noinspection DataFlowIssue
-        if (stack.is(Items.PAPER) && stack.hasTag() && stack.getTag().getBoolean("DragItGuide") && event.getEntity() instanceof LocalPlayer) {
+        if (stack.getItem().equals(Items.PAPER) && stack.hasTag() && stack.getTag().getBoolean("DragItGuide") && event.getEntity() instanceof LocalPlayer) {
             for (Component component : GuideComponents.GUIDE) {
                 Minecraft.getInstance().gui.getChat().addMessage(component);
             }

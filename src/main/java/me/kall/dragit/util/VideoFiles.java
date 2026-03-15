@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 public class VideoFiles {
@@ -19,7 +20,7 @@ public class VideoFiles {
     }
 
     public static @NotNull String copyFileToConfig(String filePath) {
-        Path source = Path.of(filePath);
+        Path source = Paths.get(filePath);
         String hash = String.valueOf(filePath.hashCode());
         Path targetDir = FMLLoader.getGamePath().resolve("config").resolve("narutoloading-sources").resolve(hash);
 

@@ -9,6 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLLoader;
@@ -33,7 +34,8 @@ public final class DragIt {
 
     @SubscribeEvent
     public static void giveGuide(PlayerEvent.@NotNull PlayerLoggedInEvent event) {
-        if (event.getEntity() instanceof ServerPlayer player) {
+        if (event.getEntity() instanceof ServerPlayer) {
+            ServerPlayer player = (ServerPlayer) event.getEntity();
             CompoundTag persistentData = player.getPersistentData();
             boolean guided = persistentData.getBoolean("DragItGuided");
             if (guided) return;

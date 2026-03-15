@@ -26,7 +26,7 @@ public class VideoDropInvoker implements DragCallback.Invoker {
 
         if (level == null || target == null || player == null) return false;
         if (target.getType() != HitResult.Type.ENTITY) return false;
-        if (!(((EntityHitResult)target).getEntity() instanceof ItemFrame leftBottom)) return false;
+        if (!(((EntityHitResult)target).getEntity() instanceof ItemFrame)) return false;
         ItemFrame leftBottom = (ItemFrame) ((EntityHitResult)target).getEntity();
         ItemFrame rightBottom = ItemFrameLocator.findOtherCorner(leftBottom, player, level);
         DragNetworker.sendToServer(new VideoScreenPacket(leftBottom.getId(), rightBottom.getId(), NarutoConfig.relative(VideoFiles.copyFileToConfig(filePath))));
