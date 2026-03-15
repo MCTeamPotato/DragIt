@@ -30,7 +30,12 @@
 
   "chat.dragit.shared_image": "%s 分享了图片：",
 
-
-  "dragit.guide.book.name": "DragIt 使用手册",
-  "dragit.guide.book.landing_text": "欢迎使用 $(bold)DragIt$() 手册！$(br2)本模组允许你通过将文件$(italic)拖拽$()到 Minecraft 窗口来改变皮肤、披风、画作、物品展示框内容，以及在聊天栏分享图片。$(br2)选择左侧分类开始阅读吧。"
+  "paper.dragit.guide": "右击显示DragIt使用小贴士",
+  "guide.dragit.skin": "自定义皮肤：切到第一人称视角->打开物品栏->拖入图片->完成。",
+  "guide.dragit.cape": "自定义披风：切到第三人称视角->打开物品栏->拖入图片->完成。暂未支持原版格式披风，需是普通图片。",
+  "guide.dragit.chat": "聊天栏发送图片：打开聊天栏->拖入图片->完成。",
+  "guide.dragit.item_frame": "自定义物品展示框：建造一个至少4*4规格的物品展示框墙->准星对上一个物品展示框->拖入图片->完成。",
+  "guide.dragit.painting": "自定义画作：放张画->准星对上它->拖入图片->完成。",
+  "guide.dragit.naruto_loading": "NarutoLoading 联动：在标题页面拖入视频可以直接切换当前背景；物品展示框和披风可以拖入视频而不局限于图片。",
+  "guide.dragit.naruto_loading.note": "视频仅本地可见，多人同步需要对方拥有相同的视频文件在相对路径上。"
 }
