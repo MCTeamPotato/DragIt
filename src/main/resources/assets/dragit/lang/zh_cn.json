@@ -28,5 +28,9 @@
   "commands.dragit.blacklist.remove.not_found": "%s 不在黑名单中。",
   "commands.dragit.blacklist.remove.success":   "已将 %s 从黑名单中移除。",
 
-  "chat.dragit.shared_image": "%s 分享了图片："
+  "chat.dragit.shared_image": "%s 分享了图片：",
+
+
+  "dragit.guide.book.name": "DragIt 使用手册",
+  "dragit.guide.book.landing_text": "欢迎使用 $(bold)DragIt$() 手册！$(br2)本模组允许你通过将文件$(italic)拖拽$()到 Minecraft 窗口来改变皮肤、披风、画作、物品展示框内容，以及在聊天栏分享图片。$(br2)选择左侧分类开始阅读吧。"
 }
