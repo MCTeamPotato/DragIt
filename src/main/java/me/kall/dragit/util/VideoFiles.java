@@ -21,7 +21,7 @@ public class VideoFiles {
     public static @NotNull String copyFileToConfig(String filePath) {
         Path source = Path.of(filePath);
         String hash = String.valueOf(filePath.hashCode());
-        Path targetDir = FMLLoader.getGamePath().resolve("config").resolve("narutoloading-sources").resolve(hash);
+        Path targetDir = FMLLoader.getCurrent().getGameDir().resolve("config").resolve("narutoloading-sources").resolve(hash);
 
         String fileName = source.getFileName().toString();
         int dot = fileName.lastIndexOf('.');
