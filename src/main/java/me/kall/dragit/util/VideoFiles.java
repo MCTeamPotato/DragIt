@@ -1,6 +1,6 @@
 package me.kall.dragit.util;
 
-import net.minecraftforge.fml.loading.FMLLoader;
+import net.neoforged.fml.loading.FMLLoader;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Files;
