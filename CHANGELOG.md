@@ -20,3 +20,5 @@
 - Add a guide paper
 - Now you have to be on first person view when you want to customize your skin
 - Fix video check logic
+# 1.4.1
+- Add config option for the guide paper
