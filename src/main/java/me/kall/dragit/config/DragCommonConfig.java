@@ -19,7 +19,7 @@ public class DragCommonConfig {
     public static final DragCommonConfig INSTANCE = new DragCommonConfig();
 
     private final ForgeConfigSpec configSpec;
-    private final ForgeConfigSpec.BooleanValue all;
+    private final ForgeConfigSpec.BooleanValue all, giveGuidePaper;
     private final ForgeConfigSpec.ConfigValue<List<? extends String>> whitelist, blacklist;
     private final ForgeConfigSpec.IntValue maxPixels;
 
@@ -28,6 +28,7 @@ public class DragCommonConfig {
     private DragCommonConfig() {
         ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
         builder.push("DragCommonConfig");
+        this.giveGuidePaper = builder.comment("If disabled, the paper named 'Right Click To Show DragIt Usage Note' will not be delivered to your inventory on first join").define("GiveGuidePaper", true);
         this.all = builder.comment("If enabled, all the players can send their skin/painting/chat images data to server.").define("All", true);
         this.blacklist = builder.comment("Put UUIDs here so these players can never send their skin/painting/chat images data to server even if 'All' is enabled.").defineList("Blacklist", Lists.newArrayList(), Predicates.alwaysTrue());
         this.whitelist = builder.comment("Require 'All' to be false.", "Put UUIDs here so only these players can send their skin/painting/chat images data to server.").defineList("Whitelist", Lists.newArrayList(), Predicates.alwaysTrue());
@@ -46,6 +47,10 @@ public class DragCommonConfig {
 
     public int getMaxPixels() {
         return this.maxPixels.get();
+    }
+
+    public boolean giveGuidePaper() {
+        return this.giveGuidePaper.get();
     }
 
     public boolean all() {
