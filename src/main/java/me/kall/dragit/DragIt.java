@@ -38,7 +38,7 @@ public final class DragIt {
 
     @SubscribeEvent
     public static void giveGuide(PlayerEvent.@NotNull PlayerLoggedInEvent event) {
-        if (event.getEntity() instanceof ServerPlayer player) {
+        if (DragCommonConfig.INSTANCE.giveGuidePaper() && event.getEntity() instanceof ServerPlayer player) {
             CompoundTag persistentData = player.getPersistentData();
             boolean guided = persistentData.getBoolean("DragItGuided");
             if (guided) return;
